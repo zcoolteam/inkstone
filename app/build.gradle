@@ -96,7 +96,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':inkstone')
-    annotationProcessor project(':processor')
+    annotationProcessor project(':inkstone-processor')
 
     implementation rootProject.ext.bcfg.deps.support_annotations
     implementation rootProject.ext.bcfg.deps.support_app_compat

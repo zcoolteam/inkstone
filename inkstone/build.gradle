@@ -29,7 +29,7 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api project(':annotation')
+    api project(':inkstone-annotation')
 
     api rootProject.ext.bcfg.deps.support_annotations
     api rootProject.ext.bcfg.deps.support_app_compat

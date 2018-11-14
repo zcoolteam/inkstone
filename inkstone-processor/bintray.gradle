@@ -62,7 +62,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = 'maven'
-        name = 'inkstone'
+        name = 'inkstone-processor'
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ['Apache-2.0']
