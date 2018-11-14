@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="40dp"
+    android:layout_marginRight="40dp"
+    android:background="#FFffffff"
+    android:orientation="vertical"
+    tools:background="#66000000">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.2"
+        android:padding="10dp"
+        android:text="消息通知：测试消息，　ViewDialog 样式消息展示"
+        android:textColor="#FF000000"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/action_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:padding="10dp"
+        android:text="确定"
+        android:textColor="#FF2222ff"
+        android:textSize="16sp" />
+
+</LinearLayout>

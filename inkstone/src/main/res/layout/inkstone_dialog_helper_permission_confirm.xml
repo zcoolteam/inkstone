@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="40dp"
+    android:layout_marginRight="40dp"
+    android:background="#FFffffff">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textColor="#FF282828"
+        android:textSize="16sp"
+        tools:text="授权确认" />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.2"
+        android:minLines="3"
+        android:padding="10dp"
+        android:textColor="#FF282828"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:text="分享功能需要访问网络，使用存储空间" />
+
+    <TextView
+        android:id="@+id/action_cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:text="取消"
+        android:textColor="#FF282828"
+        android:textSize="14sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/message"
+        app:layout_constraintWidth_percent="0.5" />
+
+    <TextView
+        android:id="@+id/action_ok"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:text="确定"
+        android:textColor="#FF282828"
+        android:textSize="14sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/message"
+        app:layout_constraintWidth_percent="0.5" />
+</android.support.constraint.ConstraintLayout>

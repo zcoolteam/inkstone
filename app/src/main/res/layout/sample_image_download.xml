@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zcool.inkstone.ext.widget.FitInsetsLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:systemInsetPaddingBottom="all"
+    app:systemInsetPaddingLeft="all"
+    app:systemInsetPaddingRight="all"
+    app:systemInsetPaddingTop="all">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/simple_drawee_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+</com.zcool.inkstone.ext.widget.FitInsetsLayout>

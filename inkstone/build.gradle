@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.bcfg.ver.target_sdk
+    buildToolsVersion rootProject.ext.bcfg.ver.build_tools
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.bcfg.ver.min_sdk
+        targetSdkVersion rootProject.ext.bcfg.ver.target_sdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api project(':annotation')
+
+    api rootProject.ext.bcfg.deps.support_annotations
+    api rootProject.ext.bcfg.deps.support_app_compat
+    api rootProject.ext.bcfg.deps.support_multidex
+    api(rootProject.ext.bcfg.deps.guava) {
+        exclude module: 'failureaccess'
+    }
+    api rootProject.ext.bcfg.deps.support_constraint_layout
+    api rootProject.ext.bcfg.deps.timber
+    api rootProject.ext.bcfg.deps.okhttp
+    api rootProject.ext.bcfg.deps.okhttp_logging_interceptor
+    api rootProject.ext.bcfg.deps.gson
+    api rootProject.ext.bcfg.deps.fresco
+    api rootProject.ext.bcfg.deps.fresco_anim_gif
+    api rootProject.ext.bcfg.deps.fresco_anim_webp
+    api rootProject.ext.bcfg.deps.fresco_support_webp
+    api rootProject.ext.bcfg.deps.fresco_okhttp3
+    api rootProject.ext.bcfg.deps.rx_android
+    api rootProject.ext.bcfg.deps.rxjava2
+    api rootProject.ext.bcfg.deps.rxbinding2
+
+    api "com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.1.6"
+    api 'com.sina.weibo.sdk:core:4.3.1:openDefaultRelease@aar'
+}

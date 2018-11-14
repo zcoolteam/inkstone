@@ -1,0 +1,124 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.bcfg.ver.target_sdk
+    buildToolsVersion rootProject.ext.bcfg.ver.build_tools
+
+    // 第三方登录分享参数
+    def qqAppId = "101508464"
+    def weixinAppKey = "wx35fc52d0224a96f2"
+    def weixinAppSecret = "4d413f46bb8aa00e35d6a6116e0e0522"
+    def weiboAppKey = "832675406"
+    def weiboRedirectUrl = "https://api.weibo.com/oauth2/default.html"
+
+    defaultConfig {
+        applicationId "com.zcool.sample"
+        minSdkVersion rootProject.ext.bcfg.ver.min_sdk
+        targetSdkVersion rootProject.ext.bcfg.ver.target_sdk
+        versionCode rootProject.ext.bcfg.ver.versionCode
+        versionName rootProject.ext.bcfg.ver.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
+        }
+
+        multiDexEnabled true
+        multiDexKeepFile file("multidex-config.txt")
+
+        flavorDimensions("channel")
+
+        buildConfigField("String", "QQ_APP_ID", "\"${qqAppId}\"")
+        buildConfigField("String", "WX_APP_KEY", "\"${weixinAppKey}\"")
+        buildConfigField("String", "WX_APP_SECRET", "\"${weixinAppSecret}\"")
+        buildConfigField("String", "WEIBO_APP_KEY", "\"${weiboAppKey}\"")
+        buildConfigField("String", "WEIBO_REDIRECT_URL", "\"${weiboRedirectUrl}\"")
+        manifestPlaceholders = ["inkstone_qq_app_id": "\"${qqAppId}\""]
+    }
+
+    productFlavors {
+        zcool {
+            dimension "channel"
+            buildConfigField("String", "CHANNEL", "\"zcool\"")
+        }
+    }
+
+    signingConfigs {
+        sample {
+            storeFile file('../sample_keystore.jks')
+            storePassword 'sample'
+            keyAlias 'sample'
+            keyPassword 'sample'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${defaultConfig.applicationId}_${defaultConfig.versionName}(${defaultConfig.versionCode})_${variant.productFlavors[0].name}_${variant.buildType.name}.apk"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.sample
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            resValue("bool", "inkstone_debug", "false")
+        }
+        debug {
+            signingConfig signingConfigs.sample
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            resValue("bool", "inkstone_debug", "true")
+            debuggable true
+        }
+        dev {
+            signingConfig signingConfigs.sample
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            resValue("bool", "inkstone_debug", "true")
+            resValue("bool", "inkstone_debug_http_body", "true")
+            debuggable true
+            matchingFallbacks = "debug"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':inkstone')
+    annotationProcessor project(':processor')
+
+    implementation rootProject.ext.bcfg.deps.support_annotations
+    implementation rootProject.ext.bcfg.deps.support_app_compat
+    implementation rootProject.ext.bcfg.deps.support_recyclerview
+    implementation rootProject.ext.bcfg.deps.support_design
+    implementation rootProject.ext.bcfg.deps.support_constraint_layout
+    implementation rootProject.ext.bcfg.deps.support_multidex
+    implementation rootProject.ext.bcfg.deps.rx_android
+    implementation rootProject.ext.bcfg.deps.rxjava2
+    implementation rootProject.ext.bcfg.deps.butterknife
+    annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor
+
+    // test
+    testImplementation rootProject.ext.bcfg.deps.junit_test
+    // android test
+    androidTestImplementation rootProject.ext.bcfg.deps.support_test_runner_test
+    androidTestImplementation rootProject.ext.bcfg.deps.junit_test
+    androidTestImplementation rootProject.ext.bcfg.deps.support_espresso_core_test
+    // other
+    releaseImplementation rootProject.ext.bcfg.deps.leakcanary_no_op
+    debugImplementation rootProject.ext.bcfg.deps.leakcanary
+    devImplementation rootProject.ext.bcfg.deps.leakcanary
+    testImplementation rootProject.ext.bcfg.deps.leakcanary
+    androidTestImplementation rootProject.ext.bcfg.deps.leakcanary
+}

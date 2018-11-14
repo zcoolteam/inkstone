@@ -1,0 +1,15 @@
+buildscript {
+    apply from: 'gradle/versions.gradle'
+    rootProject.ext.bcfg.addRepos(repositories)
+    dependencies {
+        classpath rootProject.ext.bcfg.deps.android_gradle_plugin
+    }
+}
+
+allprojects {
+    rootProject.ext.bcfg.addRepos(repositories)
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

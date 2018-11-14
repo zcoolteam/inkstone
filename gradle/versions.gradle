@@ -1,0 +1,119 @@
+// build config
+def bcfg = [:]
+ext.bcfg = bcfg
+
+bcfg.ver = [:]
+bcfg.ver.min_sdk = 16
+bcfg.ver.target_sdk = 28
+bcfg.ver.build_tools = "28.0.2"
+bcfg.ver.android_gradle_plugin = '3.2.0'
+bcfg.ver.versionCode = this.createGitVersionCode()
+bcfg.ver.versionName = this.createGitVersionName()
+bcfg.ver.support = "28.0.0"
+bcfg.ver.support_constraint_layout = "1.1.3"
+bcfg.ver.support_espresso = "3.0.2"
+bcfg.ver.support_test_runner = "1.0.2"
+bcfg.ver.support_multidex = "1.0.3"
+bcfg.ver.junit = "4.12"
+bcfg.ver.retrofit = "2.3.0"
+bcfg.ver.gson = "2.8.0"
+bcfg.ver.okhttp = "3.9.0"
+bcfg.ver.okhttp_logging_interceptor = "3.9.0"
+bcfg.ver.timber = "4.5.1"
+bcfg.ver.rxjava2 = "2.1.3"
+bcfg.ver.rx_android = "2.0.1"
+bcfg.ver.fresco = "1.10.0"
+bcfg.ver.butterknife = "8.8.1"
+bcfg.ver.leakcanary = "1.5.4"
+bcfg.ver.guava = "27.0-android"
+bcfg.ver.rxbinding2 = "2.2.0"
+
+bcfg.deps = [:]
+bcfg.deps.android_gradle_plugin = "com.android.tools.build:gradle:$bcfg.ver.android_gradle_plugin"
+
+bcfg.deps.support_annotations = "com.android.support:support-annotations:$bcfg.ver.support"
+bcfg.deps.support_app_compat = "com.android.support:appcompat-v7:$bcfg.ver.support"
+bcfg.deps.support_recyclerview = "com.android.support:recyclerview-v7:$bcfg.ver.support"
+bcfg.deps.support_design = "com.android.support:design:$bcfg.ver.support"
+bcfg.deps.support_constraint_layout = "com.android.support.constraint:constraint-layout:$bcfg.ver.support_constraint_layout"
+bcfg.deps.support_espresso_core_test = "com.android.support.test.espresso:espresso-core:$bcfg.ver.support_espresso"
+bcfg.deps.support_test_runner_test = "com.android.support.test:runner:$bcfg.ver.support_test_runner"
+bcfg.deps.support_multidex = "com.android.support:multidex:$bcfg.ver.support_multidex"
+
+bcfg.deps.gson = "com.google.code.gson:gson:$bcfg.ver.gson"
+bcfg.deps.okhttp = "com.squareup.okhttp3:okhttp:$bcfg.ver.okhttp"
+bcfg.deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:$bcfg.ver.okhttp_logging_interceptor"
+bcfg.deps.retrofit_runtime = "com.squareup.retrofit2:retrofit:$bcfg.ver.retrofit"
+bcfg.deps.retrofit_gson = "com.squareup.retrofit2:converter-gson:$bcfg.ver.retrofit"
+bcfg.deps.retrofit_mock = "com.squareup.retrofit2:retrofit-mock:$bcfg.ver.retrofit"
+bcfg.deps.butterknife = "com.jakewharton:butterknife:$bcfg.ver.butterknife"
+bcfg.deps.butterknife_processor = "com.jakewharton:butterknife-compiler:$bcfg.ver.butterknife"
+bcfg.deps.leakcanary = "com.squareup.leakcanary:leakcanary-android:$bcfg.ver.leakcanary"
+bcfg.deps.leakcanary_no_op = "com.squareup.leakcanary:leakcanary-android-no-op:$bcfg.ver.leakcanary"
+bcfg.deps.guava = "com.google.guava:guava:$bcfg.ver.guava"
+
+bcfg.deps.timber = "com.jakewharton.timber:timber:$bcfg.ver.timber"
+bcfg.deps.junit_test = "junit:junit:$bcfg.ver.junit"
+bcfg.deps.rxjava2 = "io.reactivex.rxjava2:rxjava:$bcfg.ver.rxjava2"
+bcfg.deps.rx_android = "io.reactivex.rxjava2:rxandroid:$bcfg.ver.rx_android"
+bcfg.deps.rxbinding2 = "com.jakewharton.rxbinding2:rxbinding:$bcfg.ver.rxbinding2"
+
+bcfg.deps.fresco = "com.facebook.fresco:fresco:$bcfg.ver.fresco"
+bcfg.deps.fresco_anim_gif = "com.facebook.fresco:animated-gif:$bcfg.ver.fresco"
+bcfg.deps.fresco_anim_webp = "com.facebook.fresco:animated-webp:$bcfg.ver.fresco"
+bcfg.deps.fresco_support_webp = "com.facebook.fresco:webpsupport:$bcfg.ver.fresco"
+bcfg.deps.fresco_okhttp3 = "com.facebook.fresco:imagepipeline-okhttp3:$bcfg.ver.fresco"
+
+bcfg.addRepos = this.&addRepos
+
+def addRepos(RepositoryHandler handler) {
+    handler.maven { url 'http://maven.aliyun.com/nexus/content/repositories/central/' }
+    handler.maven { url 'http://maven.aliyun.com/nexus/content/repositories/releases/' }
+    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    handler.maven { url 'https://dl.google.com/dl/android/maven2/' }
+    handler.maven { url 'https://dl.bintray.com/thelasterstar/maven/' }
+    handler.jcenter()
+    handler.google()
+}
+
+def createGitVersionCode() {
+    // 使用 git commit 总数作为 version code
+    def cmd = 'git rev-list HEAD --count'
+    def cmdResult = cmd.execute().text.trim().toInteger()
+    def versionCodeOffset = 200
+    def gitVersionCode = versionCodeOffset
+    if (cmdResult) {
+        gitVersionCode += cmdResult
+    }
+    return gitVersionCode
+}
+
+def createGitVersionName() {
+    // 使用距离最近的标签名 + '.' + 距离该标签的 commit 数量 作为版本名称, 通常标签使用如 1.0 命名方式
+    // 如果没有标签, 则使用 '0.0' 作为默认值
+    def cmd = 'git describe --tags'
+    def cmdResult = cmd.execute().text.trim()
+    def tagDesc = '0.0'
+    if (cmdResult) {
+        tagDesc = cmdResult
+    }
+
+    def pattern = '-(\\d+)-g'
+    def matcher = tagDesc =~ pattern
+
+    def tagName
+    def commitCount
+
+    if (matcher) {
+        tagName = tagDesc.substring(0, matcher.start())
+        commitCount = matcher[0][1]
+    } else {
+        tagName = tagDesc
+        commitCount = '0'
+    }
+
+    def gitVersionName = tagName + '.' + commitCount
+    return gitVersionName
+}
+
+

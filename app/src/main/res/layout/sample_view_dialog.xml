@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zcool.inkstone.ext.widget.FitInsetsLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:systemInsetPaddingBottom="all"
+    app:systemInsetPaddingLeft="all"
+    app:systemInsetPaddingRight="all"
+    app:systemInsetPaddingTop="all">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/item_view_dialog_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="view dialog 1" />
+
+            <Button
+                android:id="@+id/item_view_dialog_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="view dialog 2" />
+
+            <Button
+                android:id="@+id/item_view_dialog_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="view dialog 3" />
+
+            <Button
+                android:id="@+id/item_view_dialog_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="view dialog 4" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</com.zcool.inkstone.ext.widget.FitInsetsLayout>

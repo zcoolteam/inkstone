@@ -1,0 +1,81 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zcool.inkstone">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application android:name="com.zcool.inkstone.app.InkstoneApplication">
+        <provider
+            android:name="com.zcool.inkstone.lang.CommonFileProvider"
+            android:authorities="inkstone.${applicationId}.CommonFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/inkstone_file_provider" />
+        </provider>
+        <provider
+            android:name="com.zcool.inkstone.service.DefaultServiceContentProvider"
+            android:authorities="inkstone.${applicationId}.DefaultServiceContentProvider"
+            android:exported="false"
+            android:multiprocess="false"
+            android:process=":inkstone" />
+
+        <service
+            android:name="com.zcool.inkstone.service.InkstoneService"
+            android:exported="false"
+            android:process=":inkstone" />
+
+        <!-- share -->
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent${inkstone_qq_app_id}" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.zcool.inkstone.ext.share.weixin.ShareWXEntryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity-alias
+            android:name="${applicationId}.wxapi.WXEntryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="behind"
+            android:targetActivity="com.zcool.inkstone.ext.share.weixin.ShareWXEntryActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <receiver
+            android:name="com.zcool.inkstone.ext.share.weixin.ShareWeixinAppRegister"
+            android:exported="true"
+            android:permission="com.tencent.mm.plugin.permission.SEND">
+            <intent-filter>
+                <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
+            </intent-filter>
+        </receiver>
+        <!-- end of share -->
+
+    </application>
+</manifest>

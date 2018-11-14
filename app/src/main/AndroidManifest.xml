@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zcool.sample">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/sample_ic_launcher"
+        android:label="@string/sample_app_name"
+        android:roundIcon="@mipmap/sample_ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Sample.AppTheme">
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="E8KjXZ6vgCuIvLQcYfKutWpoqhG30YoB" />
+
+        <activity
+            android:name="com.zcool.sample.module.main.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.zcool.sample.module.imagedownload.ImageDownloadActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.zcool.sample.module.third.ThirdActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.zcool.sample.module.viewdialog.ViewDialogActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>
