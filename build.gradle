@@ -3,6 +3,8 @@ buildscript {
     rootProject.ext.bcfg.addRepos(repositories)
     dependencies {
         classpath rootProject.ext.bcfg.deps.android_gradle_plugin
+        classpath rootProject.ext.bcfg.deps.android_maven_gradle_plugin
+        classpath rootProject.ext.bcfg.deps.gradle_bintray_plugin
     }
 }
 

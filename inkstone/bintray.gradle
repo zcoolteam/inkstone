@@ -1,0 +1,79 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def siteUrl = 'https://github.com/zcoolteam/inkstone'
+def gitUrl = 'https://github.com/zcoolteam/inkstone.git'
+group = 'com.zcool.inkstone'
+version = rootProject.ext.bcfg.ver.versionName
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'android app library'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'idonans'
+                        name 'idonans'
+                        email 'idonans@126.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task androidJavadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charset', 'UTF-8')
+    failOnError false
+}
+
+task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+    classifier = 'javadoc'
+    from androidJavadoc.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidJavadocJar
+    archives androidSourcesJar
+}
+
+bintray {
+    Properties localProperties = new Properties()
+    rootProject.file('local.properties').withInputStream {
+        localProperties.load(it)
+    }
+
+    user = localProperties.getProperty('bintray.user')
+    key = localProperties.getProperty('bintray.apikey')
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'inkstone'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        publish = true
+    }
+}
+
