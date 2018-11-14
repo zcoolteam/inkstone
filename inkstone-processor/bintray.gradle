@@ -44,6 +44,8 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+    javadoc.options.addStringOption('encoding', 'UTF-8')
+    javadoc.options.addStringOption('charset', 'UTF-8')
 }
 
 artifacts {
