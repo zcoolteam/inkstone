@@ -6,8 +6,6 @@ import android.text.TextUtils;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
@@ -83,7 +81,7 @@ public class ShareUtil {
         tencent.shareToQQ(
                 shareHelper.getActivity(),
                 convertQQShareContent(shareContent),
-                shareHelper.getShareQQHelper().getListener());
+                shareHelper.getShareQQHelper().getShareListener());
         return true;
     }
 
@@ -142,7 +140,7 @@ public class ShareUtil {
         tencent.shareToQzone(
                 shareHelper.getActivity(),
                 convertQzoneShareContent(shareContent),
-                shareHelper.getShareQQHelper().getListener());
+                shareHelper.getShareQQHelper().getShareListener());
         return true;
     }
 
@@ -337,9 +335,8 @@ public class ShareUtil {
         void onWeiboShareCancel();
     }
 
-    public static ShareHelper.IShareListener newShareListener(final ShareListener shareListener) {
-
-        return new ShareHelper.IShareListener() {
+    public static ShareHelper.ShareListener newShareListener(final ShareListener shareListener) {
+        return new ShareHelper.ShareListener() {
             @Override
             public void onQQComplete(Object o) {
                 shareListener.onQQShareSuccess();
@@ -382,22 +379,10 @@ public class ShareUtil {
                             break;
                         }
                     }
+                    return;
                 }
-            }
 
-            @Override
-            public void onWeiboAuthComplete(Oauth2AccessToken oauth2AccessToken) {
-                Timber.e("ignore");
-            }
-
-            @Override
-            public void onWeiboAuthException(WbConnectErrorMessage e) {
-                Timber.e("ignore");
-            }
-
-            @Override
-            public void onWeiboAuthCancel() {
-                Timber.e("ignore");
+                Timber.e("unknown baseResp " + baseResp);
             }
 
             @Override

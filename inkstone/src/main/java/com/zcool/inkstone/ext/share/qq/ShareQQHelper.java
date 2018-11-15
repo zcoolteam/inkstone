@@ -20,26 +20,41 @@ import java.io.IOException;
 public final class ShareQQHelper implements Closeable {
 
     private final Tencent mTencent;
-    private final IUiListenerAdapter mListener;
+    private final IUiListenerAdapter mAuthListener;
+    private final IUiListenerAdapter mShareListener;
 
-    public ShareQQHelper(IUiListener listener) {
+    public ShareQQHelper(IUiListener authListener, IUiListener shareListener) {
         mTencent = Tencent.createInstance(ShareConfig.getQQAppId(), ContextUtil.getContext());
-        mListener = new IUiListenerAdapter();
-        mListener.setOutListener(listener);
+
+        mAuthListener = new IUiListenerAdapter();
+        mAuthListener.setOutListener(authListener);
+
+        mShareListener = new IUiListenerAdapter();
+        mShareListener.setOutListener(shareListener);
     }
 
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case Constants.REQUEST_LOGIN:
+                Tencent.onActivityResultData(requestCode, resultCode, data, mAuthListener);
+                return true;
             case Constants.REQUEST_QQ_SHARE:
             case Constants.REQUEST_QZONE_SHARE: {
-                Tencent.onActivityResultData(requestCode, resultCode, data, mListener);
+                Tencent.onActivityResultData(requestCode, resultCode, data, mShareListener);
                 return true;
             }
             default: {
                 return false;
             }
         }
+    }
+
+    public void setAuthListener(IUiListener authListener) {
+        mAuthListener.setOutListener(authListener);
+    }
+
+    public void setShareListener(IUiListener shareListener) {
+        mShareListener.setOutListener(shareListener);
     }
 
     @NonNull
@@ -52,13 +67,19 @@ public final class ShareQQHelper implements Closeable {
     }
 
     @NonNull
-    public IUiListener getListener() {
-        return mListener;
+    public IUiListenerAdapter getAuthListener() {
+        return mAuthListener;
+    }
+
+    @NonNull
+    public IUiListenerAdapter getShareListener() {
+        return mShareListener;
     }
 
     @Override
     public void close() throws IOException {
-        mListener.setOutListener(null);
+        mAuthListener.setOutListener(null);
+        mShareListener.setOutListener(null);
     }
 
     private static class IUiListenerAdapter implements IUiListener {

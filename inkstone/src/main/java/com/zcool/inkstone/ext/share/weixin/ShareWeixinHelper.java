@@ -4,6 +4,8 @@ import android.support.annotation.CheckResult;
 
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -20,22 +22,47 @@ import timber.log.Timber;
  */
 public final class ShareWeixinHelper implements Closeable {
 
-    private IWXAPI mApi;
-    private IWXListenerAdapter mListener;
+    private final IWXAPI mApi;
+    private final IWXListenerAdapter mAuthListener;
+    private final IWXListenerAdapter mShareListener;
 
     private static final GlobalWXAPIEventHandler sGlobalWXAPIEventHandler =
             new GlobalWXAPIEventHandler();
 
-    public ShareWeixinHelper(IWXListener listener) {
+    public ShareWeixinHelper(IWXListener authListener, IWXListener shareListener) {
         mApi = WXAPIFactory.createWXAPI(
                 ContextUtil.getContext(), ShareConfig.getWeixinAppKey(), false);
         mApi.registerApp(ShareConfig.getWeixinAppKey());
-        mListener = new IWXListenerAdapter();
-        mListener.setOutListener(listener);
+
+        mAuthListener = new IWXListenerAdapter();
+        mAuthListener.setOutListener(authListener);
+
+        mShareListener = new IWXListenerAdapter();
+        mShareListener.setOutListener(shareListener);
     }
 
     public void resume() {
-        sGlobalWXAPIEventHandler.setListenerProxy(mListener);
+        sGlobalWXAPIEventHandler.setListenerProxy(baseResp -> {
+            if (baseResp instanceof SendAuth.Resp) {
+                mAuthListener.onWXCallback(baseResp);
+                return;
+            }
+
+            if (baseResp instanceof SendMessageToWX.Resp) {
+                mShareListener.onWXCallback(baseResp);
+                return;
+            }
+
+            Timber.e("unknown baseResp " + baseResp);
+        });
+    }
+
+    public void setAuthListener(IWXListener authListener) {
+        mAuthListener.setOutListener(authListener);
+    }
+
+    public void setShareListener(IWXListener shareListener) {
+        mShareListener.setOutListener(shareListener);
     }
 
     /**
@@ -54,7 +81,8 @@ public final class ShareWeixinHelper implements Closeable {
 
     @Override
     public void close() throws IOException {
-        mListener.setOutListener(null);
+        mAuthListener.setOutListener(null);
+        mShareListener.setOutListener(null);
     }
 
     public interface IWXListener {

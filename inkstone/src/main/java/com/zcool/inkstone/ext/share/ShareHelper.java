@@ -3,6 +3,7 @@ package com.zcool.inkstone.ext.share;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbAuthListener;
@@ -26,23 +27,23 @@ public class ShareHelper implements Closeable {
     private ShareWeixinHelper mShareWeixinHelper;
     private ShareWeiboHelper mShareWeiboHelper;
 
-    public ShareHelper(@NonNull Activity activity, @NonNull IShareListener listener) {
+    public ShareHelper(@NonNull Activity activity, @Nullable AuthListener authListener, @Nullable ShareListener shareListener) {
         mActivity = activity;
 
         if (ShareConfig.hasConfigQQ()) {
-            mShareQQHelper = new ShareQQHelper(new IShareQQUiListenerAdapter(listener));
+            mShareQQHelper = new ShareQQHelper(AuthListenerQQAdapter.create(authListener), ShareListenerQQAdapter.create(shareListener));
         }
 
         if (ShareConfig.hasConfigWeixin()) {
-            mShareWeixinHelper = new ShareWeixinHelper(new IShareWeixinListenerAdapter(listener));
+            mShareWeixinHelper = new ShareWeixinHelper(AuthListenerWeixinAdapter.create(authListener), ShareListenerWeixinAdapter.create(shareListener));
         }
 
         if (ShareConfig.hasConfigWeibo()) {
             mShareWeiboHelper =
                     new ShareWeiboHelper(
                             activity,
-                            new IShareWeiboAuthListenerAdapter(listener),
-                            new IShareWeiboShareListenerAdapter(listener));
+                            AuthListenerWeiboAdapter.create(authListener),
+                            ShareListenerWeiboAdapter.create(shareListener));
         }
     }
 
@@ -50,16 +51,47 @@ public class ShareHelper implements Closeable {
         return mActivity;
     }
 
+    @Nullable
     public ShareQQHelper getShareQQHelper() {
         return mShareQQHelper;
     }
 
+    @Nullable
     public ShareWeixinHelper getShareWeixinHelper() {
         return mShareWeixinHelper;
     }
 
+    @Nullable
     public ShareWeiboHelper getShareWeiboHelper() {
         return mShareWeiboHelper;
+    }
+
+    public void setAuthListener(@Nullable AuthListener authListener) {
+        if (mShareQQHelper != null) {
+            mShareQQHelper.setAuthListener(AuthListenerQQAdapter.create(authListener));
+        }
+
+        if (mShareWeixinHelper != null) {
+            mShareWeixinHelper.setAuthListener(AuthListenerWeixinAdapter.create(authListener));
+        }
+
+        if (mShareWeiboHelper != null) {
+            mShareWeiboHelper.setAuthListener(AuthListenerWeiboAdapter.create(authListener));
+        }
+    }
+
+    public void setShareListener(@Nullable ShareListener shareListener) {
+        if (mShareQQHelper != null) {
+            mShareQQHelper.setShareListener(ShareListenerQQAdapter.create(shareListener));
+        }
+
+        if (mShareWeixinHelper != null) {
+            mShareWeixinHelper.setShareListener(ShareListenerWeixinAdapter.create(shareListener));
+        }
+
+        if (mShareWeiboHelper != null) {
+            mShareWeiboHelper.setShareListener(ShareListenerWeiboAdapter.create(shareListener));
+        }
     }
 
     public void resume() {
@@ -92,12 +124,12 @@ public class ShareHelper implements Closeable {
         IOUtil.closeQuietly(mShareWeiboHelper);
     }
 
-    private static class IShareQQUiListenerAdapter implements IUiListener {
+    private static class ShareListenerQQAdapter implements IUiListener {
 
         @NonNull
-        private final IShareListener mOutListener;
+        private final ShareListener mOutListener;
 
-        private IShareQQUiListenerAdapter(@NonNull IShareListener outListener) {
+        private ShareListenerQQAdapter(@NonNull ShareListener outListener) {
             mOutListener = outListener;
         }
 
@@ -115,14 +147,50 @@ public class ShareHelper implements Closeable {
         public void onCancel() {
             mOutListener.onQQCancel();
         }
+
+        @Nullable
+        public static ShareListenerQQAdapter create(@Nullable ShareListener shareListener) {
+            return shareListener == null ? null : new ShareListenerQQAdapter(shareListener);
+        }
+
     }
 
-    private static class IShareWeixinListenerAdapter implements ShareWeixinHelper.IWXListener {
+    private static class AuthListenerQQAdapter implements IUiListener {
 
         @NonNull
-        private final IShareListener mOutListener;
+        private final AuthListener mOutListener;
 
-        private IShareWeixinListenerAdapter(@NonNull IShareListener outListener) {
+        private AuthListenerQQAdapter(@NonNull AuthListener outListener) {
+            mOutListener = outListener;
+        }
+
+        @Override
+        public void onComplete(Object o) {
+            mOutListener.onQQComplete(o);
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            mOutListener.onQQError(uiError);
+        }
+
+        @Override
+        public void onCancel() {
+            mOutListener.onQQCancel();
+        }
+
+        @Nullable
+        public static AuthListenerQQAdapter create(@Nullable AuthListener authListener) {
+            return authListener == null ? null : new AuthListenerQQAdapter(authListener);
+        }
+    }
+
+    private static class AuthListenerWeixinAdapter implements ShareWeixinHelper.IWXListener {
+
+        @NonNull
+        private final AuthListener mOutListener;
+
+        private AuthListenerWeixinAdapter(@NonNull AuthListener outListener) {
             mOutListener = outListener;
         }
 
@@ -130,14 +198,39 @@ public class ShareHelper implements Closeable {
         public void onWXCallback(BaseResp baseResp) {
             mOutListener.onWeixinCallback(baseResp);
         }
+
+        @Nullable
+        public static AuthListenerWeixinAdapter create(@Nullable AuthListener authListener) {
+            return authListener == null ? null : new AuthListenerWeixinAdapter(authListener);
+        }
     }
 
-    private static class IShareWeiboAuthListenerAdapter implements WbAuthListener {
+    private static class ShareListenerWeixinAdapter implements ShareWeixinHelper.IWXListener {
 
         @NonNull
-        private final IShareListener mOutListener;
+        private final ShareListener mOutListener;
 
-        private IShareWeiboAuthListenerAdapter(@NonNull IShareListener outListener) {
+        private ShareListenerWeixinAdapter(@NonNull ShareListener outListener) {
+            mOutListener = outListener;
+        }
+
+        @Override
+        public void onWXCallback(BaseResp baseResp) {
+            mOutListener.onWeixinCallback(baseResp);
+        }
+
+        @Nullable
+        public static ShareListenerWeixinAdapter create(@Nullable ShareListener shareListener) {
+            return shareListener == null ? null : new ShareListenerWeixinAdapter(shareListener);
+        }
+    }
+
+    private static class AuthListenerWeiboAdapter implements WbAuthListener {
+
+        @NonNull
+        private final AuthListener mOutListener;
+
+        private AuthListenerWeiboAdapter(@NonNull AuthListener outListener) {
             mOutListener = outListener;
         }
 
@@ -155,14 +248,19 @@ public class ShareHelper implements Closeable {
         public void onFailure(WbConnectErrorMessage e) {
             mOutListener.onWeiboAuthException(e);
         }
+
+        @Nullable
+        public static AuthListenerWeiboAdapter create(@Nullable AuthListener authListener) {
+            return authListener == null ? null : new AuthListenerWeiboAdapter(authListener);
+        }
     }
 
-    private static class IShareWeiboShareListenerAdapter implements WbShareCallback {
+    private static class ShareListenerWeiboAdapter implements WbShareCallback {
 
         @NonNull
-        private final IShareListener mOutListener;
+        private final ShareListener mOutListener;
 
-        private IShareWeiboShareListenerAdapter(@NonNull IShareListener outListener) {
+        private ShareListenerWeiboAdapter(@NonNull ShareListener outListener) {
             mOutListener = outListener;
         }
 
@@ -180,9 +278,31 @@ public class ShareHelper implements Closeable {
         public void onWbShareFail() {
             mOutListener.onWeiboShareFail();
         }
+
+        @Nullable
+        public static ShareListenerWeiboAdapter create(@Nullable ShareListener shareListener) {
+            return shareListener == null ? null : new ShareListenerWeiboAdapter(shareListener);
+        }
     }
 
-    public interface IShareListener {
+    public interface ShareListener {
+
+        void onQQComplete(Object o);
+
+        void onQQError(UiError uiError);
+
+        void onQQCancel();
+
+        void onWeixinCallback(BaseResp baseResp);
+
+        void onWeiboShareSuccess();
+
+        void onWeiboShareFail();
+
+        void onWeiboShareCancel();
+    }
+
+    public interface AuthListener {
 
         void onQQComplete(Object o);
 
@@ -197,64 +317,6 @@ public class ShareHelper implements Closeable {
         void onWeiboAuthException(WbConnectErrorMessage e);
 
         void onWeiboAuthCancel();
-
-        void onWeiboShareSuccess();
-
-        void onWeiboShareFail();
-
-        void onWeiboShareCancel();
     }
 
-    public static class SimpleShareListener implements IShareListener {
-
-        @Override
-        public void onQQComplete(Object o) {
-            // ignore
-        }
-
-        @Override
-        public void onQQError(UiError uiError) {
-            // ignore
-        }
-
-        @Override
-        public void onQQCancel() {
-            // ignore
-        }
-
-        @Override
-        public void onWeixinCallback(BaseResp baseResp) {
-            // ignore
-        }
-
-        @Override
-        public void onWeiboAuthComplete(Oauth2AccessToken oauth2AccessToken) {
-            // ignore
-        }
-
-        @Override
-        public void onWeiboAuthException(WbConnectErrorMessage e) {
-            // ignore
-        }
-
-        @Override
-        public void onWeiboAuthCancel() {
-            // ignore
-        }
-
-        @Override
-        public void onWeiboShareSuccess() {
-            // ignore
-        }
-
-        @Override
-        public void onWeiboShareFail() {
-            // ignore
-        }
-
-        @Override
-        public void onWeiboShareCancel() {
-            // ignore
-        }
-    }
 }

@@ -26,16 +26,16 @@ import timber.log.Timber;
 public final class ShareWeiboHelper implements Closeable {
 
     private final Activity mActivity;
-    private final WeiboAuthListenerAdapter mListener;
-    private final SsoHandler mSsoHandler;
+    private final WeiboAuthListenerAdapter mAuthListener;
+    private final FixSsoHandler mSsoHandler;
 
     private static final GlobalWeiboHandlerResponseAdapter sGlobalWeiboHandlerResponseAdapter = new GlobalWeiboHandlerResponseAdapter();
     private final WbShareHandler mIWeiboShareAPI;
-    private final WeiboShareListenerAdapter mShareListenerAdapter;
+    private final WeiboShareListenerAdapter mShareListener;
 
     private static boolean sInstall;
 
-    public ShareWeiboHelper(Activity activity, WbAuthListener listener, WbShareCallback shareListener) {
+    public ShareWeiboHelper(Activity activity, WbAuthListener authListener, WbShareCallback shareListener) {
 
         if (!sInstall) {
             sInstall = true;
@@ -43,13 +43,13 @@ public final class ShareWeiboHelper implements Closeable {
         }
 
         mActivity = activity;
-        mListener = new WeiboAuthListenerAdapter();
-        mListener.setOutListener(listener);
+        mAuthListener = new WeiboAuthListenerAdapter();
+        mAuthListener.setOutListener(authListener);
 
-        mSsoHandler = new SsoHandler(activity);
+        mSsoHandler = new FixSsoHandler(activity);
 
-        mShareListenerAdapter = new WeiboShareListenerAdapter();
-        mShareListenerAdapter.setOutListener(shareListener);
+        mShareListener = new WeiboShareListenerAdapter();
+        mShareListener.setOutListener(shareListener);
 
         mIWeiboShareAPI = new WbShareHandler(activity);
         mIWeiboShareAPI.registerApp();
@@ -60,7 +60,7 @@ public final class ShareWeiboHelper implements Closeable {
     }
 
     public void resume() {
-        sGlobalWeiboHandlerResponseAdapter.setListenerProxy(mShareListenerAdapter);
+        sGlobalWeiboHandlerResponseAdapter.setListenerProxy(mShareListener);
     }
 
     @NonNull
@@ -68,9 +68,17 @@ public final class ShareWeiboHelper implements Closeable {
         return mSsoHandler;
     }
 
+    public void setAuthListener(WbAuthListener authListener) {
+        mAuthListener.setOutListener(authListener);
+    }
+
+    public void setShareListener(WbShareCallback shareListener) {
+        mShareListener.setOutListener(shareListener);
+    }
+
     @NonNull
-    public WeiboAuthListenerAdapter getListener() {
-        return mListener;
+    public WeiboAuthListenerAdapter getAuthListener() {
+        return mAuthListener;
     }
 
     @NonNull
@@ -83,14 +91,15 @@ public final class ShareWeiboHelper implements Closeable {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mSsoHandler.updateAuthListener(mAuthListener);
         mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
-        mIWeiboShareAPI.doResultIntent(data, mShareListenerAdapter);
+        mIWeiboShareAPI.doResultIntent(data, mShareListener);
     }
 
     @Override
     public void close() throws IOException {
-        mListener.setOutListener(null);
-        mShareListenerAdapter.setOutListener(null);
+        mAuthListener.setOutListener(null);
+        mShareListener.setOutListener(null);
     }
 
     private static class WeiboAuthListenerAdapter implements WbAuthListener {
@@ -220,6 +229,18 @@ public final class ShareWeiboHelper implements Closeable {
                 mPendingResponse = new PendingResponse(false, false, true);
             }
         }
+    }
+
+    public static class FixSsoHandler extends SsoHandler {
+
+        public FixSsoHandler(Activity activity) {
+            super(activity);
+        }
+
+        public void updateAuthListener(WbAuthListener authListener) {
+            this.authListener = authListener;
+        }
+
     }
 
 }

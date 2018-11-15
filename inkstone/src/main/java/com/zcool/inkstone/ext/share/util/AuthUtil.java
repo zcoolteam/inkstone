@@ -37,7 +37,7 @@ public class AuthUtil {
         tencent.login(
                 shareHelper.getActivity(),
                 "get_simple_userinfo",
-                shareHelper.getShareQQHelper().getListener());
+                shareHelper.getShareQQHelper().getAuthListener());
         return true;
     }
 
@@ -67,7 +67,7 @@ public class AuthUtil {
         if (ssoHandler == null) {
             return false;
         }
-        ssoHandler.authorize(shareHelper.getShareWeiboHelper().getListener());
+        ssoHandler.authorize(shareHelper.getShareWeiboHelper().getAuthListener());
         return true;
     }
 
@@ -154,9 +154,8 @@ public class AuthUtil {
         }
     }
 
-    public static ShareHelper.IShareListener newAuthListener(final AuthListener authListener) {
-
-        return new ShareHelper.IShareListener() {
+    public static ShareHelper.AuthListener newAuthListener(final AuthListener authListener) {
+        return new ShareHelper.AuthListener() {
             @Override
             public void onQQComplete(Object o) {
                 if (o instanceof JSONObject) {
@@ -219,7 +218,10 @@ public class AuthUtil {
                             break;
                         }
                     }
+                    return;
                 }
+
+                Timber.e("unknown baseResp " + baseResp);
             }
 
             @Override
@@ -247,20 +249,6 @@ public class AuthUtil {
                 authListener.onWeiboAuthCancel();
             }
 
-            @Override
-            public void onWeiboShareSuccess() {
-                Timber.e("ignore");
-            }
-
-            @Override
-            public void onWeiboShareCancel() {
-                Timber.e("ignore");
-            }
-
-            @Override
-            public void onWeiboShareFail() {
-                Timber.e("ignore");
-            }
         };
     }
 }
