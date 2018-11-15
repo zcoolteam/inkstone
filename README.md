@@ -1,5 +1,6 @@
 # 支持多进程开发的 Android App 基础框架
 - [基本配置](#基本配置)
+   - [引入依赖](#引入依赖)
    - [配置 ApplicationDelegate](#配置-applicationdelegate)
    - [配置 ServicesProvider](#配置-servicesprovider)
 - [其它配置](#其它配置)
@@ -20,6 +21,13 @@
       - [定义对外的服务类 SessionManager](#定义对外的服务类-sessionmanager)
 
 ### 基本配置
+
+##### 引入依赖
+
+```
+implementation "com.zcool.inkstone:inkstone:0.1.5"
+annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.5"
+```
 
 ##### 配置 ApplicationDelegate
 
