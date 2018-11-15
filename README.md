@@ -1,14 +1,15 @@
 # 支持多进程开发的 Android App 基础框架
-- [基本配置](#基本配置)
-   - [引入依赖](#引入依赖)
-   - [配置 ApplicationDelegate](#配置-applicationdelegate)
-   - [配置 ServicesProvider](#配置-servicesprovider)
-- [其它配置](#其它配置)
-   - [处理自定义 Application](#处理自定义-application)
-   - [处理自定义 Service](#处理自定义-service)
-   - [处理自定义 ContentProvider](#处理自定义-contentprovider)
-   - [处理自定义 BroadcastReceiver](#处理自定义-broadcastreceiver)
-- [进阶配置](#进阶配置)
+- [配置](#配置)
+   - [基本配置](#基本配置)
+      - [引入依赖](#引入依赖)
+      - [配置 ApplicationDelegate](#配置-applicationdelegate)
+      - [配置 ServicesProvider](#配置-servicesprovider)
+   - [其它配置](#其它配置)
+      - [处理自定义 Application](#处理自定义-application)
+      - [处理自定义 Service](#处理自定义-service)
+      - [处理自定义 ContentProvider](#处理自定义-contentprovider)
+      - [处理自定义 BroadcastReceiver](#处理自定义-broadcastreceiver)
+- [功能使用及扩展](#功能使用及扩展)
    - [自定义跨进程服务示例---实现登录信息的跨进程服务 SessionManager](#自定义跨进程服务示例---实现登录信息的跨进程服务-sessionmanager)
       - [定义实体类 Session](#定义实体类-session)
       - [定义实体类 User](#定义实体类-user)
@@ -19,6 +20,8 @@
       - [定义业务类 SessionService](#定义业务类-sessionservice)
       - [在 ServicesProvider 中注册 SessionService](#在-servicesprovider-中注册-sessionservice)
       - [定义对外的服务类 SessionManager](#定义对外的服务类-sessionmanager)
+
+## 配置
 
 ### 基本配置
 
@@ -185,14 +188,13 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 }
 ```
 
-### 进阶配置
+## 功能使用及扩展
 
----
-##### 自定义跨进程服务示例---实现登录信息的跨进程服务 SessionManager
+### 自定义跨进程服务示例---实现登录信息的跨进程服务 SessionManager
 
 > 跨进程服务框架的核心是基于 AIDL, 因此需要你对 AIDL 有一定的了解。
 
-###### 定义实体类 Session
+##### 定义实体类 Session
 
 > 实体类 Session.java, 用于 AIDL 通信，实现 Parcelable 接口
 
@@ -244,7 +246,7 @@ public class Session implements Parcelable {
 }
 ```
 
-###### 定义实体类 User
+##### 定义实体类 User
 
 > 实体类 User.java, 用于 AIDL 通信，实现 Parcelable 接口
 
@@ -292,7 +294,7 @@ public class User implements Parcelable {
 }
 ```
 
-###### 定义 AIDL Session
+##### 定义 AIDL Session
 
 > 申明 Session.aidl, 对应 Session.java
 
@@ -302,7 +304,7 @@ package com.zcool.sample.entity;
 parcelable Session;
 ```
 
-###### 定义 AIDL User
+##### 定义 AIDL User
 
 > 申明 User.aidl, 对应 User.java
 
@@ -312,7 +314,7 @@ package com.zcool.sample.entity;
 parcelable User;
 ```
 
-###### 定义 AIDL ISessionService
+##### 定义 AIDL ISessionService
 
 > ISessionService.aidl 是跨进程业务接口定义，后续会分别实现此接口的服务端和客户端代码。
 > 其中服务端为实现为 SessionService extends ISessionService.Stub.
@@ -332,7 +334,7 @@ interface ISessionService {
 }
 ```
 
-###### 定义业务核心类 SessionServiceProvider
+##### 定义业务核心类 SessionServiceProvider
 
 > 业务类 SessionServiceProvider.java 是服务端代码，实现了登录信息的核心业务逻辑，
 > 仅供 ISessionService.Stub 的实现类 SessionService 调用。
@@ -389,7 +391,7 @@ class SessionServiceProvider {
 }
 ```
 
-###### 定义业务类 SessionService
+##### 定义业务类 SessionService
 
 > 业务类 SessionService.java 是 ISessionService 的服务端直接实现，继承自 ISessionService.Stub,
 > 并且将对应的业务方法实现转为调用单例类 SessionServiceProvider 上的业务方法
@@ -421,7 +423,7 @@ class SessionService extends ISessionService.Stub {
 }
 ```
 
-###### 在 ServicesProvider 中注册 SessionService
+##### 在 ServicesProvider 中注册 SessionService
 
 > ServicesProvider 在此处的实现类是 MainServicesProvider.java, 继承自 BaseServicesProvider,
 > 申明了注解 @ServicesProvider. 在 onCreate 方法中添加 SessionService 服务.
@@ -461,7 +463,7 @@ public class MainServicesProvider extends BaseServicesProvider {
 }
 ```
 
-###### 定义对外的服务类 SessionManager
+##### 定义对外的服务类 SessionManager
 
 > 类 SessionManager.java 是最终对外提供服务的客户端类，其他调用登录信息相关的业务时，都是通过
 > SessionManager 实现，这是一个 public 的单例类. 它在背后调用的是远程服务 MainServicesProvider.SERVICE_SESSION,
@@ -536,4 +538,3 @@ public class SessionManager {
 
 }
 ```
----
