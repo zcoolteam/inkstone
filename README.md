@@ -427,8 +427,8 @@ class SessionService extends ISessionService.Stub {
 
 > ServicesProvider 在此处的实现类是 MainServicesProvider.java, 继承自 BaseServicesProvider,
 > 申明了注解 @ServicesProvider. 在 onCreate 方法中添加 SessionService 服务.
-> 需要注意 addService 的 key 不要与已存在的服务 key 冲突.
-> 客户端在使用此服务时通过 ServiceManager.getInstance().fetchRemote().getService(key)
+> 需要注意 addService 的 serviceName 不要与已存在的服务 serviceName 冲突, 否则会覆盖已有的服务
+> 客户端在使用此服务时通过 ServiceManager.getInstance().fetchRemote(serviceName)
 > 获取此处的服务对象, 注意要通过 ISessionService.Stub.asInterface 进行转换
 
 ```
