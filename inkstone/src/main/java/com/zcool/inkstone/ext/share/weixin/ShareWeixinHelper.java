@@ -1,6 +1,6 @@
 package com.zcool.inkstone.ext.share.weixin;
 
-import android.support.annotation.CheckResult;
+import android.support.annotation.Nullable;
 
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -67,10 +67,8 @@ public final class ShareWeixinHelper implements Closeable {
 
     /**
      * 如果没有安装微信客户端，或者微信客户端版本不支持，将返回 null.
-     *
-     * @return
      */
-    @CheckResult
+    @Nullable
     public IWXAPI getApi() {
         if (mApi.isWXAppInstalled()) {
             return mApi;

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zcool.inkstone.ext.widget.FitInsetsLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:systemInsetPaddingBottom="all"
+    app:systemInsetPaddingLeft="all"
+    app:systemInsetPaddingRight="all"
+    app:systemInsetPaddingTop="all">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/request_auth_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QQ 登录" />
+
+            <Button
+                android:id="@+id/request_auth_weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="微博登录" />
+
+            <Button
+                android:id="@+id/request_auth_weixin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="微信登录" />
+
+            <Button
+                android:id="@+id/request_share_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QQ 分享" />
+
+            <Button
+                android:id="@+id/request_share_weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="微博分享" />
+
+            <Button
+                android:id="@+id/request_share_weixin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="微信分享" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</com.zcool.inkstone.ext.widget.FitInsetsLayout>

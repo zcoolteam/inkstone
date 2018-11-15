@@ -36,7 +36,7 @@
             android:name="com.zcool.sample.module.imagedownload.ImageDownloadActivity"
             android:exported="false" />
         <activity
-            android:name="com.zcool.sample.module.third.ThirdActivity"
+            android:name="com.zcool.sample.module.share.ShareActivity"
             android:exported="false" />
         <activity
             android:name="com.zcool.sample.module.viewdialog.ViewDialogActivity"

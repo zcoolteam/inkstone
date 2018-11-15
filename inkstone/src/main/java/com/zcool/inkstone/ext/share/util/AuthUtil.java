@@ -251,4 +251,53 @@ public class AuthUtil {
 
         };
     }
+
+    public static class SimpleAuthListener implements AuthListener {
+
+        @Override
+        public void onQQAuthSuccess(@NonNull QQAuthInfo info) {
+            Timber.v("onQQAuthSuccess " + info);
+        }
+
+        @Override
+        public void onQQAuthFail() {
+            Timber.v("onQQAuthFail");
+        }
+
+        @Override
+        public void onQQAuthCancel() {
+            Timber.v("onQQAuthCancel");
+        }
+
+        @Override
+        public void onWeixinAuthSuccess(@NonNull WeixinAuthInfo info) {
+            Timber.v("onWeixinAuthSuccess " + info);
+        }
+
+        @Override
+        public void onWeixinAuthFail() {
+            Timber.v("onWeixinAuthFail");
+        }
+
+        @Override
+        public void onWeixinAuthCancel() {
+            Timber.v("onWeixinAuthCancel");
+        }
+
+        @Override
+        public void onWeiboAuthSuccess(@NonNull WeiboAuthInfo info) {
+            Timber.v("onWeiboAuthSuccess " + info);
+        }
+
+        @Override
+        public void onWeiboAuthFail() {
+            Timber.v("onWeiboAuthFail");
+        }
+
+        @Override
+        public void onWeiboAuthCancel() {
+            Timber.v("onWeiboAuthCancel");
+        }
+    }
+
 }

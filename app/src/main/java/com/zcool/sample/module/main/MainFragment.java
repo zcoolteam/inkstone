@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.zcool.inkstone.util.ViewUtil;
 import com.zcool.sample.R;
 import com.zcool.sample.module.imagedownload.ImageDownloadActivity;
-import com.zcool.sample.module.third.ThirdActivity;
+import com.zcool.sample.module.share.ShareActivity;
 import com.zcool.sample.module.viewdialog.ViewDialogActivity;
 
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
 
         {
             mItems.add(Pair.create("图片下载", ImageDownloadActivity.class.getName()));
-            mItems.add(Pair.create("第三方账号登录", ThirdActivity.class.getName()));
+            mItems.add(Pair.create("第三方账号登录", ShareActivity.class.getName()));
             mItems.add(Pair.create("ViewDialog", ViewDialogActivity.class.getName()));
         }
 

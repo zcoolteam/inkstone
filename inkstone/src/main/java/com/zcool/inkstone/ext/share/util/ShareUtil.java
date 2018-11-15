@@ -18,6 +18,9 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.zcool.inkstone.ext.share.ShareHelper;
+import com.zcool.inkstone.ext.share.qq.ShareQQHelper;
+import com.zcool.inkstone.ext.share.weibo.ShareWeiboHelper;
+import com.zcool.inkstone.ext.share.weixin.ShareWeixinHelper;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -66,15 +69,24 @@ public class ShareUtil {
      */
     public static boolean shareToQQ(ShareHelper shareHelper, QQShareContent shareContent) {
         if (shareHelper == null) {
+            Timber.e("shareHelper is null");
             return false;
         }
 
         if (shareContent == null) {
+            Timber.e("shareContent is null");
             return false;
         }
 
-        Tencent tencent = shareHelper.getShareQQHelper().getTencent(shareHelper.getActivity());
+        ShareQQHelper shareQQHelper = shareHelper.getShareQQHelper();
+        if (shareQQHelper == null) {
+            Timber.e("shareQQHelper is null");
+            return false;
+        }
+
+        Tencent tencent = shareQQHelper.getTencent(shareHelper.getActivity());
         if (tencent == null) {
+            Timber.e("tencent is null");
             return false;
         }
 
@@ -125,15 +137,24 @@ public class ShareUtil {
      */
     public static boolean shareToQzone(ShareHelper shareHelper, QzoneShareContent shareContent) {
         if (shareHelper == null) {
+            Timber.e("shareHelper is null");
             return false;
         }
 
         if (shareContent == null) {
+            Timber.e("shareContent is null");
             return false;
         }
 
-        Tencent tencent = shareHelper.getShareQQHelper().getTencent(shareHelper.getActivity());
+        ShareQQHelper shareQQHelper = shareHelper.getShareQQHelper();
+        if (shareQQHelper == null) {
+            Timber.e("shareQQHelper is null");
+            return false;
+        }
+
+        Tencent tencent = shareQQHelper.getTencent(shareHelper.getActivity());
         if (tencent == null) {
+            Timber.e("tencent is null");
             return false;
         }
 
@@ -173,15 +194,24 @@ public class ShareUtil {
      */
     public static boolean shareToWeixin(ShareHelper shareHelper, WeixinShareContent shareContent) {
         if (shareHelper == null) {
+            Timber.e("shareHelper is null");
             return false;
         }
 
         if (shareContent == null) {
+            Timber.e("shareContent is null");
             return false;
         }
 
-        IWXAPI api = shareHelper.getShareWeixinHelper().getApi();
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        IWXAPI api = shareWeixinHelper.getApi();
         if (api == null) {
+            Timber.e("api is null");
             return false;
         }
 
@@ -228,15 +258,24 @@ public class ShareUtil {
     public static boolean shareToWeixin(
             ShareHelper shareHelper, WeixinMiniProgramShareContent shareContent) {
         if (shareHelper == null) {
+            Timber.e("shareHelper is null");
             return false;
         }
 
         if (shareContent == null) {
+            Timber.e("shareContent is null");
             return false;
         }
 
-        IWXAPI api = shareHelper.getShareWeixinHelper().getApi();
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        IWXAPI api = shareWeixinHelper.getApi();
         if (api == null) {
+            Timber.e("api is null");
             return false;
         }
 
@@ -253,15 +292,24 @@ public class ShareUtil {
     public static boolean shareToWeixinTimeline(
             ShareHelper shareHelper, WeixinShareContent shareContent) {
         if (shareHelper == null) {
+            Timber.e("shareHelper is null");
             return false;
         }
 
         if (shareContent == null) {
+            Timber.e("shareContent is null");
             return false;
         }
 
-        IWXAPI api = shareHelper.getShareWeixinHelper().getApi();
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        IWXAPI api = shareWeixinHelper.getApi();
         if (api == null) {
+            Timber.e("api is null");
             return false;
         }
 
@@ -303,14 +351,27 @@ public class ShareUtil {
      */
     public static boolean shareToWeibo(ShareHelper shareHelper, WeiboShareContent shareContent) {
         if (shareHelper == null) {
+            Timber.e("shareHelper is null");
             return false;
         }
 
         if (shareContent == null) {
+            Timber.e("shareContent is null");
             return false;
         }
 
-        WbShareHandler api = shareHelper.getShareWeiboHelper().getIWeiboShareAPI();
+        ShareWeiboHelper shareWeiboHelper = shareHelper.getShareWeiboHelper();
+        if (shareWeiboHelper == null) {
+            Timber.e("shareWeiboHelper is null");
+            return false;
+        }
+
+        WbShareHandler api = shareWeiboHelper.getIWeiboShareAPI();
+        if (api == null) {
+            Timber.e("api is null");
+            return false;
+        }
+
         api.shareMessage(convertWeiboShareContent(shareContent), false);
         return true;
     }
@@ -402,4 +463,53 @@ public class ShareUtil {
 
         };
     }
+
+    public static class SimpleShareListener implements ShareListener {
+
+        @Override
+        public void onQQShareSuccess() {
+            Timber.v("onQQShareSuccess");
+        }
+
+        @Override
+        public void onQQShareFail() {
+            Timber.v("onQQShareFail");
+        }
+
+        @Override
+        public void onQQShareCancel() {
+            Timber.v("onQQShareCancel");
+        }
+
+        @Override
+        public void onWeixinShareSuccess() {
+            Timber.v("onWeixinShareSuccess");
+        }
+
+        @Override
+        public void onWeixinShareFail() {
+            Timber.v("onWeixinShareFail");
+        }
+
+        @Override
+        public void onWeixinShareCancel() {
+            Timber.v("onWeixinShareCancel");
+        }
+
+        @Override
+        public void onWeiboShareSuccess() {
+            Timber.v("onWeiboShareSuccess");
+        }
+
+        @Override
+        public void onWeiboShareFail() {
+            Timber.v("onWeiboShareFail");
+        }
+
+        @Override
+        public void onWeiboShareCancel() {
+            Timber.v("onWeiboShareCancel");
+        }
+    }
+
 }
