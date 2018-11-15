@@ -27,9 +27,11 @@
 
 ##### 引入依赖
 
-```
-implementation "com.zcool.inkstone:inkstone:0.1.5"
-annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.5"
+```groovy
+dependencies {
+    implementation "com.zcool.inkstone:inkstone:0.1.5"
+    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.5"
+}
 ```
 
 ##### 配置 ApplicationDelegate
@@ -39,7 +41,7 @@ annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.5"
 > **为了提高兼容性，如果你有自定义的 Application, ContentProvider, Service, BroadcastReceiver,
 > 需要在其对应的入口处调用 `Inkstone.init(Context)` 方法.**
 
-```
+```java
 package com.zcool.sample;
 
 import android.app.Application;
@@ -85,7 +87,7 @@ public class MainApplicationDelegate extends BaseApplicationDelegate {
 > 如 StorageManager, CookieStoreManager 等. 你也可以实现自定义的跨进程服务，
 > 如登录信息 SessionManager, 关于如何实现自定义跨进程服务，参看进阶部分。
 
-```
+```java
 package com.zcool.sample.service;
 
 import android.os.IBinder;
@@ -123,7 +125,7 @@ public class MainServicesProvider extends BaseServicesProvider {
 
 > 通常，自定义 Application 是不必要的，你可以将自定义 Application 中的初始化内容移动到 ApplicationDelegate 中
 
-```
+```java
 public class MyApplication extends MultiDexApplication {
 
     @Override
@@ -139,7 +141,7 @@ public class MyApplication extends MultiDexApplication {
 
 ##### 处理自定义 Service
 
-```
+```java
 public class MyService extends Service {
 
     @Override
@@ -161,7 +163,7 @@ public class MyService extends Service {
 
 ##### 处理自定义 ContentProvider
 
-```
+```java
 public class MyContentProvider extends ContentProvider {
 
     @Override
@@ -176,7 +178,7 @@ public class MyContentProvider extends ContentProvider {
 
 ##### 处理自定义 BroadcastReceiver
 
-```
+```java
 public class MyBroadcastReceiver extends BroadcastReceiver {
 
     @Override
@@ -198,7 +200,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
 > 实体类 Session.java, 用于 AIDL 通信，实现 Parcelable 接口
 
-```
+```java
 package com.zcool.sample.entity;
 
 import android.os.Parcel;
@@ -250,7 +252,7 @@ public class Session implements Parcelable {
 
 > 实体类 User.java, 用于 AIDL 通信，实现 Parcelable 接口
 
-```
+```java
 package com.zcool.sample.entity;
 
 import android.os.Parcel;
@@ -298,7 +300,7 @@ public class User implements Parcelable {
 
 > 申明 Session.aidl, 对应 Session.java
 
-```
+```aidl
 package com.zcool.sample.entity;
 
 parcelable Session;
@@ -308,7 +310,7 @@ parcelable Session;
 
 > 申明 User.aidl, 对应 User.java
 
-```
+```aidl
 package com.zcool.sample.entity;
 
 parcelable User;
@@ -320,7 +322,7 @@ parcelable User;
 > 其中服务端为实现为 SessionService extends ISessionService.Stub.
 > 客户端实现为 ISessionService.Stub.asInterface(binder)。
 
-```
+```aidl
 package com.zcool.sample.service;
 
 import com.zcool.sample.entity.Session;
@@ -340,7 +342,7 @@ interface ISessionService {
 > 仅供 ISessionService.Stub 的实现类 SessionService 调用。
 > 此处将 SessionServiceProvider 类的访问权限定义为 default
 
-```
+```java
 package com.zcool.sample.service;
 
 import android.support.annotation.Nullable;
@@ -396,7 +398,7 @@ class SessionServiceProvider {
 > 业务类 SessionService.java 是 ISessionService 的服务端直接实现，继承自 ISessionService.Stub,
 > 并且将对应的业务方法实现转为调用单例类 SessionServiceProvider 上的业务方法
 
-```
+```java
 package com.zcool.sample.service;
 
 import android.os.RemoteException;
@@ -427,11 +429,11 @@ class SessionService extends ISessionService.Stub {
 
 > ServicesProvider 在此处的实现类是 MainServicesProvider.java, 继承自 BaseServicesProvider,
 > 申明了注解 @ServicesProvider. 在 onCreate 方法中添加 SessionService 服务.
-> 需要注意 addService 的 serviceName 不要与已存在的服务 serviceName 冲突, 否则会覆盖已有的服务
+> 需要注意 addService 的 serviceName 不要与已存在的服务 serviceName 冲突, 否则会覆盖已有的服务.
 > 客户端在使用此服务时通过 ServiceManager.getInstance().fetchRemote(serviceName)
 > 获取此处的服务对象, 注意要通过 ISessionService.Stub.asInterface 进行转换
 
-```
+```java
 package com.zcool.sample.service;
 
 import android.os.IBinder;
@@ -470,7 +472,7 @@ public class MainServicesProvider extends BaseServicesProvider {
 > 该服务是在 ServicesProvider 的实现类 MainServicesProvider 中注册.
 > SessionManager 支持在任意进程中调用，它们最终都调用到了核心业务实现类 SessionServiceProvider 中对应的方法.
 
-```
+```java
 package com.zcool.sample.manager;
 
 import android.os.RemoteException;
