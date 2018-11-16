@@ -29,8 +29,8 @@
 
 ```groovy
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.5"
-    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.5"
+    implementation "com.zcool.inkstone:inkstone:0.1.12"
+    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.12"
 }
 ```
 
