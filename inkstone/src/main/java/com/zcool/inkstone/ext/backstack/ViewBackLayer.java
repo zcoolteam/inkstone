@@ -41,6 +41,12 @@ public class ViewBackLayer implements BackStack.BackLayer {
 
     @Override
     public boolean onBackPressed() {
+        if (mOnBackPressedListener != null) {
+            if (mOnBackPressedListener.onBackPressed()) {
+                return true;
+            }
+        }
+
         if (mCancelable) {
             hide(true);
         }
@@ -153,6 +159,16 @@ public class ViewBackLayer implements BackStack.BackLayer {
         if (mOnShowListener != null) {
             mOnShowListener.onShow();
         }
+    }
+
+    public interface OnBackPressedListener {
+        boolean onBackPressed();
+    }
+
+    private OnBackPressedListener mOnBackPressedListener;
+
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        mOnBackPressedListener = onBackPressedListener;
     }
 
 }
