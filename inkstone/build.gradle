@@ -50,6 +50,9 @@ dependencies {
     api rootProject.ext.bcfg.deps.rx_android
     api rootProject.ext.bcfg.deps.rxjava2
     api rootProject.ext.bcfg.deps.rxbinding2
+    api rootProject.ext.bcfg.deps.retrofit
+    api rootProject.ext.bcfg.deps.retrofit_gson
+    api rootProject.ext.bcfg.deps.retrofit_rxjava2
 
     api "com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.1.6"
     api 'com.sina.weibo.sdk:core:4.3.1:openDefaultRelease@aar'
