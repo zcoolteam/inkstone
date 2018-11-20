@@ -159,6 +159,8 @@ public class ViewDialog extends ViewBackLayer {
         private OnHideListener mOnHideListener;
         private OnShowListener mOnShowListener;
 
+        private OnBackPressedListener mOnBackPressedListener;
+
         private int mContentViewLayoutRes;
         private int mContentViewShowAnimatorRes;
         private int mContentViewHideAnimatorRes;
@@ -202,6 +204,11 @@ public class ViewDialog extends ViewBackLayer {
             return this;
         }
 
+        public Builder setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+            mOnBackPressedListener = onBackPressedListener;
+            return this;
+        }
+
         public Builder setContentViewShowAnimator(@AnimatorRes int animatorRes) {
             mContentViewShowAnimatorRes = animatorRes;
             return this;
@@ -238,6 +245,7 @@ public class ViewDialog extends ViewBackLayer {
             viewDialog.setCancelable(mCancelable);
             viewDialog.setOnHideListener(mOnHideListener);
             viewDialog.setOnShowListener(mOnShowListener);
+            viewDialog.setOnBackPressedListener(mOnBackPressedListener);
             viewDialog.setContentViewAnimator(
                     mContentViewShowAnimatorRes > 0 ? AnimatorInflater.loadAnimator(mActivity, mContentViewShowAnimatorRes) : null,
                     mContentViewHideAnimatorRes > 0 ? AnimatorInflater.loadAnimator(mActivity, mContentViewHideAnimatorRes) : null);
