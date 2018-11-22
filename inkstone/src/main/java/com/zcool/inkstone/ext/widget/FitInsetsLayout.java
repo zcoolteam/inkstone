@@ -14,6 +14,8 @@ import android.widget.FrameLayout;
 
 import com.zcool.inkstone.R;
 
+import java.util.Arrays;
+
 import timber.log.Timber;
 
 /**
@@ -46,6 +48,13 @@ public class FitInsetsLayout extends FrameLayout {
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    private interface Index {
+        int LEFT = 0;
+        int TOP = 1;
+        int RIGHT = 2;
+        int BOTTOM = 3;
+    }
+
     public static final int NONE = -1;
     public static final int ALL = -2;
 
@@ -53,6 +62,18 @@ public class FitInsetsLayout extends FrameLayout {
     private int mFitInsetPaddingTop = NONE;
     private int mFitInsetPaddingRight = NONE;
     private int mFitInsetPaddingBottom = NONE;
+
+    private boolean mFitInsetPaddingLeftNotSet = false; // 是否将 left 值设置到 padding
+    private boolean mFitInsetPaddingLeftNotConsume = false; // 是否将 left 值从输入值中减少
+
+    private boolean mFitInsetPaddingTopNotSet = false; // 是否将 top 值设置到 padding
+    private boolean mFitInsetPaddingTopNotConsume = false;// 是否将 top 值从输入值中减少
+
+    private boolean mFitInsetPaddingRightNotSet = false; // 是否将 right 值设置到 padding
+    private boolean mFitInsetPaddingRightNotConsume = false;// 是否将 right 值从输入值中减少
+
+    private boolean mFitInsetPaddingBottomNotSet = false; // 是否将 bottom 值设置到 padding
+    private boolean mFitInsetPaddingBottomNotConsume = false;// 是否将 bottom 值从输入值中减少
 
     public int mPrivateFlags;
 
@@ -88,6 +109,16 @@ public class FitInsetsLayout extends FrameLayout {
                         R.styleable.FitInsetsLayout_systemInsetPaddingBottom,
                         mFitInsetPaddingBottom);
 
+        mFitInsetPaddingLeftNotSet = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingLeftNotSet, mFitInsetPaddingLeftNotSet);
+        mFitInsetPaddingTopNotSet = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingTopNotSet, mFitInsetPaddingTopNotSet);
+        mFitInsetPaddingRightNotSet = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingRightNotSet, mFitInsetPaddingRightNotSet);
+        mFitInsetPaddingBottomNotSet = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingBottomNotSet, mFitInsetPaddingBottomNotSet);
+
+        mFitInsetPaddingLeftNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingLeftNotConsume, mFitInsetPaddingLeftNotConsume);
+        mFitInsetPaddingTopNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingTopNotConsume, mFitInsetPaddingTopNotConsume);
+        mFitInsetPaddingRightNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingRightNotConsume, mFitInsetPaddingRightNotConsume);
+        mFitInsetPaddingBottomNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingBottomNotConsume, mFitInsetPaddingBottomNotConsume);
+
         a.recycle();
 
         if (DEBUG) {
@@ -117,6 +148,48 @@ public class FitInsetsLayout extends FrameLayout {
         }
     }
 
+    public boolean[] getFitInsetPaddingNotSet() {
+        return new boolean[]{
+                mFitInsetPaddingLeftNotSet,
+                mFitInsetPaddingTopNotSet,
+                mFitInsetPaddingRightNotSet,
+                mFitInsetPaddingBottomNotSet};
+    }
+
+    public void setFitInsetPaddingNotSet(boolean left, boolean top, boolean right, boolean bottom) {
+        if (mFitInsetPaddingLeftNotSet != left
+                || mFitInsetPaddingTopNotSet != top
+                || mFitInsetPaddingRightNotSet != right
+                || mFitInsetPaddingBottomNotSet != bottom) {
+            mFitInsetPaddingLeftNotSet = left;
+            mFitInsetPaddingTopNotSet = top;
+            mFitInsetPaddingRightNotSet = right;
+            mFitInsetPaddingBottomNotSet = bottom;
+            ViewCompat.requestApplyInsets(this);
+        }
+    }
+
+    public boolean[] getFitInsetPaddingNotConsume() {
+        return new boolean[]{
+                mFitInsetPaddingLeftNotConsume,
+                mFitInsetPaddingTopNotConsume,
+                mFitInsetPaddingRightNotConsume,
+                mFitInsetPaddingBottomNotConsume};
+    }
+
+    public void setFitInsetPaddingNotConsume(boolean left, boolean top, boolean right, boolean bottom) {
+        if (mFitInsetPaddingLeftNotConsume != left
+                || mFitInsetPaddingTopNotConsume != top
+                || mFitInsetPaddingRightNotConsume != right
+                || mFitInsetPaddingBottomNotConsume != bottom) {
+            mFitInsetPaddingLeftNotConsume = left;
+            mFitInsetPaddingTopNotConsume = top;
+            mFitInsetPaddingRightNotConsume = right;
+            mFitInsetPaddingBottomNotConsume = bottom;
+            ViewCompat.requestApplyInsets(this);
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
@@ -138,7 +211,7 @@ public class FitInsetsLayout extends FrameLayout {
             int insetRight = insets.getSystemWindowInsetRight();
             int insetBottom = insets.getSystemWindowInsetBottom();
 
-            Rect remain = onFitInsets(insetLeft, insetTop, insetRight, insetBottom);
+            Rect remain = dispatchFitInsets(insetLeft, insetTop, insetRight, insetBottom);
 
             insets = insets.replaceSystemWindowInsets(remain.left, remain.top, remain.right, remain.bottom);
 
@@ -168,7 +241,7 @@ public class FitInsetsLayout extends FrameLayout {
             int insetRight = insets.right;
             int insetBottom = insets.bottom;
 
-            Rect remain = onFitInsets(insetLeft, insetTop, insetRight, insetBottom);
+            Rect remain = dispatchFitInsets(insetLeft, insetTop, insetRight, insetBottom);
 
             insets.set(remain);
 
@@ -178,59 +251,81 @@ public class FitInsetsLayout extends FrameLayout {
         }
     }
 
+    private final Rect mLastInsets = new Rect();
+
+    public Rect getLastInsets() {
+        return new Rect(mLastInsets);
+    }
+
+    /**
+     * @return 返回剩余的 insets 值
+     */
+    protected Rect dispatchFitInsets(int left, int top, int right, int bottom) {
+        mLastInsets.set(left, top, right, bottom);
+        return onFitInsets(left, top, right, bottom);
+    }
+
     /**
      * @return 返回剩余的 insets 值
      */
     protected Rect onFitInsets(int left, int top, int right, int bottom) {
-        Rect insetsPadding = new Rect();
+        Rect targetInsets = new Rect();
 
-        insetsPadding.left = calculateInsetPaddingValueConsumed(left, mFitInsetPaddingLeft);
-        insetsPadding.top = calculateInsetPaddingValueConsumed(top, mFitInsetPaddingTop);
-        insetsPadding.right = calculateInsetPaddingValueConsumed(right, mFitInsetPaddingRight);
-        insetsPadding.bottom = calculateInsetPaddingValueConsumed(bottom, mFitInsetPaddingBottom);
+        targetInsets.left = calculateTargetInsetPaddingValue(left, mFitInsetPaddingLeft);
+        targetInsets.top = calculateTargetInsetPaddingValue(top, mFitInsetPaddingTop);
+        targetInsets.right = calculateTargetInsetPaddingValue(right, mFitInsetPaddingRight);
+        targetInsets.bottom = calculateTargetInsetPaddingValue(bottom, mFitInsetPaddingBottom);
 
-        setPadding(
-                insetsPadding.left, insetsPadding.top, insetsPadding.right, insetsPadding.bottom);
+        // adjust padding
+        boolean[] notSet = getFitInsetPaddingNotSet();
+        Rect padding = new Rect();
+        padding.left = notSet[Index.LEFT] ? 0 : targetInsets.left;
+        padding.top = notSet[Index.TOP] ? 0 : targetInsets.top;
+        padding.right = notSet[Index.RIGHT] ? 0 : targetInsets.right;
+        padding.bottom = notSet[Index.BOTTOM] ? 0 : targetInsets.bottom;
+        setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
-        Rect remain =
-                new Rect(
-                        left - insetsPadding.left,
-                        top - insetsPadding.top,
-                        right - insetsPadding.right,
-                        bottom - insetsPadding.bottom);
+        // adjust remain
+        boolean[] notConsume = getFitInsetPaddingNotConsume();
+        Rect remain = new Rect();
+        remain.left = notConsume[Index.LEFT] ? left : left - targetInsets.left;
+        remain.top = notConsume[Index.TOP] ? top : top - targetInsets.top;
+        remain.right = notConsume[Index.RIGHT] ? right : right - targetInsets.right;
+        remain.bottom = notConsume[Index.BOTTOM] ? bottom : bottom - targetInsets.bottom;
 
         if (DEBUG) {
-            Timber.d(
-                    "onFitInsets %s -> consumed:%s remain:%s target:%s",
+            Timber.v(
+                    "onFitInsets:%s=> targetInsets:%s->%s padding:%s->%s remain:%s->%s",
                     new Rect(left, top, right, bottom),
-                    insetsPadding,
-                    remain,
-                    getFitInsetPadding());
+                    getFitInsetPadding(), targetInsets,
+                    Arrays.toString(notSet), padding,
+                    Arrays.toString(notConsume), remain);
         }
 
         return remain;
     }
 
-    private int calculateInsetPaddingValueConsumed(int value, int target) {
-        int consumed = 0;
-        int consumedTarget = NONE;
+
+    private int calculateTargetInsetPaddingValue(int value, int target) {
+        int resultValue = 0;
+        int resultValueTarget = NONE;
         if (value > 0) {
             if (target != NONE) {
                 if (target == ALL) {
-                    consumedTarget = value;
+                    resultValueTarget = value;
                 } else if (target >= 0) {
-                    consumedTarget = target;
+                    resultValueTarget = target;
                 } else {
                     throw new IllegalArgumentException("invalid target value " + target);
                 }
             }
 
-            if (consumedTarget >= 0) {
-                consumed = Math.min(consumedTarget, value);
+            if (resultValueTarget >= 0) {
+                resultValue = Math.min(resultValueTarget, value);
             }
         }
 
-        return consumed;
+        return resultValue;
     }
 
 }

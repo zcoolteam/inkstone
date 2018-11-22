@@ -15,10 +15,29 @@
         <enum name="none" value="-1" />
         <enum name="all" value="-2" />
     </attr>
+
+    <attr name="systemInsetPaddingLeftNotSet" format="boolean" tools:ignore="ResourceName" />
+    <attr name="systemInsetPaddingTopNotSet" format="boolean" tools:ignore="ResourceName" />
+    <attr name="systemInsetPaddingRightNotSet" format="boolean" tools:ignore="ResourceName" />
+    <attr name="systemInsetPaddingBottomNotSet" format="boolean" tools:ignore="ResourceName" />
+
+    <attr name="systemInsetPaddingLeftNotConsume" format="boolean" tools:ignore="ResourceName" />
+    <attr name="systemInsetPaddingTopNotConsume" format="boolean" tools:ignore="ResourceName" />
+    <attr name="systemInsetPaddingRightNotConsume" format="boolean" tools:ignore="ResourceName" />
+    <attr name="systemInsetPaddingBottomNotConsume" format="boolean" tools:ignore="ResourceName" />
+
     <declare-styleable name="FitInsetsLayout" tools:ignore="ResourceName">
         <attr name="systemInsetPaddingLeft" />
         <attr name="systemInsetPaddingTop" />
         <attr name="systemInsetPaddingRight" />
         <attr name="systemInsetPaddingBottom" />
+        <attr name="systemInsetPaddingLeftNotSet" />
+        <attr name="systemInsetPaddingTopNotSet" />
+        <attr name="systemInsetPaddingRightNotSet" />
+        <attr name="systemInsetPaddingBottomNotSet" />
+        <attr name="systemInsetPaddingLeftNotConsume" />
+        <attr name="systemInsetPaddingTopNotConsume" />
+        <attr name="systemInsetPaddingRightNotConsume" />
+        <attr name="systemInsetPaddingBottomNotConsume" />
     </declare-styleable>
 </resources>
