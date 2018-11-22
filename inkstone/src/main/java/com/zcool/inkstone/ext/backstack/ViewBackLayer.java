@@ -1,6 +1,7 @@
 package com.zcool.inkstone.ext.backstack;
 
 import android.support.annotation.IdRes;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -14,6 +15,7 @@ public class ViewBackLayer implements BackStack.BackLayer {
     protected final WindowBackStackDispatcher mDispatcher;
 
     protected boolean mCancelable = true;
+    protected boolean mRequestSystemInsets = true;
     protected boolean mShown;
 
     public ViewBackLayer(WindowBackStackDispatcher dispatcher, View decorView, ViewGroup parentView) {
@@ -22,9 +24,12 @@ public class ViewBackLayer implements BackStack.BackLayer {
         mParentView = parentView;
     }
 
-    public ViewBackLayer setCancelable(boolean cancelable) {
+    public void setCancelable(boolean cancelable) {
         mCancelable = cancelable;
-        return this;
+    }
+
+    public void setRequestSystemInsets(boolean requestSystemInsets) {
+        mRequestSystemInsets = requestSystemInsets;
     }
 
     public View getDecorView() {
@@ -55,6 +60,10 @@ public class ViewBackLayer implements BackStack.BackLayer {
 
     public boolean isCancelable() {
         return mCancelable;
+    }
+
+    public boolean isRequestSystemInsets() {
+        return mRequestSystemInsets;
     }
 
     public boolean isShown() {
@@ -113,6 +122,13 @@ public class ViewBackLayer implements BackStack.BackLayer {
         }
 
         mParentView.addView(mDecorView);
+        if (mRequestSystemInsets) {
+            ViewCompat.requestApplyInsets(mParentView);
+        }
+
+        if (mOnAddToParentListener != null) {
+            mOnAddToParentListener.onAddToParent();
+        }
     }
 
     protected void detachViewFromParent() {
@@ -124,9 +140,17 @@ public class ViewBackLayer implements BackStack.BackLayer {
 
         if (parent != mParentView) {
             Timber.e("decor view's parent changed to another, require:%s, found:%s", mParentView, parent);
+            return;
         }
 
         ((ViewGroup) parent).removeView(mDecorView);
+        if (mRequestSystemInsets) {
+            ViewCompat.requestApplyInsets(mParentView);
+        }
+
+        if (mOnRemoveFromParentListener != null) {
+            mOnRemoveFromParentListener.onRemoveFromParent();
+        }
     }
 
     public interface OnHideListener {
@@ -159,6 +183,26 @@ public class ViewBackLayer implements BackStack.BackLayer {
         if (mOnShowListener != null) {
             mOnShowListener.onShow();
         }
+    }
+
+    public interface OnAddToParentListener {
+        void onAddToParent();
+    }
+
+    private OnAddToParentListener mOnAddToParentListener;
+
+    public void setOnAddToParentListener(OnAddToParentListener onAddToParentListener) {
+        mOnAddToParentListener = onAddToParentListener;
+    }
+
+    public interface OnRemoveFromParentListener {
+        void onRemoveFromParent();
+    }
+
+    private OnRemoveFromParentListener mOnRemoveFromParentListener;
+
+    public void setOnRemoveFromParentListener(OnRemoveFromParentListener onRemoveFromParentListener) {
+        mOnRemoveFromParentListener = onRemoveFromParentListener;
     }
 
     public interface OnBackPressedListener {

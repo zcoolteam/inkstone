@@ -159,6 +159,11 @@ public class ViewDialog extends ViewBackLayer {
         private OnHideListener mOnHideListener;
         private OnShowListener mOnShowListener;
 
+        private boolean mRequestSystemInsets = true;
+
+        private OnAddToParentListener mOnAddToParentListener;
+        private OnRemoveFromParentListener mOnRemoveFromParentListener;
+
         private OnBackPressedListener mOnBackPressedListener;
 
         private int mContentViewLayoutRes;
@@ -204,6 +209,16 @@ public class ViewDialog extends ViewBackLayer {
             return this;
         }
 
+        public Builder setOnAddToParentListener(OnAddToParentListener onAddToParentListener) {
+            mOnAddToParentListener = onAddToParentListener;
+            return this;
+        }
+
+        public Builder setOnRemoveFromParentListener(OnRemoveFromParentListener onRemoveFromParentListener) {
+            mOnRemoveFromParentListener = onRemoveFromParentListener;
+            return this;
+        }
+
         public Builder setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
             mOnBackPressedListener = onBackPressedListener;
             return this;
@@ -216,6 +231,11 @@ public class ViewDialog extends ViewBackLayer {
 
         public Builder setContentViewHideAnimator(@AnimatorRes int animatorRes) {
             mContentViewHideAnimatorRes = animatorRes;
+            return this;
+        }
+
+        public Builder setRequestSystemInsets(boolean requestSystemInsets) {
+            this.mRequestSystemInsets = requestSystemInsets;
             return this;
         }
 
@@ -246,6 +266,9 @@ public class ViewDialog extends ViewBackLayer {
             viewDialog.setOnHideListener(mOnHideListener);
             viewDialog.setOnShowListener(mOnShowListener);
             viewDialog.setOnBackPressedListener(mOnBackPressedListener);
+            viewDialog.setOnAddToParentListener(mOnAddToParentListener);
+            viewDialog.setOnRemoveFromParentListener(mOnRemoveFromParentListener);
+            viewDialog.setRequestSystemInsets(mRequestSystemInsets);
             viewDialog.setContentViewAnimator(
                     mContentViewShowAnimatorRes > 0 ? AnimatorInflater.loadAnimator(mActivity, mContentViewShowAnimatorRes) : null,
                     mContentViewHideAnimatorRes > 0 ? AnimatorInflater.loadAnimator(mActivity, mContentViewHideAnimatorRes) : null);
