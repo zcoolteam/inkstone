@@ -51,6 +51,9 @@ public class ViewUtil {
         });
     }
 
+    /**
+     * 类似 return view.findViewById(id1).findViewById(id2)...findViewById(idn);
+     */
     @Nullable
     public static <T extends View> T findViewById(View view, @IdRes int... ids) {
         if (view == null) {
