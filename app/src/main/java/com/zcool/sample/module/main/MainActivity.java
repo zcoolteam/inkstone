@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
         SystemUiHelper.from(getWindow())
                 .layoutStatusBar()
                 .layoutStable()
+                .setStatusBarTextColorBlack()
                 .apply();
 
         HierarchyDelegateHelper.showContentFragment(

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,11 +70,17 @@ public class MainFragment extends Fragment {
             mItems.add(Pair.create("图片下载", ImageDownloadActivity.class.getName()));
             mItems.add(Pair.create("第三方账号登录", ShareActivity.class.getName()));
             mItems.add(Pair.create("ViewDialog", ViewDialogActivity.class.getName()));
+
+            for (int i = 0; i < 100; i++) {
+                mItems.add(Pair.create("item#" + i, null));
+            }
         }
 
         @NonNull
         @Override
         public DataViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+            Timber.v("onCreateViewHolder position#%s", position);
+
             LayoutInflater inflater = getLayoutInflater();
             View itemView = inflater.inflate(R.layout.sample_main_view_item, viewGroup, false);
             return new DataViewHolder(itemView);
@@ -81,6 +88,8 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull DataViewHolder dataViewHolder, int position) {
+            Timber.v("onBindViewHolder position#%s", position);
+
             Pair<String, String> item = mItems.get(position);
             dataViewHolder.onBind(item.first, item.second);
         }
@@ -109,6 +118,12 @@ public class MainFragment extends Fragment {
                     Timber.e("activity is null");
                     return;
                 }
+
+                if (TextUtils.isEmpty(clazz)) {
+                    Timber.e("clazz is empty");
+                    return;
+                }
+
                 Intent intent = new Intent();
                 intent.setClassName(activity, clazz);
                 startActivity(intent);
