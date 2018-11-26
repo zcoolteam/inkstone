@@ -41,6 +41,9 @@
         <activity
             android:name="com.zcool.sample.module.viewdialog.ViewDialogActivity"
             android:exported="false" />
+        <activity
+            android:name="com.zcool.sample.module.design.DesignActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
