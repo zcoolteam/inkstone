@@ -5,9 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import com.zcool.inkstone.ext.widget.FitInsetsLayout;
+import com.zcool.inkstone.ext.widget.FitInsetsFrameLayout;
 
-public class MinHeightInsetsLayout extends FitInsetsLayout {
+public class MinHeightInsetsLayout extends FitInsetsFrameLayout {
+
     public MinHeightInsetsLayout(Context context) {
         super(context);
     }
