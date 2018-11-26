@@ -13,26 +13,26 @@ import android.widget.FrameLayout;
 /**
  * 辅助处理自定义 window insets
  */
-public class FitInsetsLayout extends FrameLayout implements FitInsetsLayoutInterface {
+public class FitInsetsFrameLayout extends FrameLayout implements FitInsetsLayoutInterface {
 
     private final FitInsetsLayoutHelper mFitInsetsLayoutHelper;
 
-    public FitInsetsLayout(Context context) {
+    public FitInsetsFrameLayout(Context context) {
         this(context, null);
     }
 
-    public FitInsetsLayout(Context context, AttributeSet attrs) {
+    public FitInsetsFrameLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public FitInsetsLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FitInsetsFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mFitInsetsLayoutHelper = createFitInsetsLayoutHelper();
         mFitInsetsLayoutHelper.init(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FitInsetsLayout(
+    public FitInsetsFrameLayout(
             @NonNull Context context,
             @Nullable AttributeSet attrs,
             int defStyleAttr,
@@ -100,6 +100,7 @@ public class FitInsetsLayout extends FrameLayout implements FitInsetsLayoutInter
         return super.fitSystemWindows(insets);
     }
 
+    @NonNull
     @Override
     public Rect getLastInsets() {
         return mFitInsetsLayoutHelper.getLastInsets();
