@@ -20,6 +20,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
+import com.zcool.inkstone.Debug;
+
 import timber.log.Timber;
 
 public class FixWebView extends WebView {
@@ -74,6 +76,8 @@ public class FixWebView extends WebView {
 
     public static class WebViewClientImpl extends WebViewClient {
 
+        private final boolean DEBUG = Debug.isDebugWidget();
+
         protected final FixWebView mFixWebView;
 
         public WebViewClientImpl(FixWebView fixWebView) {
@@ -87,27 +91,37 @@ public class FixWebView extends WebView {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Timber.v("shouldOverrideUrlLoading %s", url);
+            if (DEBUG) {
+                Timber.v("shouldOverrideUrlLoading %s", url);
+            }
             return false;
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            Timber.v("onPageStarted %s, webview url %s", url, view.getUrl());
+            if (DEBUG) {
+                Timber.v("onPageStarted %s, webview url %s", url, view.getUrl());
+            }
         }
 
         @Override
         public void onPageCommitVisible(WebView view, String url) {
-            Timber.v("onPageCommitVisible %s", url);
+            if (DEBUG) {
+                Timber.v("onPageCommitVisible %s", url);
+            }
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            Timber.v("onPageFinished %s, webview url %s", url, view.getUrl());
+            if (DEBUG) {
+                Timber.v("onPageFinished %s, webview url %s", url, view.getUrl());
+            }
         }
     }
 
     public static class WebChromeClientImpl extends WebChromeClient {
+
+        private final boolean DEBUG = Debug.isDebugWidget();
 
         protected final FixWebView mFixWebView;
 
@@ -117,12 +131,16 @@ public class FixWebView extends WebView {
 
         @Override
         public void onReceivedTitle(WebView view, String title) {
-            Timber.v("onReceivedTitle %s", title);
+            if (DEBUG) {
+                Timber.v("onReceivedTitle %s", title);
+            }
         }
 
         @Override
         public void onShowCustomView(View view, CustomViewCallback callback) {
-            Timber.v("onShowCustomView");
+            if (DEBUG) {
+                Timber.v("onShowCustomView");
+            }
             if (mFixWebView.mCustomViewer != null) {
                 mFixWebView.mCustomViewer.show(view, callback);
             }
@@ -131,13 +149,17 @@ public class FixWebView extends WebView {
         @Override
         public void onShowCustomView(
                 View view, int requestedOrientation, CustomViewCallback callback) {
-            Timber.v("onShowCustomView requestedOrientation %s", requestedOrientation);
+            if (DEBUG) {
+                Timber.v("onShowCustomView requestedOrientation %s", requestedOrientation);
+            }
             onShowCustomView(view, callback);
         }
 
         @Override
         public void onHideCustomView() {
-            Timber.v("onHideCustomView");
+            if (DEBUG) {
+                Timber.v("onHideCustomView");
+            }
             if (mFixWebView.mCustomViewer != null) {
                 mFixWebView.mCustomViewer.hide();
             }
@@ -181,6 +203,8 @@ public class FixWebView extends WebView {
 
     public static class CustomViewer {
 
+        private final boolean DEBUG = Debug.isDebugWidget();
+
         private final Activity mActivity;
         private final int mOriginalRequestOrientation;
         private final ViewGroup mParent;
@@ -199,7 +223,9 @@ public class FixWebView extends WebView {
             mParent = parent;
             mIgnoreFullscreen = ignoreFullscreen;
 
-            Timber.v("original request orientation %s", mOriginalRequestOrientation);
+            if (DEBUG) {
+                Timber.v("original request orientation %s", mOriginalRequestOrientation);
+            }
         }
 
         public void show(View view, WebChromeClient.CustomViewCallback callback) {
@@ -274,9 +300,9 @@ public class FixWebView extends WebView {
                     new OnSystemUiVisibilityChangeListener() {
                         @Override
                         public void onSystemUiVisibilityChange(int visibility) {
-                            Timber.v(
-                                    "requestSystemUiFullscreen onSystemUiVisibilityChange %s",
-                                    visibility);
+                            if (DEBUG) {
+                                Timber.v("requestSystemUiFullscreen onSystemUiVisibilityChange %s", visibility);
+                            }
 
                             mRequestSystemUiRunnable =
                                     new Runnable() {

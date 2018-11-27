@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowInsets;
 
+import com.zcool.inkstone.Debug;
 import com.zcool.inkstone.R;
 
 import java.util.Arrays;
@@ -23,7 +24,7 @@ import timber.log.Timber;
  */
 public class FitInsetsLayoutHelper {
 
-    private static final boolean DEBUG = true;
+    private final boolean DEBUG = Debug.isDebugWidget();
 
     private interface Index {
         int LEFT = 0;

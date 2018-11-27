@@ -13,10 +13,15 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowInsets;
 
+import com.zcool.inkstone.Debug;
 import com.zcool.inkstone.ext.widget.FitInsetsLayout;
 import com.zcool.inkstone.ext.widget.FitInsetsLayoutHelper;
 
+import timber.log.Timber;
+
 public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLayout implements FitInsetsLayout {
+
+    private final boolean DEBUG = Debug.isDebugWidget();
 
     private final FitInsetsLayoutHelper mFitInsetsLayoutHelper;
 
@@ -72,12 +77,15 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
     private final AppBarLayout.OnOffsetChangedListener mOnOffsetChangedListener = new AppBarLayout.OnOffsetChangedListener() {
         @Override
         public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+            if (DEBUG) {
+                Timber.v("onOffsetChanged AppBarLayout totalScrollRange:%s, verticalOffset:%s", appBarLayout.getTotalScrollRange(), verticalOffset);
+            }
 
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 View childView = getChildAt(i);
 
-
+                // TODO
             }
         }
     };
