@@ -11,7 +11,7 @@ import android.view.WindowInsets;
  *
  * @see FitInsetsLayoutHelper
  */
-public interface FitInsetsLayoutInterface {
+public interface FitInsetsLayout {
 
     @NonNull
     Rect getFitInsetPadding();

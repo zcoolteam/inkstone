@@ -17,7 +17,7 @@ import com.facebook.imageformat.ImageFormatChecker;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpNetworkFetcher;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.request.ImageRequest;
-import com.zcool.inkstone.BaseApplicationDelegate;
+import com.zcool.inkstone.Debug;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.ContextUtil;
@@ -57,7 +57,7 @@ public class FrescoManager {
 
         FLogDefaultLoggingDelegate fLogDefaultLoggingDelegate = FLogDefaultLoggingDelegate.getInstance();
         fLogDefaultLoggingDelegate.setApplicationTag(ContextUtil.getContext().getPackageName());
-        if (BaseApplicationDelegate.getInstance().isDebug()) {
+        if (Debug.isDebug()) {
             fLogDefaultLoggingDelegate.setMinimumLoggingLevel(FLog.DEBUG);
         }
 

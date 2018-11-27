@@ -36,7 +36,7 @@ public class FitInsetsLayoutHelper {
     public static final int ALL = -2;
 
     private final View mView;
-    private final FitInsetsLayoutInterface mFitInsetsLayoutInterface;
+    private final FitInsetsLayout mFitInsetsLayout;
 
     private int mFitInsetPaddingLeft = NONE;
     private int mFitInsetPaddingTop = NONE;
@@ -68,10 +68,10 @@ public class FitInsetsLayoutHelper {
 
     public FitInsetsLayoutHelper(View view) {
         mView = view;
-        if (!(mView instanceof FitInsetsLayoutInterface)) {
-            throw new IllegalArgumentException("view need implement FitInsetsLayoutInterface");
+        if (!(mView instanceof FitInsetsLayout)) {
+            throw new IllegalArgumentException("view need implement FitInsetsLayout");
         }
-        mFitInsetsLayoutInterface = (FitInsetsLayoutInterface) mView;
+        mFitInsetsLayout = (FitInsetsLayout) mView;
     }
 
     public void init(
@@ -185,12 +185,12 @@ public class FitInsetsLayoutHelper {
     public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
         if ((mPrivateFlags & FLAG_FIT_SYSTEM_WINDOWS) != 0) {
             // start call from #fitSystemWindows
-            return mFitInsetsLayoutInterface.callSuperDispatchApplyWindowInsets(insets);
+            return mFitInsetsLayout.callSuperDispatchApplyWindowInsets(insets);
         }
 
         if ((mPrivateFlags & FLAG_DISPATCH_APPLY_WINDOW_INSETS) != 0) {
             // looper call from this method
-            return mFitInsetsLayoutInterface.callSuperDispatchApplyWindowInsets(insets);
+            return mFitInsetsLayout.callSuperDispatchApplyWindowInsets(insets);
         }
 
         try {
@@ -205,7 +205,7 @@ public class FitInsetsLayoutHelper {
 
             insets = insets.replaceSystemWindowInsets(remain.left, remain.top, remain.right, remain.bottom);
 
-            return mFitInsetsLayoutInterface.callSuperDispatchApplyWindowInsets(insets);
+            return mFitInsetsLayout.callSuperDispatchApplyWindowInsets(insets);
         } finally {
             mPrivateFlags &= ~FLAG_DISPATCH_APPLY_WINDOW_INSETS;
         }
@@ -214,12 +214,12 @@ public class FitInsetsLayoutHelper {
     public boolean fitSystemWindows(Rect insets) {
         if ((mPrivateFlags & FLAG_DISPATCH_APPLY_WINDOW_INSETS) != 0) {
             // start call from #dispatchApplyWindowInsets
-            return mFitInsetsLayoutInterface.callSuperFitSystemWindows(insets);
+            return mFitInsetsLayout.callSuperFitSystemWindows(insets);
         }
 
         if ((mPrivateFlags & FLAG_FIT_SYSTEM_WINDOWS) != 0) {
             // looper call from this method
-            return mFitInsetsLayoutInterface.callSuperFitSystemWindows(insets);
+            return mFitInsetsLayout.callSuperFitSystemWindows(insets);
         }
 
         try {
@@ -234,7 +234,7 @@ public class FitInsetsLayoutHelper {
 
             insets.set(remain);
 
-            return mFitInsetsLayoutInterface.callSuperFitSystemWindows(insets);
+            return mFitInsetsLayout.callSuperFitSystemWindows(insets);
         } finally {
             mPrivateFlags &= ~FLAG_FIT_SYSTEM_WINDOWS;
         }

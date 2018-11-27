@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 /**
  * 辅助处理自定义 window insets
  */
-public class FitInsetsLinearLayout extends LinearLayout implements FitInsetsLayoutInterface {
+public class FitInsetsLinearLayout extends LinearLayout implements FitInsetsLayout {
 
     private final FitInsetsLayoutHelper mFitInsetsLayoutHelper;
 

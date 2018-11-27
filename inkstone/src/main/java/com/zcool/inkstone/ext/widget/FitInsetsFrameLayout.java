@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 /**
  * 辅助处理自定义 window insets
  */
-public class FitInsetsFrameLayout extends FrameLayout implements FitInsetsLayoutInterface {
+public class FitInsetsFrameLayout extends FrameLayout implements FitInsetsLayout {
 
     private final FitInsetsLayoutHelper mFitInsetsLayoutHelper;
 

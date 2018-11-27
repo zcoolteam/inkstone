@@ -3,7 +3,7 @@ package com.zcool.inkstone.ext.share;
 import android.text.TextUtils;
 
 import com.sina.weibo.sdk.utils.LogUtil;
-import com.zcool.inkstone.BaseApplicationDelegate;
+import com.zcool.inkstone.Debug;
 
 /**
  * 配置第三方平台参数, 在 App 入口处配置. 通常只需要在主进程 (ui 所在进程) 中配置.
@@ -27,7 +27,7 @@ public final class ShareConfig {
         sWeiboAppKey = builder.mWeiboAppKey;
         sWeiboRedirectUrl = builder.mWeiboRedirectUrl;
 
-        if (BaseApplicationDelegate.getInstance().isDebug()) {
+        if (Debug.isDebug()) {
             LogUtil.enableLog();
         }
     }

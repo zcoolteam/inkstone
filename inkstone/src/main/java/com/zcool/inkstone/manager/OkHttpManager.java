@@ -3,6 +3,7 @@ package com.zcool.inkstone.manager;
 import android.text.TextUtils;
 
 import com.zcool.inkstone.BaseApplicationDelegate;
+import com.zcool.inkstone.Debug;
 import com.zcool.inkstone.lang.OkHttp3CookieJar;
 import com.zcool.inkstone.lang.Singleton;
 
@@ -99,8 +100,8 @@ public class OkHttpManager {
                     }
                 };
 
-        boolean debug = BaseApplicationDelegate.getInstance().isDebug();
-        boolean debugHttpBody = !disableDebugHttpBody && BaseApplicationDelegate.getInstance().isDebugHttpBody();
+        boolean debug = Debug.isDebug();
+        boolean debugHttpBody = !disableDebugHttpBody && Debug.isDebugHttpBody();
         if (debug) {
             Timber.d("createNew OkHttpClient: debug");
 

@@ -5,15 +5,18 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewParent;
 import android.view.WindowInsets;
 
+import com.zcool.inkstone.ext.widget.FitInsetsLayout;
 import com.zcool.inkstone.ext.widget.FitInsetsLayoutHelper;
-import com.zcool.inkstone.ext.widget.FitInsetsLayoutInterface;
 
-public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLayout implements FitInsetsLayoutInterface {
+public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLayout implements FitInsetsLayout {
 
     private final FitInsetsLayoutHelper mFitInsetsLayoutHelper;
 
@@ -44,6 +47,40 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
 
         return insetsTop;
     }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        ViewParent parent = this.getParent();
+        if (parent instanceof AppBarLayout) {
+            ((AppBarLayout) parent).addOnOffsetChangedListener(mOnOffsetChangedListener);
+            ViewCompat.requestApplyInsets(this);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        ViewParent parent = this.getParent();
+        if (parent instanceof AppBarLayout) {
+            ((AppBarLayout) parent).removeOnOffsetChangedListener(mOnOffsetChangedListener);
+        }
+    }
+
+    private final AppBarLayout.OnOffsetChangedListener mOnOffsetChangedListener = new AppBarLayout.OnOffsetChangedListener() {
+        @Override
+        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+            int childCount = getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View childView = getChildAt(i);
+
+
+            }
+        }
+    };
 
     protected FitInsetsLayoutHelper createFitInsetsLayoutHelper() {
         return new FitInsetsLayoutHelper(this);

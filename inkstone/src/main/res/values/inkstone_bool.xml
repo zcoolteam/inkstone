@@ -5,4 +5,5 @@
       # 注意, 打印 request's body or response's body 时, 会读取全部 body 内容.
      -->
     <bool name="inkstone_debug_http_body">false</bool>
+    <bool name="inkstone_debug_widget">false</bool>
 </resources>

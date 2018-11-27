@@ -91,7 +91,7 @@ public class BaseApplicationDelegate {
     public void onCreate(Context context) {
         throwIfNotInit();
 
-        if (isDebug()) {
+        if (Debug.isDebug()) {
             Timber.plant(new Timber.DebugTree());
         }
 
@@ -125,6 +125,10 @@ public class BaseApplicationDelegate {
 
     public boolean isDebugHttpBody() {
         return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug_http_body);
+    }
+
+    public boolean isDebugWidget() {
+        return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug_widget);
     }
 
     public AppCallbacks getAppCallbacks() {
