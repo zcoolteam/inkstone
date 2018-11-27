@@ -64,12 +64,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             minifyEnabled false
             resValue("bool", "inkstone_debug", "false")
+            resValue("bool", "inkstone_debug_widget", "false")
         }
         debug {
             signingConfig signingConfigs.sample
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             minifyEnabled false
             resValue("bool", "inkstone_debug", "true")
+            resValue("bool", "inkstone_debug_widget", "true")
             debuggable true
         }
         dev {
@@ -78,6 +80,7 @@ android {
             minifyEnabled false
             resValue("bool", "inkstone_debug", "true")
             resValue("bool", "inkstone_debug_http_body", "true")
+            resValue("bool", "inkstone_debug_widget", "true")
             debuggable true
             matchingFallbacks = "debug"
         }
