@@ -37,21 +37,29 @@
                         app:layout_constraintDimensionRatio="1:1" />
                 </android.support.constraint.ConstraintLayout>
 
-                <com.zcool.inkstone.ext.widget.FitInsetsFrameLayout
+                <com.zcool.sample.widget.ProgressViewFrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_collapseMode="pin"
-                    app:systemInsetPaddingTop="all"
-                    app:systemInsetPaddingTopNotConsume="true">
+                    app:layout_collapseMode="pin">
 
-                    <TextView
-                        android:id="@+id/title_text"
+                    <com.zcool.inkstone.ext.widget.FitInsetsFrameLayout
+                        android:id="@+id/title_bar_background"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="20dp"
-                        android:text="design title" />
-                </com.zcool.inkstone.ext.widget.FitInsetsFrameLayout>
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff"
+                        app:systemInsetPaddingTop="all"
+                        app:systemInsetPaddingTopNotConsume="true">
+
+                        <TextView
+                            android:id="@+id/title_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="20dp"
+                            android:text="design title"
+                            android:textColor="#000000" />
+                    </com.zcool.inkstone.ext.widget.FitInsetsFrameLayout>
+                </com.zcool.sample.widget.ProgressViewFrameLayout>
             </com.zcool.sample.widget.MinHeightInsetsCollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.math.MathUtils;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -78,14 +79,23 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
         @Override
         public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
             if (DEBUG) {
-                Timber.v("onOffsetChanged AppBarLayout totalScrollRange:%s, verticalOffset:%s", appBarLayout.getTotalScrollRange(), verticalOffset);
+                Timber.v("onOffsetChanged AppBarLayout totalScrollRange:%s, verticalOffset:%s, childCount:%s", appBarLayout.getTotalScrollRange(), verticalOffset, getChildCount());
             }
+
+            int maxRange = appBarLayout.getTotalScrollRange();
+            int offset = -verticalOffset;
 
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 View childView = getChildAt(i);
 
-                // TODO
+                if (childView instanceof ProgressView) {
+                    int viewHeight = childView.getHeight();
+                    float progress = offset * 1f / maxRange;
+                    progress = MathUtils.clamp(progress, 0f, 1f);
+
+                    ((ProgressView) childView).onProgressUpdate(appBarLayout, verticalOffset, progress, maxRange, offset, viewHeight);
+                }
             }
         }
     };
