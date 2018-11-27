@@ -84,6 +84,8 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
 
             int maxRange = appBarLayout.getTotalScrollRange();
             int offset = -verticalOffset;
+            float progress = offset * 1f / maxRange;
+            progress = MathUtils.clamp(progress, 0f, 1f);
 
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
@@ -91,9 +93,6 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
 
                 if (childView instanceof ProgressView) {
                     int viewHeight = childView.getHeight();
-                    float progress = offset * 1f / maxRange;
-                    progress = MathUtils.clamp(progress, 0f, 1f);
-
                     ((ProgressView) childView).onProgressUpdate(appBarLayout, verticalOffset, progress, maxRange, offset, viewHeight);
                 }
             }
