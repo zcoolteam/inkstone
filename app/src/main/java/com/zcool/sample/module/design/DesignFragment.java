@@ -1,5 +1,6 @@
 package com.zcool.sample.module.design;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
+import com.zcool.sample.module.design.widget.ProgressViewFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,9 @@ public class DesignFragment extends Fragment {
     @BindView(R.id.app_bar)
     AppBarLayout mAppBarLayout;
 
+    @BindView(R.id.progress_view_title)
+    ProgressViewFrameLayout mProgressViewTitle;
+
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
@@ -54,6 +59,11 @@ public class DesignFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mUnbinder = ButterKnife.bind(this, view);
+
+        Activity activity = getActivity();
+        if (activity != null) {
+            mProgressViewTitle.setSystemUiWindow(activity.getWindow());
+        }
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

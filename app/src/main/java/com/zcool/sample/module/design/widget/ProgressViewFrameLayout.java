@@ -1,4 +1,4 @@
-package com.zcool.sample.widget;
+package com.zcool.sample.module.design.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -9,11 +9,16 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.zcool.inkstone.Debug;
+import com.zcool.inkstone.lang.SystemUiHelper;
 import com.zcool.sample.R;
+import com.zcool.sample.widget.ProgressView;
+
+import java.lang.ref.WeakReference;
 
 import timber.log.Timber;
 
@@ -43,11 +48,11 @@ public class ProgressViewFrameLayout extends FrameLayout implements ProgressView
     @Override
     public void onProgressUpdate(AppBarLayout appBarLayout, int verticalOffset, float progress, int maxRange, int offset, int viewHeight) {
         int alpha;
-        if (progress <= 0.1f) {
+        if (progress <= 0.8f) {
             alpha = 0;
         } else if (progress <= 0.9) {
-            // [0.1, 0.9] -> [0, 255]
-            alpha = (int) (255f * (progress - 0.1f) / (0.9f - 0.1f));
+            // [0.8, 0.9] -> [0, 255]
+            alpha = (int) (255f * (progress - 0.8f) / (0.9f - 0.8f));
         } else {
             alpha = 255;
         }
@@ -87,6 +92,40 @@ public class ProgressViewFrameLayout extends FrameLayout implements ProgressView
                 Timber.v("mTitleBarBackground is null");
             }
         }
+
+        updateSystemUi();
+    }
+
+    private void updateSystemUi() {
+        Window window = null;
+        if (mWindowRef != null) {
+            window = mWindowRef.get();
+        }
+        if (window == null) {
+            return;
+        }
+        if (mLastAlpha == 0) {
+            // 状态栏白色文字
+            SystemUiHelper.from(window)
+                    .layoutStatusBar()
+                    .layoutStable()
+                    .setStatusBarTextColorWhite()
+                    .apply();
+        } else if (mLastAlpha == 255) {
+            // 状态栏黑色文字
+            SystemUiHelper.from(window)
+                    .layoutStatusBar()
+                    .layoutStable()
+                    .setStatusBarTextColorBlack()
+                    .apply();
+        }
+    }
+
+    private WeakReference<Window> mWindowRef;
+
+    public void setSystemUiWindow(Window window) {
+        mWindowRef = new WeakReference<>(window);
+        updateSystemUi();
     }
 
     private View mTitleBarBackground;
