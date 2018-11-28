@@ -1,9 +1,10 @@
 package com.zcool.inkstone.ext.backstack;
 
 import android.annotation.SuppressLint;
-import android.support.v7.view.WindowCallbackWrapper;
 import android.view.KeyEvent;
 import android.view.Window;
+
+import androidx.appcompat.view.WindowCallbackWrapper;
 
 @SuppressLint("RestrictedApi")
 public class WindowBackStackDispatcher extends WindowCallbackWrapper implements KeyEvent.Callback {

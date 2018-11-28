@@ -2,8 +2,6 @@ package com.zcool.inkstone.ext.share;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbAuthListener;
@@ -19,6 +17,9 @@ import com.zcool.inkstone.util.IOUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class ShareHelper implements Closeable {
 

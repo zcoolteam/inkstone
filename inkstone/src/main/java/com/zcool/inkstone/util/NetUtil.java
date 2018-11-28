@@ -2,7 +2,8 @@ package com.zcool.inkstone.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.v4.net.ConnectivityManagerCompat;
+
+import androidx.core.net.ConnectivityManagerCompat;
 
 /**
  * 网络相关

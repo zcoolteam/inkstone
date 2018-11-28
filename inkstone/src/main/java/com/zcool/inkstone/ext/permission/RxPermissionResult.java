@@ -1,11 +1,11 @@
 package com.zcool.inkstone.ext.permission;
 
-import android.support.annotation.NonNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
 
 public class RxPermissionResult {
 

@@ -3,9 +3,6 @@ package com.zcool.inkstone.ext.backstack.dialog;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.app.Activity;
-import android.support.annotation.AnimatorRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,6 +12,9 @@ import com.zcool.inkstone.ext.backstack.ViewBackLayer;
 import com.zcool.inkstone.ext.backstack.WindowBackStackDispatcher;
 import com.zcool.inkstone.util.ViewUtil;
 
+import androidx.annotation.AnimatorRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class ViewDialog extends ViewBackLayer {

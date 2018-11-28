@@ -1,7 +1,5 @@
 package com.zcool.inkstone.manager;
 
-import android.support.annotation.Nullable;
-
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.thread.TaskQueue;
 import com.zcool.inkstone.thread.Threads;
@@ -10,6 +8,7 @@ import com.zcool.inkstone.util.TimeUtil;
 
 import java.io.File;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 /**

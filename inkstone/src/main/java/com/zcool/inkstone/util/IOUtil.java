@@ -3,7 +3,6 @@ package com.zcool.inkstone.util;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteClosable;
 import android.graphics.BitmapRegionDecoder;
-import android.support.annotation.Nullable;
 import android.webkit.WebView;
 
 import com.zcool.inkstone.lang.AbortSignal;
@@ -24,6 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * IO 辅助类

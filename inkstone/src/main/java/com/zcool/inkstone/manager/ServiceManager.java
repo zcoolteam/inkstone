@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
-import android.support.v4.app.BundleCompat;
 
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.service.DefaultServiceContentProvider;
 import com.zcool.inkstone.service.ICoreService;
 import com.zcool.inkstone.util.ContextUtil;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.BundleCompat;
 import timber.log.Timber;
 
 /**

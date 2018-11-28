@@ -4,10 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.IdRes;
-import android.support.annotation.Nullable;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 import com.jakewharton.rxbinding2.view.RxView;
@@ -15,6 +11,10 @@ import com.zcool.inkstone.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;

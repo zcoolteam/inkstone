@@ -1,7 +1,5 @@
 package com.zcool.inkstone.ext.share.weixin;
 
-import android.support.annotation.Nullable;
-
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -15,6 +13,7 @@ import com.zcool.inkstone.util.ContextUtil;
 import java.io.Closeable;
 import java.io.IOException;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 /**

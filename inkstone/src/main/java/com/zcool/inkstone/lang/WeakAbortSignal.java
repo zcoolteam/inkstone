@@ -1,8 +1,8 @@
 package com.zcool.inkstone.lang;
 
-import android.support.annotation.Nullable;
-
 import java.lang.ref.WeakReference;
+
+import androidx.annotation.Nullable;
 
 /**
  * @return true, if the reference object is null.

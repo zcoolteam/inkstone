@@ -1,6 +1,6 @@
 package com.zcool.sample.widget;
 
-import android.support.design.widget.AppBarLayout;
+import com.google.android.material.appbar.AppBarLayout;
 
 public interface ProgressView {
 

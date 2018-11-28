@@ -1,6 +1,5 @@
 package com.zcool.inkstone.service;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.zcool.inkstone.db.SimpleDB;
@@ -9,6 +8,7 @@ import com.zcool.inkstone.lang.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 class StorageServiceProvider {

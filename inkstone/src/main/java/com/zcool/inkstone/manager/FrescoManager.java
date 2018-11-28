@@ -1,6 +1,5 @@
 package com.zcool.inkstone.manager;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.facebook.cache.disk.DiskCacheConfig;
@@ -28,6 +27,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.Executor;
 
+import androidx.annotation.Nullable;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleSource;
 import timber.log.Timber;

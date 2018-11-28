@@ -2,8 +2,6 @@ package com.zcool.sample.module.share;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.zcool.inkstone.ext.hierarchy.HierarchyDelegateHelper;
 import com.zcool.inkstone.ext.share.LifecyclerShareHelper;
@@ -11,6 +9,9 @@ import com.zcool.inkstone.ext.share.ShareHelper;
 import com.zcool.inkstone.ext.share.util.AuthUtil;
 import com.zcool.inkstone.ext.share.util.ShareUtil;
 import com.zcool.inkstone.lang.SystemUiHelper;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ShareActivity extends AppCompatActivity implements ShareHelperHost {
 

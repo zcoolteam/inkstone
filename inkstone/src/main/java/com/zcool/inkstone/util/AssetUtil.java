@@ -2,13 +2,14 @@ package com.zcool.inkstone.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.support.annotation.Nullable;
 
 import com.zcool.inkstone.lang.AbortSignal;
 import com.zcool.inkstone.lang.Progress;
 
 import java.io.InputStream;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * helper for read asset content

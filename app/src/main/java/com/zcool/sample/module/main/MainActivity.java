@@ -1,10 +1,11 @@
 package com.zcool.sample.module.main;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.zcool.inkstone.ext.hierarchy.HierarchyDelegateHelper;
 import com.zcool.inkstone.lang.SystemUiHelper;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 

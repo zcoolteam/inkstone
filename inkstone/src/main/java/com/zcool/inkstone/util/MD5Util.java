@@ -1,7 +1,5 @@
 package com.zcool.inkstone.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.zcool.inkstone.lang.Charsets;
@@ -10,6 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * MD5 辅助类(小写32位)

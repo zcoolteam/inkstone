@@ -2,7 +2,6 @@ package com.zcool.inkstone.ext.share.qq;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
@@ -13,6 +12,8 @@ import com.zcool.inkstone.util.ContextUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
+
+import androidx.annotation.NonNull;
 
 /**
  * QQ 登陆分享，Qzone 分享

@@ -1,10 +1,11 @@
 package com.zcool.sample.service;
 
 import android.os.IBinder;
-import android.support.annotation.Keep;
 
 import com.zcool.inkstone.annotation.ServicesProvider;
 import com.zcool.inkstone.service.BaseServicesProvider;
+
+import androidx.annotation.Keep;
 
 @Keep
 @ServicesProvider

@@ -1,9 +1,9 @@
 package com.zcool.inkstone.lang;
 
-import android.support.annotation.Nullable;
-
 import java.lang.reflect.Type;
 import java.util.Map;
+
+import androidx.annotation.Nullable;
 
 public abstract class AssetsCacheDataKeyHelper<T, K, V> extends AssetsCacheDataHelper<T> {
 

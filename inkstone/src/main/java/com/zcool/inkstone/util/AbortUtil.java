@@ -1,9 +1,9 @@
 package com.zcool.inkstone.util;
 
-import android.support.annotation.Nullable;
-
 import com.zcool.inkstone.lang.AbortException;
 import com.zcool.inkstone.lang.AbortSignal;
+
+import androidx.annotation.Nullable;
 
 public class AbortUtil {
 

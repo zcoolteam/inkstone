@@ -1,12 +1,12 @@
 package com.zcool.inkstone.service;
 
 import android.os.IBinder;
-import android.support.annotation.CallSuper;
 
 import com.zcool.inkstone.lang.Singleton;
 
 import java.util.HashMap;
 
+import androidx.annotation.CallSuper;
 import timber.log.Timber;
 
 public class BaseServicesProvider {

@@ -17,7 +17,7 @@ android {
         targetSdkVersion rootProject.ext.bcfg.ver.target_sdk
         versionCode rootProject.ext.bcfg.ver.versionCode
         versionName rootProject.ext.bcfg.ver.versionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
@@ -101,23 +101,17 @@ dependencies {
     implementation project(':inkstone')
     annotationProcessor project(':inkstone-processor')
 
-    implementation rootProject.ext.bcfg.deps.support_annotations
-    implementation rootProject.ext.bcfg.deps.support_app_compat
-    implementation rootProject.ext.bcfg.deps.support_recyclerview
-    implementation rootProject.ext.bcfg.deps.support_design
-    implementation rootProject.ext.bcfg.deps.support_constraint_layout
-    implementation rootProject.ext.bcfg.deps.support_multidex
     implementation rootProject.ext.bcfg.deps.rx_android
     implementation rootProject.ext.bcfg.deps.rxjava2
     implementation rootProject.ext.bcfg.deps.butterknife
     annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor
 
     // test
-    testImplementation rootProject.ext.bcfg.deps.junit_test
+    testImplementation rootProject.ext.bcfg.deps.junit
     // android test
-    androidTestImplementation rootProject.ext.bcfg.deps.support_test_runner_test
-    androidTestImplementation rootProject.ext.bcfg.deps.junit_test
-    androidTestImplementation rootProject.ext.bcfg.deps.support_espresso_core_test
+    androidTestImplementation rootProject.ext.bcfg.deps.junit
+    androidTestImplementation rootProject.ext.bcfg.deps.test_runner
+    androidTestImplementation rootProject.ext.bcfg.deps.test_espresso
     // other
     releaseImplementation rootProject.ext.bcfg.deps.leakcanary_no_op
     debugImplementation rootProject.ext.bcfg.deps.leakcanary

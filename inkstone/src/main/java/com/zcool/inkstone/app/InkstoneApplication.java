@@ -1,8 +1,8 @@
 package com.zcool.inkstone.app;
 
-import android.support.multidex.MultiDexApplication;
-
 import com.zcool.inkstone.Inkstone;
+
+import androidx.multidex.MultiDexApplication;
 
 public class InkstoneApplication extends MultiDexApplication {
 

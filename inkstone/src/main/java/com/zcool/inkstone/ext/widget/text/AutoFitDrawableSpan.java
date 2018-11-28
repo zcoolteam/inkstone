@@ -3,9 +3,10 @@ package com.zcool.inkstone.ext.widget.text;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.style.ReplacementSpan;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class AutoFitDrawableSpan extends ReplacementSpan {
 

@@ -1,7 +1,5 @@
 package com.zcool.inkstone.ext.share.util;
 
-import android.support.annotation.NonNull;
-
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
@@ -16,6 +14,7 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class AuthUtil {

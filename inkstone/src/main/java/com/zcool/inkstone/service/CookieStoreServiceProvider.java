@@ -1,9 +1,5 @@
 package com.zcool.inkstone.service;
 
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.v4.util.ObjectsCompat;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -17,6 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.core.util.ObjectsCompat;
+import androidx.core.util.Pair;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 import timber.log.Timber;

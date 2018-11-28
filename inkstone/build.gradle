@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -31,13 +31,16 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     api project(':inkstone-annotation')
 
-    api rootProject.ext.bcfg.deps.support_annotations
-    api rootProject.ext.bcfg.deps.support_app_compat
-    api rootProject.ext.bcfg.deps.support_multidex
+    api rootProject.ext.bcfg.deps.androidx_annotation
+    api rootProject.ext.bcfg.deps.androidx_appcompat
+    api rootProject.ext.bcfg.deps.androidx_multidex
+    api rootProject.ext.bcfg.deps.androidx_constraintlayout
+    api rootProject.ext.bcfg.deps.androidx_recyclerview
+    api rootProject.ext.bcfg.deps.material
+
     api(rootProject.ext.bcfg.deps.guava) {
         exclude module: 'failureaccess'
     }
-    api rootProject.ext.bcfg.deps.support_constraint_layout
     api rootProject.ext.bcfg.deps.timber
     api rootProject.ext.bcfg.deps.okhttp
     api rootProject.ext.bcfg.deps.okhttp_logging_interceptor

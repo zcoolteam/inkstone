@@ -7,12 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.BundleCompat;
 
 import com.zcool.inkstone.BaseApplicationDelegate;
 import com.zcool.inkstone.util.ContextUtil;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.BundleCompat;
 
 public class DefaultServiceContentProvider extends ContentProvider {
 

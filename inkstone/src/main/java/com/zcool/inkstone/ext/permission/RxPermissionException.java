@@ -1,6 +1,6 @@
 package com.zcool.inkstone.ext.permission;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class RxPermissionException extends RuntimeException {
 

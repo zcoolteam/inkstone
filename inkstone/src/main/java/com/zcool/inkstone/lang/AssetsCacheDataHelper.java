@@ -1,12 +1,13 @@
 package com.zcool.inkstone.lang;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.zcool.inkstone.util.AssetUtil;
 
 import java.lang.reflect.Type;
+
+import androidx.annotation.Nullable;
 
 public class AssetsCacheDataHelper<T> extends CacheDataHelper<T> {
 

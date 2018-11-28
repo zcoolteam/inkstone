@@ -4,15 +4,13 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.zcool.inkstone.Debug;
 import com.zcool.inkstone.lang.SystemUiHelper;
 import com.zcool.sample.R;
@@ -20,6 +18,8 @@ import com.zcool.sample.widget.ProgressView;
 
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class ProgressViewFrameLayout extends FrameLayout implements ProgressView {

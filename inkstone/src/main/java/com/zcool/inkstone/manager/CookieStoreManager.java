@@ -1,7 +1,6 @@
 package com.zcool.inkstone.manager;
 
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.service.BaseServicesProvider;
@@ -9,6 +8,7 @@ import com.zcool.inkstone.service.ICookieStoreService;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 /**

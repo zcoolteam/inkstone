@@ -9,7 +9,7 @@
     app:systemInsetPaddingRight="all"
     app:systemInsetPaddingTop="all">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -42,5 +42,5 @@
                 android:layout_height="wrap_content"
                 android:text="view dialog 4" />
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </com.zcool.inkstone.ext.widget.FitInsetsFrameLayout>

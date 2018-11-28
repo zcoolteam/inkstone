@@ -2,7 +2,6 @@ package com.zcool.inkstone.ext.share.weibo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
@@ -18,6 +17,7 @@ import com.zcool.inkstone.util.ContextUtil;
 import java.io.Closeable;
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 /**

@@ -1,11 +1,11 @@
 package com.zcool.sample.service;
 
-import android.support.annotation.Nullable;
-
 import com.google.gson.reflect.TypeToken;
 import com.zcool.inkstone.lang.CacheDataHelper;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.sample.entity.Session;
+
+import androidx.annotation.Nullable;
 
 class SessionServiceProvider {
 

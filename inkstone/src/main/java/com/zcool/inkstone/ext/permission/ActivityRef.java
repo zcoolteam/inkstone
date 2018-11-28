@@ -1,9 +1,9 @@
 package com.zcool.inkstone.ext.permission;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-
 import java.lang.ref.WeakReference;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 public class ActivityRef extends WeakReference<Object> {
 

@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     app:systemInsetPaddingBottom="all">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="40dp"
@@ -35,7 +35,7 @@
                         android:src="@mipmap/sample_ic_launcher"
                         app:layout_constrainedHeight="true"
                         app:layout_constraintDimensionRatio="1:1" />
-                </android.support.constraint.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.zcool.sample.module.design.widget.ProgressViewFrameLayout
                     android:id="@+id/progress_view_title"
@@ -63,7 +63,7 @@
                 </com.zcool.sample.module.design.widget.ProgressViewFrameLayout>
             </com.zcool.sample.widget.MinHeightInsetsCollapsingToolbarLayout>
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,12 +82,12 @@
                 app:tabPaddingTop="0dp"
                 app:tabSelectedTextColor="#FFf2f200"
                 app:tabTextColor="#FF282828" />
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </com.zcool.inkstone.ext.widget.FitInsetsFrameLayout>

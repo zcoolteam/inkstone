@@ -2,9 +2,6 @@ package com.zcool.inkstone;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.CallSuper;
-import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.zcool.inkstone.lang.NotInitException;
@@ -13,6 +10,9 @@ import com.zcool.inkstone.manager.FrescoManager;
 import com.zcool.inkstone.service.InkstoneService;
 import com.zcool.inkstone.util.ContextUtil;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 @Keep

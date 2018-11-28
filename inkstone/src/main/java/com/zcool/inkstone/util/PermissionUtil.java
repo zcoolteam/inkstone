@@ -1,7 +1,8 @@
 package com.zcool.inkstone.util;
 
 import android.Manifest;
-import android.support.v4.content.PermissionChecker;
+
+import androidx.core.content.PermissionChecker;
 
 public class PermissionUtil {
 

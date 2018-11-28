@@ -3,8 +3,9 @@ package com.zcool.inkstone.ext.widget;
 import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.view.WindowInsets;
+
+import androidx.annotation.NonNull;
 
 /**
  * 辅助处理自定义 window insets

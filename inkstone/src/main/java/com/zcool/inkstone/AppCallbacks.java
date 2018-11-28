@@ -6,12 +6,12 @@ import android.content.ComponentCallbacks;
 import android.content.ComponentCallbacks2;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 
 import com.zcool.inkstone.util.ContextUtil;
 
 import java.util.WeakHashMap;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class AppCallbacks {

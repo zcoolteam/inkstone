@@ -2,12 +2,13 @@ package com.zcool.sample;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.Keep;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.zcool.inkstone.BaseApplicationDelegate;
 import com.zcool.inkstone.annotation.ApplicationDelegate;
 import com.zcool.inkstone.ext.share.ShareConfig;
+
+import androidx.annotation.Keep;
 
 @Keep
 @ApplicationDelegate

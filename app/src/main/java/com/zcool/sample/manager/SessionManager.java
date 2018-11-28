@@ -1,7 +1,6 @@
 package com.zcool.sample.manager;
 
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.manager.ServiceManager;
@@ -9,6 +8,7 @@ import com.zcool.sample.entity.Session;
 import com.zcool.sample.service.ISessionService;
 import com.zcool.sample.service.MainServicesProvider;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class SessionManager {
