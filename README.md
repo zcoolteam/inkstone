@@ -46,12 +46,13 @@ package com.zcool.sample;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.Keep;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.zcool.inkstone.BaseApplicationDelegate;
 import com.zcool.inkstone.annotation.ApplicationDelegate;
 import com.zcool.inkstone.ext.share.ShareConfig;
+
+import androidx.annotation.Keep;
 
 @Keep
 @ApplicationDelegate
@@ -91,10 +92,11 @@ public class MainApplicationDelegate extends BaseApplicationDelegate {
 package com.zcool.sample.service;
 
 import android.os.IBinder;
-import android.support.annotation.Keep;
 
 import com.zcool.inkstone.annotation.ServicesProvider;
 import com.zcool.inkstone.service.BaseServicesProvider;
+
+import androidx.annotation.Keep;
 
 @Keep
 @ServicesProvider
@@ -345,12 +347,12 @@ interface ISessionService {
 ```java
 package com.zcool.sample.service;
 
-import android.support.annotation.Nullable;
-
 import com.google.gson.reflect.TypeToken;
 import com.zcool.inkstone.lang.CacheDataHelper;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.sample.entity.Session;
+
+import androidx.annotation.Nullable;
 
 class SessionServiceProvider {
 
@@ -437,10 +439,11 @@ class SessionService extends ISessionService.Stub {
 package com.zcool.sample.service;
 
 import android.os.IBinder;
-import android.support.annotation.Keep;
 
 import com.zcool.inkstone.annotation.ServicesProvider;
 import com.zcool.inkstone.service.BaseServicesProvider;
+
+import androidx.annotation.Keep;
 
 @Keep
 @ServicesProvider
@@ -476,7 +479,6 @@ public class MainServicesProvider extends BaseServicesProvider {
 package com.zcool.sample.manager;
 
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.manager.ServiceManager;
@@ -484,6 +486,7 @@ import com.zcool.sample.entity.Session;
 import com.zcool.sample.service.ISessionService;
 import com.zcool.sample.service.MainServicesProvider;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class SessionManager {
