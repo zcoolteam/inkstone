@@ -1,28 +1,22 @@
 package com.zcool.sample.module.design;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
 import com.zcool.sample.module.design.widget.ProgressViewFrameLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,11 +42,14 @@ public class DesignFragment extends Fragment {
     @BindView(R.id.app_bar)
     AppBarLayout mAppBarLayout;
 
+    @BindView(R.id.tab_layout)
+    TabLayout mTabLayout;
+
     @BindView(R.id.progress_view_title)
     ProgressViewFrameLayout mProgressViewTitle;
 
-    @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.pager)
+    ViewPager mPager;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -63,11 +60,12 @@ public class DesignFragment extends Fragment {
         Activity activity = getActivity();
         if (activity != null) {
             mProgressViewTitle.setSystemUiWindow(activity.getWindow());
+        } else {
+            Timber.e("activity is null");
         }
 
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(new DataAdapter());
+        mPager.setAdapter(new DataAdapter(getChildFragmentManager()));
+        mTabLayout.setupWithViewPager(mPager);
     }
 
     @Override
@@ -80,64 +78,29 @@ public class DesignFragment extends Fragment {
         }
     }
 
-    private class DataAdapter extends RecyclerView.Adapter<DataViewHolder> {
+    private class DataAdapter extends FragmentPagerAdapter {
 
-        private List<String> mItems = new ArrayList<>();
-
-        {
-            for (int i = 0; i < 100; i++) {
-                mItems.add("item#" + i);
-            }
-        }
-
-        @NonNull
-        @Override
-        public DataViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-            Timber.v("onCreateViewHolder position#%s", position);
-
-            TextView textView = new AppCompatTextView(viewGroup.getContext());
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            textView.setLayoutParams(layoutParams);
-            textView.setGravity(Gravity.CENTER);
-
-            final int padding = DimenUtil.dp2px(10);
-            textView.setPadding(padding, padding, padding, padding);
-
-            textView.setTextColor(Color.WHITE);
-            textView.setBackgroundColor(Color.GRAY);
-            textView.setTextSize(16);
-
-            return new DataViewHolder(textView);
+        public DataAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull DataViewHolder dataViewHolder, int position) {
-            Timber.v("onBindViewHolder position#%s", position);
+        public Fragment getItem(int i) {
+            return DesignItemFragment.newInstance("item#" + i);
+        }
 
-            dataViewHolder.onBind(mItems.get(position));
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "item#" + position;
         }
 
         @Override
-        public int getItemCount() {
-            return mItems.size();
-        }
-    }
-
-    private class DataViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView mItemText;
-
-        public DataViewHolder(@NonNull TextView itemView) {
-            super(itemView);
-            mItemText = itemView;
-        }
-
-        public void onBind(final String text) {
-            mItemText.setText(text);
+        public int getCount() {
+            return 5;
         }
 
     }
+
 
 }
