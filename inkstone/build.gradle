@@ -58,7 +58,7 @@ dependencies {
     api rootProject.ext.bcfg.deps.retrofit_rxjava2
 
     api "com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.1.6"
-    api 'com.sina.weibo.sdk:core:4.3.1:openDefaultRelease@aar'
+    api 'com.sina.weibo.sdk:core:4.3.6:openDefaultRelease@aar'
 }
 
 apply from: ('bintray.gradle')
