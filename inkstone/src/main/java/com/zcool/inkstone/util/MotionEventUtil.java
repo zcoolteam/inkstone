@@ -1,7 +1,6 @@
 package com.zcool.inkstone.util;
 
 import android.os.SystemClock;
-import android.view.InputDevice;
 import android.view.MotionEvent;
 
 /**
@@ -15,7 +14,6 @@ public class MotionEventUtil {
     public static MotionEvent createCancelTouchMotionEvent() {
         final long now = SystemClock.uptimeMillis();
         MotionEvent event = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, 0.0f, 0.0f, 0);
-        event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
         return event;
     }
 
