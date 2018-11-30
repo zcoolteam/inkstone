@@ -8,11 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.zcool.inkstone.lang.DisposableHolder;
+import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,9 +23,14 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class DesignItemFragment extends Fragment {
@@ -45,6 +53,11 @@ public class DesignItemFragment extends Fragment {
 
     private Unbinder mUnbinder;
 
+    private final DisposableHolder mRequestHolder = new DisposableHolder();
+
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout mRefreshLayout;
+
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
@@ -57,6 +70,34 @@ public class DesignItemFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new DataAdapter());
+
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mRequestHolder.set(Single.fromCallable(
+                        new Callable<Object>() {
+                            @Override
+                            public Object call() throws Exception {
+                                Threads.sleepQuietly(3000L);
+                                return new Object();
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Object>() {
+                            @Override
+                            public void accept(Object o) throws Exception {
+                                mRefreshLayout.setRefreshing(false);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable e) throws Exception {
+                                e.printStackTrace();
+                                mRefreshLayout.setRefreshing(false);
+                            }
+                        }));
+            }
+        });
     }
 
     @Override
@@ -67,6 +108,8 @@ public class DesignItemFragment extends Fragment {
             mUnbinder.unbind();
             mUnbinder = null;
         }
+
+        mRequestHolder.clear();
     }
 
     private class DataAdapter extends RecyclerView.Adapter<DataViewHolder> {
