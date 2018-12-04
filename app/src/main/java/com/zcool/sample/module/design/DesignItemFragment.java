@@ -12,6 +12,7 @@ import com.zcool.inkstone.lang.DisposableHolder;
 import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
+import com.zcool.sample.widget.refreshlayout.PtrLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -56,7 +56,7 @@ public class DesignItemFragment extends Fragment {
     private final DisposableHolder mRequestHolder = new DisposableHolder();
 
     @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
+    PtrLayout mRefreshLayout;
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -71,7 +71,7 @@ public class DesignItemFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new DataAdapter());
 
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mRequestHolder.set(Single.fromCallable(
