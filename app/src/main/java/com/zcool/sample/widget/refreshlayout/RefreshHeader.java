@@ -22,25 +22,25 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import timber.log.Timber;
 
-public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
+public class RefreshHeader extends FrameLayout implements RefreshLayout.HeaderView {
 
-    public PtrHeader(@NonNull Context context) {
+    public RefreshHeader(@NonNull Context context) {
         super(context);
         init();
     }
 
-    public PtrHeader(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public RefreshHeader(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PtrHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public RefreshHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PtrHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
+    public RefreshHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -180,10 +180,10 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
     private ValueAnimator mToRefreshAnimator;
 
-    private PtrLayout.OnRefreshListener mOnRefreshListener;
+    private RefreshLayout.OnRefreshListener mOnRefreshListener;
 
     @Override
-    public void setOnRefreshListener(PtrLayout.OnRefreshListener onRefreshListener) {
+    public void setOnRefreshListener(RefreshLayout.OnRefreshListener onRefreshListener) {
         mOnRefreshListener = onRefreshListener;
     }
 

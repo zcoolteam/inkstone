@@ -17,25 +17,25 @@ import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
 import timber.log.Timber;
 
-public class PtrLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
+public class RefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
 
-    public PtrLayout(Context context) {
+    public RefreshLayout(Context context) {
         super(context);
         init();
     }
 
-    public PtrLayout(Context context, AttributeSet attrs) {
+    public RefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PtrLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PtrLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public RefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
