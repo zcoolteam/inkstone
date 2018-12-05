@@ -75,6 +75,7 @@ def createGitVersionCode() {
 
 def createGitVersionName() {
     // 使用距离最近的标签名 + '.' + 距离该标签的 commit 数量 作为版本名称, 通常标签使用如 1.0 命名方式
+    // 忽略标签开始的 parent-
     // 如果没有标签, 则使用 '0.0' 作为默认值
     def cmd = 'git describe --tags'
     def cmdResult = cmd.execute().text.trim()
@@ -95,6 +96,13 @@ def createGitVersionName() {
     } else {
         tagName = tagDesc
         commitCount = '0'
+    }
+
+    if (tagName.startsWith("parent")) {
+        tagName = tagName.substring(5)
+    }
+    if (tagName.startsWith("-")) {
+        tagName = tagName.substring(1)
     }
 
     def gitVersionName = tagName + '.' + commitCount
