@@ -99,7 +99,7 @@ def createGitVersionName() {
     }
 
     if (tagName.startsWith("parent")) {
-        tagName = tagName.substring(5)
+        tagName = tagName.substring(6)
     }
     if (tagName.startsWith("-")) {
         tagName = tagName.substring(1)
