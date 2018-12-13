@@ -33,7 +33,7 @@ android {
         buildConfigField("String", "WX_APP_SECRET", "\"${weixinAppSecret}\"")
         buildConfigField("String", "WEIBO_APP_KEY", "\"${weiboAppKey}\"")
         buildConfigField("String", "WEIBO_REDIRECT_URL", "\"${weiboRedirectUrl}\"")
-        manifestPlaceholders = ["inkstone_qq_app_id": "\"${qqAppId}\""]
+        manifestPlaceholders = ["inkstone_qq_app_id": "${qqAppId}"]
     }
 
     productFlavors {
