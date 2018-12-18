@@ -26,20 +26,6 @@
     <attr name="systemInsetPaddingRightNotConsume" format="boolean" tools:ignore="ResourceName" />
     <attr name="systemInsetPaddingBottomNotConsume" format="boolean" tools:ignore="ResourceName" />
 
-    <declare-styleable name="FitInsetsLayout" tools:ignore="MissingDefaultResource,ResourceName">
-        <attr name="systemInsetPaddingLeft" />
-        <attr name="systemInsetPaddingTop" />
-        <attr name="systemInsetPaddingRight" />
-        <attr name="systemInsetPaddingBottom" />
-        <attr name="systemInsetPaddingLeftNotSet" />
-        <attr name="systemInsetPaddingTopNotSet" />
-        <attr name="systemInsetPaddingRightNotSet" />
-        <attr name="systemInsetPaddingBottomNotSet" />
-        <attr name="systemInsetPaddingLeftNotConsume" />
-        <attr name="systemInsetPaddingTopNotConsume" />
-        <attr name="systemInsetPaddingRightNotConsume" />
-        <attr name="systemInsetPaddingBottomNotConsume" />
-    </declare-styleable>
     <declare-styleable name="FitInsetsFrameLayout" tools:ignore="ResourceName">
         <attr name="systemInsetPaddingLeft" />
         <attr name="systemInsetPaddingTop" />
