@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zcool.inkstone.ext.widget.FitInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/app_main_content"
     android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     app:layout_collapseMode="pin">
 
-                    <com.zcool.inkstone.ext.widget.FitInsetsFrameLayout
+                    <com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout
                         android:id="@+id/title_bar_background"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                             android:paddingLeft="20dp"
                             android:text="design title"
                             android:textColor="#000000" />
-                    </com.zcool.inkstone.ext.widget.FitInsetsFrameLayout>
+                    </com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout>
                 </com.zcool.sample.module.design.widget.ProgressViewFrameLayout>
             </com.zcool.sample.widget.MinHeightInsetsCollapsingToolbarLayout>
 
@@ -90,4 +90,4 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</com.zcool.inkstone.ext.widget.FitInsetsFrameLayout>
+</com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout>

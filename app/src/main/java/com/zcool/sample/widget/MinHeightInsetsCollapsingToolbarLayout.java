@@ -12,19 +12,19 @@ import android.view.WindowInsets;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.zcool.inkstone.Debug;
-import com.zcool.inkstone.ext.widget.FitInsetsLayout;
-import com.zcool.inkstone.ext.widget.FitInsetsLayoutHelper;
+import com.zcool.inkstone.ext.widget.SystemInsetsLayout;
+import com.zcool.inkstone.ext.widget.SystemInsetsLayoutHelper;
 
 import androidx.annotation.NonNull;
 import androidx.core.math.MathUtils;
 import androidx.core.view.ViewCompat;
 import timber.log.Timber;
 
-public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLayout implements FitInsetsLayout {
+public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLayout implements SystemInsetsLayout {
 
     private final boolean DEBUG = Debug.isDebugWidget();
 
-    private final FitInsetsLayoutHelper mFitInsetsLayoutHelper;
+    private final SystemInsetsLayoutHelper mSystemInsetsLayoutHelper;
 
     public MinHeightInsetsCollapsingToolbarLayout(Context context) {
         this(context, null);
@@ -38,13 +38,13 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
         super(context, attrs, defStyleAttr);
 
         ViewCompat.setOnApplyWindowInsetsListener(this, null);
-        mFitInsetsLayoutHelper = createFitInsetsLayoutHelper();
-        mFitInsetsLayoutHelper.init(context, attrs, defStyleAttr, 0);
+        mSystemInsetsLayoutHelper = createFitInsetsLayoutHelper();
+        mSystemInsetsLayoutHelper.init(context, attrs, defStyleAttr, 0);
     }
 
     @Override
     public int getMinimumHeight() {
-        int insetsTop = getLastInsets().top;
+        int insetsTop = getLastSystemInsets().top;
         int childCount = getChildCount();
         if (childCount > 0) {
             int childMinHeight = getChildAt(0).getMinimumHeight();
@@ -99,46 +99,46 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
         }
     };
 
-    protected FitInsetsLayoutHelper createFitInsetsLayoutHelper() {
-        return new FitInsetsLayoutHelper(this);
+    protected SystemInsetsLayoutHelper createFitInsetsLayoutHelper() {
+        return new SystemInsetsLayoutHelper(this);
     }
 
     @Override
     @NonNull
-    public Rect getFitInsetPadding() {
-        return mFitInsetsLayoutHelper.getFitInsetPadding();
+    public Rect getSystemInsetsPadding() {
+        return mSystemInsetsLayoutHelper.getSystemInsetsPadding();
     }
 
     @Override
-    public void setFitInsetPadding(int left, int top, int right, int bottom) {
-        mFitInsetsLayoutHelper.setFitInsetPadding(left, top, right, bottom);
+    public void setSystemInsetsPadding(int left, int top, int right, int bottom) {
+        mSystemInsetsLayoutHelper.setSystemInsetsPadding(left, top, right, bottom);
     }
 
     @Override
     @NonNull
-    public boolean[] getFitInsetPaddingNotSet() {
-        return mFitInsetsLayoutHelper.getFitInsetPaddingNotSet();
+    public boolean[] getSystemInsetsPaddingNotApply() {
+        return mSystemInsetsLayoutHelper.getSystemInsetsPaddingNotApply();
     }
 
     @Override
-    public void setFitInsetPaddingNotSet(boolean left, boolean top, boolean right, boolean bottom) {
-        mFitInsetsLayoutHelper.setFitInsetPaddingNotSet(left, true, right, bottom);
+    public void setSystemInsetsPaddingNotApply(boolean left, boolean top, boolean right, boolean bottom) {
+        mSystemInsetsLayoutHelper.setSystemInsetsPaddingNotApply(left, true, right, bottom);
     }
 
     @NonNull
     @Override
-    public boolean[] getFitInsetPaddingNotConsume() {
-        return mFitInsetsLayoutHelper.getFitInsetPaddingNotConsume();
+    public boolean[] getSystemInsetsPaddingNotConsume() {
+        return mSystemInsetsLayoutHelper.getFitInsetPaddingNotConsume();
     }
 
-    public void setFitInsetPaddingNotConsume(boolean left, boolean top, boolean right, boolean bottom) {
-        mFitInsetsLayoutHelper.setFitInsetPaddingNotConsume(left, top, right, bottom);
+    public void setSystemInsetsPaddingNotConsume(boolean left, boolean top, boolean right, boolean bottom) {
+        mSystemInsetsLayoutHelper.setFitInsetPaddingNotConsume(left, top, right, bottom);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
-        return mFitInsetsLayoutHelper.dispatchApplyWindowInsets(insets);
+        return mSystemInsetsLayoutHelper.dispatchApplyWindowInsets(insets);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
@@ -149,7 +149,7 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
 
     @Override
     public boolean fitSystemWindows(Rect insets) {
-        return mFitInsetsLayoutHelper.fitSystemWindows(insets);
+        return mSystemInsetsLayoutHelper.fitSystemWindows(insets);
     }
 
     @Override
@@ -159,8 +159,8 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
 
     @NonNull
     @Override
-    public Rect getLastInsets() {
-        return mFitInsetsLayoutHelper.getLastInsets();
+    public Rect getLastSystemInsets() {
+        return mSystemInsetsLayoutHelper.getLastSystemInsets();
     }
 
 }

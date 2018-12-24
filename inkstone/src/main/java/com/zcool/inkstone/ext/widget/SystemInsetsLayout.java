@@ -10,24 +10,24 @@ import androidx.annotation.NonNull;
 /**
  * 辅助处理自定义 window insets
  *
- * @see FitInsetsLayoutHelper
+ * @see SystemInsetsLayoutHelper
  */
-public interface FitInsetsLayout {
+public interface SystemInsetsLayout {
 
     @NonNull
-    Rect getFitInsetPadding();
+    Rect getSystemInsetsPadding();
 
-    void setFitInsetPadding(int left, int top, int right, int bottom);
-
-    @NonNull
-    boolean[] getFitInsetPaddingNotSet();
-
-    void setFitInsetPaddingNotSet(boolean left, boolean top, boolean right, boolean bottom);
+    void setSystemInsetsPadding(int left, int top, int right, int bottom);
 
     @NonNull
-    boolean[] getFitInsetPaddingNotConsume();
+    boolean[] getSystemInsetsPaddingNotApply();
 
-    void setFitInsetPaddingNotConsume(boolean left, boolean top, boolean right, boolean bottom);
+    void setSystemInsetsPaddingNotApply(boolean left, boolean top, boolean right, boolean bottom);
+
+    @NonNull
+    boolean[] getSystemInsetsPaddingNotConsume();
+
+    void setSystemInsetsPaddingNotConsume(boolean left, boolean top, boolean right, boolean bottom);
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     WindowInsets dispatchApplyWindowInsets(WindowInsets insets);
@@ -40,6 +40,6 @@ public interface FitInsetsLayout {
     boolean callSuperFitSystemWindows(Rect insets);
 
     @NonNull
-    Rect getLastInsets();
+    Rect getLastSystemInsets();
 
 }
