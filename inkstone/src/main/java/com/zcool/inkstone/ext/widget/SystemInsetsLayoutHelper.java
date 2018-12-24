@@ -79,34 +79,34 @@ public class SystemInsetsLayoutHelper {
             Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray a =
                 context.obtainStyledAttributes(
-                        attrs, R.styleable.FitInsetsLayout, defStyleAttr, defStyleRes);
+                        attrs, R.styleable.SystemInsetsLayout, defStyleAttr, defStyleRes);
 
         mSystemInsetPaddingLeft =
                 a.getLayoutDimension(
-                        R.styleable.FitInsetsLayout_systemInsetPaddingLeft,
+                        R.styleable.SystemInsetsLayout_systemInsetPaddingLeft,
                         mSystemInsetPaddingLeft);
         mSystemInsetPaddingTop =
                 a.getLayoutDimension(
-                        R.styleable.FitInsetsLayout_systemInsetPaddingTop,
+                        R.styleable.SystemInsetsLayout_systemInsetPaddingTop,
                         mSystemInsetPaddingTop);
         mSystemInsetPaddingRight =
                 a.getLayoutDimension(
-                        R.styleable.FitInsetsLayout_systemInsetPaddingRight,
+                        R.styleable.SystemInsetsLayout_systemInsetPaddingRight,
                         mSystemInsetPaddingRight);
         mSystemInsetPaddingBottom =
                 a.getLayoutDimension(
-                        R.styleable.FitInsetsLayout_systemInsetPaddingBottom,
+                        R.styleable.SystemInsetsLayout_systemInsetPaddingBottom,
                         mSystemInsetPaddingBottom);
 
-        mSystemInsetPaddingLeftNotApply = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingLeftNotSet, mSystemInsetPaddingLeftNotApply);
-        mSystemInsetPaddingTopNotApply = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingTopNotSet, mSystemInsetPaddingTopNotApply);
-        mSystemInsetPaddingRightNotApply = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingRightNotSet, mSystemInsetPaddingRightNotApply);
-        mSystemInsetPaddingBottomNotApply = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingBottomNotSet, mSystemInsetPaddingBottomNotApply);
+        mSystemInsetPaddingLeftNotApply = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingLeftNotApply, mSystemInsetPaddingLeftNotApply);
+        mSystemInsetPaddingTopNotApply = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingTopNotApply, mSystemInsetPaddingTopNotApply);
+        mSystemInsetPaddingRightNotApply = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingRightNotApply, mSystemInsetPaddingRightNotApply);
+        mSystemInsetPaddingBottomNotApply = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingBottomNotApply, mSystemInsetPaddingBottomNotApply);
 
-        mSystemInsetPaddingLeftNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingLeftNotConsume, mSystemInsetPaddingLeftNotConsume);
-        mSystemInsetPaddingTopNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingTopNotConsume, mSystemInsetPaddingTopNotConsume);
-        mSystemInsetPaddingRightNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingRightNotConsume, mSystemInsetPaddingRightNotConsume);
-        mSystemInsetPaddingBottomNotConsume = a.getBoolean(R.styleable.FitInsetsLayout_systemInsetPaddingBottomNotConsume, mSystemInsetPaddingBottomNotConsume);
+        mSystemInsetPaddingLeftNotConsume = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingLeftNotConsume, mSystemInsetPaddingLeftNotConsume);
+        mSystemInsetPaddingTopNotConsume = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingTopNotConsume, mSystemInsetPaddingTopNotConsume);
+        mSystemInsetPaddingRightNotConsume = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingRightNotConsume, mSystemInsetPaddingRightNotConsume);
+        mSystemInsetPaddingBottomNotConsume = a.getBoolean(R.styleable.SystemInsetsLayout_systemInsetPaddingBottomNotConsume, mSystemInsetPaddingBottomNotConsume);
 
         a.recycle();
 
