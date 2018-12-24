@@ -2,7 +2,7 @@
 
     <style name="Inkstone.Base.Theme" parent="Theme.AppCompat.Light.NoActionBar" />
 
-    <style name="Inkstone.Base.Theme.Splash" />
+    <style name="Inkstone.Base.Theme.Full" />
 
     <style name="Inkstone.Theme" parent="Inkstone.Base.Theme">
         <item name="android:windowBackground">@android:color/white</item>
@@ -14,7 +14,7 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
-    <style name="Inkstone.Theme.Splash" parent="Inkstone.Base.Theme.Splash">
+    <style name="Inkstone.Theme.Full" parent="Inkstone.Base.Theme.Full">
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 </resources>
