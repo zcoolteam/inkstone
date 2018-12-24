@@ -14,7 +14,7 @@ public class SystemUiHelper {
 
     private Window mWindow;
     private int mSystemUiVisibility;
-    private boolean mStatusBarTextColorBlack;
+    private boolean mLightStatusBar;
 
     private SystemUiHelper() {
     }
@@ -58,34 +58,30 @@ public class SystemUiHelper {
         return this;
     }
 
-    public SystemUiHelper setStatusBarTextColorWhite() {
-        return setStatusBarTextColor(false);
+    public SystemUiHelper setLightStatusBar() {
+        return setLightStatusBar(true);
     }
 
-    public SystemUiHelper setStatusBarTextColorBlack() {
-        return setStatusBarTextColor(true);
-    }
-
-    public SystemUiHelper setStatusBarTextColor(boolean black) {
+    public SystemUiHelper setLightStatusBar(boolean lightStatusBar) {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (black) {
+            if (lightStatusBar) {
                 mSystemUiVisibility |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             } else {
                 mSystemUiVisibility &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             }
         }
 
-        mStatusBarTextColorBlack = black;
+        mLightStatusBar = lightStatusBar;
         return this;
     }
 
     public void apply() {
         // [4.4, 6.0) 之间的部分第三方 rom 支持设置 status bar 字体颜色
         if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 23) {
-            if (trySetMIUIStatusBarLightMode(mWindow, mStatusBarTextColorBlack)) {
-                Timber.v("success set miui status bar black text color %s", mStatusBarTextColorBlack);
-            } else if (trySetFlymeStatusBarLightMode(mWindow, mStatusBarTextColorBlack)) {
-                Timber.v("success set flyme status bar black text color %s", mStatusBarTextColorBlack);
+            if (MIUICompat.setStatusBarStyle(mWindow, mLightStatusBar)) {
+                Timber.v("success set miui status bar black text color %s", mLightStatusBar);
+            } else if (FlymeCompat.setStatusBarStyle(mWindow, mLightStatusBar)) {
+                Timber.v("success set flyme status bar black text color %s", mLightStatusBar);
             }
         }
 
@@ -105,52 +101,60 @@ public class SystemUiHelper {
     }
 
     // 魅族
-    private static boolean trySetFlymeStatusBarLightMode(Window window, boolean dark) {
-        boolean result = false;
-        try {
-            Class clazz = WindowManager.LayoutParams.class;
-            WindowManager.LayoutParams lp = window.getAttributes();
-            Field darkFlag = clazz.getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
-            Field meizuFlags = clazz.getDeclaredField("meizuFlags");
-            darkFlag.setAccessible(true);
-            meizuFlags.setAccessible(true);
-            int bit = darkFlag.getInt(null);
-            int value = meizuFlags.getInt(lp);
-            if (dark) {
-                value |= bit;
-            } else {
-                value &= ~bit;
+    private static class FlymeCompat {
+
+        private static boolean setStatusBarStyle(Window window, boolean lightStatusBar) {
+            boolean result = false;
+            try {
+                Class clazz = WindowManager.LayoutParams.class;
+                WindowManager.LayoutParams lp = window.getAttributes();
+                Field darkFlag = clazz.getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
+                Field meizuFlags = clazz.getDeclaredField("meizuFlags");
+                darkFlag.setAccessible(true);
+                meizuFlags.setAccessible(true);
+                int bit = darkFlag.getInt(null);
+                int value = meizuFlags.getInt(lp);
+                if (lightStatusBar) {
+                    value |= bit;
+                } else {
+                    value &= ~bit;
+                }
+                meizuFlags.setInt(lp, value);
+                window.setAttributes(lp);
+                result = true;
+            } catch (Throwable e) {
+                // ignore
             }
-            meizuFlags.setInt(lp, value);
-            window.setAttributes(lp);
-            result = true;
-        } catch (Throwable e) {
-            // ignore
+            return result;
         }
-        return result;
+
     }
 
     // 小米
-    private static boolean trySetMIUIStatusBarLightMode(Window window, boolean dark) {
-        boolean result = false;
-        try {
-            Class clazz = Class.forName("android.view.MiuiWindowManager$LayoutParams");
-            Field darkFlagField = clazz.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
-            darkFlagField.setAccessible(true);
-            Method extraFlagField = window.getClass().getMethod("setExtraFlags", int.class, int.class);
-            extraFlagField.setAccessible(true);
+    private static class MIUICompat {
 
-            int darkModeFlag = darkFlagField.getInt(null);
-            if (dark) {
-                extraFlagField.invoke(window, darkModeFlag, darkModeFlag); // 状态栏透明且黑色字体
-            } else {
-                extraFlagField.invoke(window, 0, darkModeFlag); // 清除黑色字体
+        private static boolean setStatusBarStyle(Window window, boolean lightStatusBar) {
+            boolean result = false;
+            try {
+                Class clazz = Class.forName("android.view.MiuiWindowManager$LayoutParams");
+                Field darkFlagField = clazz.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+                darkFlagField.setAccessible(true);
+                Method extraFlagField = window.getClass().getMethod("setExtraFlags", int.class, int.class);
+                extraFlagField.setAccessible(true);
+
+                int darkModeFlag = darkFlagField.getInt(null);
+                if (lightStatusBar) {
+                    extraFlagField.invoke(window, darkModeFlag, darkModeFlag); // 状态栏透明且黑色字体
+                } else {
+                    extraFlagField.invoke(window, 0, darkModeFlag); // 清除黑色字体
+                }
+                result = true;
+            } catch (Throwable e) {
+                // ignore
             }
-            result = true;
-        } catch (Throwable e) {
-            // ignore
+            return result;
         }
-        return result;
+
     }
 
 }

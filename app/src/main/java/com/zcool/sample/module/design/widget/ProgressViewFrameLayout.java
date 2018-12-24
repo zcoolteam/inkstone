@@ -109,14 +109,14 @@ public class ProgressViewFrameLayout extends FrameLayout implements ProgressView
             SystemUiHelper.from(window)
                     .layoutStatusBar()
                     .layoutStable()
-                    .setStatusBarTextColorWhite()
+                    .setLightStatusBar(false)
                     .apply();
         } else if (mLastAlpha == 255) {
             // 状态栏黑色文字
             SystemUiHelper.from(window)
                     .layoutStatusBar()
                     .layoutStable()
-                    .setStatusBarTextColorBlack()
+                    .setLightStatusBar(true)
                     .apply();
         }
     }
