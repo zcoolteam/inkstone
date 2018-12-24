@@ -22,6 +22,8 @@ public class ShareActivity extends AppCompatActivity implements ShareHelperHost 
         SystemUiHelper.from(getWindow())
                 .layoutStatusBar()
                 .layoutStable()
+                .setLightStatusBar()
+                .setLightNavigationBar()
                 .apply();
 
         HierarchyDelegateHelper.showContentFragment(

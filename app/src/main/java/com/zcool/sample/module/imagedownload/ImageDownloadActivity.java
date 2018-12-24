@@ -17,6 +17,8 @@ public class ImageDownloadActivity extends AppCompatActivity {
         SystemUiHelper.from(getWindow())
                 .layoutStatusBar()
                 .layoutStable()
+                .setLightStatusBar()
+                .setLightNavigationBar()
                 .apply();
 
         HierarchyDelegateHelper.showContentFragment(

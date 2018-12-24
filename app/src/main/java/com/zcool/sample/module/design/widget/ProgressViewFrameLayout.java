@@ -110,6 +110,7 @@ public class ProgressViewFrameLayout extends FrameLayout implements ProgressView
                     .layoutStatusBar()
                     .layoutStable()
                     .setLightStatusBar(false)
+                    .setLightNavigationBar()
                     .apply();
         } else if (mLastAlpha == 255) {
             // 状态栏黑色文字
@@ -117,6 +118,7 @@ public class ProgressViewFrameLayout extends FrameLayout implements ProgressView
                     .layoutStatusBar()
                     .layoutStable()
                     .setLightStatusBar(true)
+                    .setLightNavigationBar()
                     .apply();
         }
     }
