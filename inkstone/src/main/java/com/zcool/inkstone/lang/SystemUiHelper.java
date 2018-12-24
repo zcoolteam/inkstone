@@ -15,6 +15,7 @@ public class SystemUiHelper {
     private Window mWindow;
     private int mSystemUiVisibility;
     private boolean mLightStatusBar;
+    private boolean mLightNavigationBar;
 
     private SystemUiHelper() {
     }
@@ -72,6 +73,23 @@ public class SystemUiHelper {
         }
 
         mLightStatusBar = lightStatusBar;
+        return this;
+    }
+
+    public SystemUiHelper setLightNavigationBar() {
+        return setLightNavigationBar(true);
+    }
+
+    public SystemUiHelper setLightNavigationBar(boolean lightNavigationBar) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (lightNavigationBar) {
+                mSystemUiVisibility |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            } else {
+                mSystemUiVisibility &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            }
+        }
+
+        mLightNavigationBar = lightNavigationBar;
         return this;
     }
 

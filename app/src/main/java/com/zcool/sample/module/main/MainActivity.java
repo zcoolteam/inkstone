@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
                 .layoutStatusBar()
                 .layoutStable()
                 .setLightStatusBar()
+                .setLightNavigationBar()
                 .apply();
 
         HierarchyDelegateHelper.showContentFragment(
