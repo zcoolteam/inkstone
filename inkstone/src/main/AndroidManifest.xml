@@ -75,6 +75,13 @@
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
             </intent-filter>
         </receiver>
+        <activity
+            android:name="com.zcool.inkstone.ext.share.process.ProcessShareActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:theme="@style/Inkstone.Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustNothing|stateAlwaysHidden" />
         <!-- end of share -->
 
     </application>

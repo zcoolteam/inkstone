@@ -1,19 +1,15 @@
 package com.zcool.sample.module.share;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.zcool.inkstone.ext.hierarchy.HierarchyDelegateHelper;
-import com.zcool.inkstone.ext.share.LifecyclerShareHelper;
-import com.zcool.inkstone.ext.share.ShareHelper;
-import com.zcool.inkstone.ext.share.util.AuthUtil;
-import com.zcool.inkstone.ext.share.util.ShareUtil;
+import com.zcool.inkstone.ext.share.process.ProcessShareHelper;
 import com.zcool.inkstone.lang.SystemUiHelper;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ShareActivity extends AppCompatActivity implements ShareHelperHost {
+public class ShareActivity extends AppCompatActivity implements ProcessShareHelper.ShareResultReceiverHost {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,26 +29,13 @@ public class ShareActivity extends AppCompatActivity implements ShareHelperHost 
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        ShareHelper shareHelper = getShareHelper(false);
-        if (shareHelper != null) {
-            shareHelper.onActivityResult(requestCode, resultCode, data);
-        }
+    public ProcessShareHelper.ShareResultReceiver getShareResultReceiver() {
+        return null;
     }
 
-    private ShareHelper mShareHelper;
-
     @Override
-    public ShareHelper getShareHelper(boolean autoCreate) {
-        if (mShareHelper == null && autoCreate) {
-            mShareHelper = LifecyclerShareHelper.create(
-                    this,
-                    AuthUtil.newAuthListener(new AuthUtil.SimpleAuthListener()),
-                    ShareUtil.newShareListener(new ShareUtil.SimpleShareListener()));
-        }
-        return mShareHelper;
+    public ProcessShareHelper.AuthResultReceiver getAuthResultReceiver() {
+        return new ProcessShareHelper.SampleAuthResultReceiver();
     }
 
 }

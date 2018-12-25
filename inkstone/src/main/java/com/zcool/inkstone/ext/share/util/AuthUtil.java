@@ -9,6 +9,9 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.zcool.inkstone.ext.share.ShareHelper;
+import com.zcool.inkstone.ext.share.process.QQAuthInfo;
+import com.zcool.inkstone.ext.share.process.WeiboAuthInfo;
+import com.zcool.inkstone.ext.share.process.WeixinAuthInfo;
 
 import org.json.JSONObject;
 
@@ -88,69 +91,6 @@ public class AuthUtil {
         void onWeiboAuthFail();
 
         void onWeiboAuthCancel();
-    }
-
-    public static class QQAuthInfo {
-        public String ret;
-        public String pay_token;
-        public String pf;
-        public String query_authority_cost;
-        public String authority_cost;
-        public String expires_in;
-        public String openid;
-        public String pfkey;
-        public String msg;
-        public String login_cost;
-        public String access_token;
-
-        @Override
-        public String toString() {
-            return "QQAuthInfo{" +
-                    "ret='" + ret + '\'' +
-                    ", pay_token='" + pay_token + '\'' +
-                    ", pf='" + pf + '\'' +
-                    ", query_authority_cost='" + query_authority_cost + '\'' +
-                    ", authority_cost='" + authority_cost + '\'' +
-                    ", expires_in='" + expires_in + '\'' +
-                    ", openid='" + openid + '\'' +
-                    ", pfkey='" + pfkey + '\'' +
-                    ", msg='" + msg + '\'' +
-                    ", login_cost='" + login_cost + '\'' +
-                    ", access_token='" + access_token + '\'' +
-                    '}';
-        }
-    }
-
-    public static class WeixinAuthInfo {
-        public String code;
-        public String openId;
-
-        @Override
-        public String toString() {
-            return "WeixinAuthInfo{" +
-                    "code='" + code + '\'' +
-                    ", openId='" + openId + '\'' +
-                    '}';
-        }
-    }
-
-    public static class WeiboAuthInfo {
-        public String access_token;
-        public String refresh_token;
-        public String expires_in;
-        public String uid;
-        public String phone_num;
-
-        @Override
-        public String toString() {
-            return "WeiboAuthInfo{" +
-                    "access_token='" + access_token + '\'' +
-                    ", refresh_token='" + refresh_token + '\'' +
-                    ", expires_in='" + expires_in + '\'' +
-                    ", uid='" + uid + '\'' +
-                    ", phone_num='" + phone_num + '\'' +
-                    '}';
-        }
     }
 
     public static ShareHelper.AuthListener newAuthListener(final AuthListener authListener) {
