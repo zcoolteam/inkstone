@@ -9,13 +9,14 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zcool.inkstone.ext.share.ShareConfig;
-import com.zcool.inkstone.ext.share.app.ShareActivity;
 import com.zcool.inkstone.util.ContextUtil;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * 与微信通信页
  */
-public class ShareWXEntryActivity extends ShareActivity implements IWXAPIEventHandler {
+public class ShareWXEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
