@@ -69,6 +69,8 @@ public class ProcessShareActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Timber.v("onActivityResult requestCode:%s, resultCode:%s, data:%s", requestCode, resultCode, data);
+
         super.onActivityResult(requestCode, resultCode, data);
 
         ShareHelper shareHelper = getShareHelper(false);
@@ -323,5 +325,41 @@ public class ProcessShareActivity extends AppCompatActivity {
             finish();
         }
     });
+
+    @Override
+    protected void onResume() {
+        Timber.v("onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Timber.v("onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        Timber.v("onRestart");
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStart() {
+        Timber.v("onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Timber.v("onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Timber.v("onDestroy");
+        super.onDestroy();
+    }
 
 }

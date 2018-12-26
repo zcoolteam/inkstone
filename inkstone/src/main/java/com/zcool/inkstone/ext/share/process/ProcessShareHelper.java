@@ -127,7 +127,6 @@ public class ProcessShareHelper {
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_QQ_AUTH);
-        // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
     }
@@ -158,7 +157,6 @@ public class ProcessShareHelper {
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_AUTH);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
     }
@@ -189,7 +187,6 @@ public class ProcessShareHelper {
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIBO_AUTH);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
     }
