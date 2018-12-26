@@ -689,4 +689,77 @@ public class ProcessShareHelper {
         }
     }
 
+    @UiThread
+    public static boolean isSupportQQAppAuth(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportQQAppAuth();
+    }
+
+    @UiThread
+    public static boolean isSupportQQAppShare(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportQQAppShare();
+    }
+
+    @UiThread
+    public static boolean isSupportQzoneAppShare(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportQzoneAppShare();
+    }
+
+    @UiThread
+    public static boolean isSupportWeixinAppAuth(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportWeixinAppAuth();
+    }
+
+    @UiThread
+    public static boolean isSupportWeixinAppShare(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportWeixinAppShare();
+    }
+
+    @UiThread
+    public static boolean isSupportWeiboAppAuth(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportWeiboAppAuth();
+    }
+
+    @UiThread
+    public static boolean isSupportWeiboAppShare(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportWeiboAppShare();
+    }
+
+    @UiThread
+    public static boolean isSupportWeiboAppShareWithMultiImage(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportWeiboAppShareWithMultiImage();
+    }
+
+    @UiThread
+    private static ProcessShareFragment getOrCreateFragment(Activity activity) {
+        if (!Threads.mustUi()) {
+            return null;
+        }
+
+        if (activity == null) {
+            Timber.e("activity is null");
+            return null;
+        }
+
+        if (!(activity instanceof FragmentActivity)) {
+            Timber.e("activity must type of FragmentActivity %s", activity);
+            return null;
+        }
+
+        FragmentActivity fragmentActivity = (FragmentActivity) activity;
+        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
+            Timber.e("activity already state saved.");
+            return null;
+        }
+
+        return ProcessShareFragment.getOrCreate(fragmentActivity);
+    }
+
 }

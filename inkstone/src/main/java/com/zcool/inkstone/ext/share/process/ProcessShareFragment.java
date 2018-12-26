@@ -13,6 +13,7 @@ import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.ContextUtil;
 import com.zcool.inkstone.util.IOUtil;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,7 @@ public class ProcessShareFragment extends Fragment {
 
     private static final String FRAGMENT_TAG = "inkstone.ProcessShareFragment";
 
+    @NonNull
     public static ProcessShareFragment newInstance() {
         Bundle args = new Bundle();
         ProcessShareFragment fragment = new ProcessShareFragment();
@@ -31,6 +33,7 @@ public class ProcessShareFragment extends Fragment {
         return fragment;
     }
 
+    @NonNull
     public static ProcessShareFragment getOrCreate(FragmentActivity fragmentActivity) {
         FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
         ProcessShareFragment fragment = (ProcessShareFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
