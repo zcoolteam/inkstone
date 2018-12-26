@@ -9,9 +9,9 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.zcool.inkstone.ext.share.ShareHelper;
-import com.zcool.inkstone.ext.share.process.QQAuthInfo;
-import com.zcool.inkstone.ext.share.process.WeiboAuthInfo;
-import com.zcool.inkstone.ext.share.process.WeixinAuthInfo;
+import com.zcool.inkstone.ext.share.process.entity.QQAuthInfo;
+import com.zcool.inkstone.ext.share.process.entity.WeiboAuthInfo;
+import com.zcool.inkstone.ext.share.process.entity.WeixinAuthInfo;
 
 import org.json.JSONObject;
 

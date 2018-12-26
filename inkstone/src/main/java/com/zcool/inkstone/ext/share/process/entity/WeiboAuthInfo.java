@@ -1,4 +1,4 @@
-package com.zcool.inkstone.ext.share.process;
+package com.zcool.inkstone.ext.share.process.entity;
 
 import android.os.Bundle;
 

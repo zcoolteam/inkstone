@@ -1,4 +1,4 @@
-package com.zcool.inkstone.ext.share.process;
+package com.zcool.inkstone.ext.share.process.entity;
 
 import android.os.Bundle;
 
@@ -44,6 +44,7 @@ public class QQAuthInfo {
         }
 
         bundle.putString(_LOCAL_FLAG_KEY, _LOCAL_FLAG_VALUE);
+
         bundle.putString("ret", this.ret);
         bundle.putString("pay_token", this.pay_token);
         bundle.putString("pf", this.pf);
