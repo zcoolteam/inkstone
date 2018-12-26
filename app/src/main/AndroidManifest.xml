@@ -37,7 +37,8 @@
             android:exported="false" />
         <activity
             android:name="com.zcool.sample.module.share.ShareActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:process=":test" />
         <activity
             android:name="com.zcool.sample.module.viewdialog.ViewDialogActivity"
             android:exported="false" />
