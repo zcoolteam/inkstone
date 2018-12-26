@@ -13,7 +13,7 @@ import com.zcool.inkstone.util.ContextUtil;
 import java.io.Closeable;
 import java.io.IOException;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 /**
@@ -64,16 +64,9 @@ public final class ShareWeixinHelper implements Closeable {
         mShareListener.setOutListener(shareListener);
     }
 
-    /**
-     * 如果没有安装微信客户端，或者微信客户端版本不支持，将返回 null.
-     */
-    @Nullable
+    @NonNull
     public IWXAPI getApi() {
-        if (mApi.isWXAppInstalled()) {
-            return mApi;
-        } else {
-            return null;
-        }
+        return mApi;
     }
 
     @Override

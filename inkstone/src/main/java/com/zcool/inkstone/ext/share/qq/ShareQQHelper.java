@@ -68,6 +68,11 @@ public final class ShareQQHelper implements Closeable {
     }
 
     @NonNull
+    public Tencent getTencent() {
+        return mTencent;
+    }
+
+    @NonNull
     public IUiListenerAdapter getAuthListener() {
         return mAuthListener;
     }
