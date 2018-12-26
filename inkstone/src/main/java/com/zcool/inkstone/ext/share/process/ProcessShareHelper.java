@@ -8,6 +8,7 @@ import com.zcool.inkstone.thread.Threads;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.fragment.app.FragmentActivity;
 import timber.log.Timber;
 
@@ -101,9 +102,9 @@ public class ProcessShareHelper {
         return intent.getBundleExtra(EXTRA_PROCESS_SHARE_ACTION_RESULT_DATA);
     }
 
+    @UiThread
     public static void requestQQAuth(Activity activity) {
-        if (!Threads.isUi()) {
-            Timber.e("must call on ui thread");
+        if (!Threads.mustUi()) {
             return;
         }
 
@@ -131,9 +132,9 @@ public class ProcessShareHelper {
         fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
     }
 
+    @UiThread
     public static void requestWeixinAuth(Activity activity) {
-        if (!Threads.isUi()) {
-            Timber.e("must call on ui thread");
+        if (!Threads.mustUi()) {
             return;
         }
 
@@ -161,9 +162,9 @@ public class ProcessShareHelper {
         fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
     }
 
+    @UiThread
     public static void requestWeiboAuth(Activity activity) {
-        if (!Threads.isUi()) {
-            Timber.e("must call on ui thread");
+        if (!Threads.mustUi()) {
             return;
         }
 
@@ -191,8 +192,13 @@ public class ProcessShareHelper {
         fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
     }
 
+    @UiThread
     public static void onActivityResult(ProcessShareFragment fragment, int requestCode, int resultCode, Intent data) {
         Timber.v("onActivityResult requestCode:%s, resultCode:%s, data:%s", requestCode, resultCode, data);
+
+        if (!Threads.mustUi()) {
+            return;
+        }
 
         if (fragment == null) {
             Timber.e("fragment is null");

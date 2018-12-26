@@ -59,31 +59,43 @@ public class Threads {
         return Looper.myLooper() == Looper.getMainLooper();
     }
 
-    public static void mustUi() {
+    public static boolean mustUi() {
         if (!isUi()) {
             Throwable e = new IllegalAccessError("此处需要是 ui 线程");
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
-    public static void mustNotUi() {
+    public static boolean mustNotUi() {
         if (isUi()) {
             Throwable e = new IllegalAccessError("此处不允许为 ui 线程");
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
-    public static void mustMainProcess() {
+    public static boolean mustMainProcess() {
         if (!ProcessManager.getInstance().isMainProcess()) {
             Throwable e = new IllegalAccessError("此处需要是主进程");
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
-    public static void mustNotMainProcess() {
+    public static boolean mustNotMainProcess() {
         if (ProcessManager.getInstance().isMainProcess()) {
             Throwable e = new IllegalAccessError("此处不允许为主进程");
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 }

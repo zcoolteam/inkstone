@@ -61,7 +61,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportQQAppAuth() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -80,7 +82,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportQQAppShare() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -98,7 +102,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportQzoneAppShare() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -116,7 +122,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportWeixinAppAuth() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -134,7 +142,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportWeixinAppShare() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -152,7 +162,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportWeiboAppAuth() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -170,7 +182,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportWeiboAppShare() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
@@ -188,7 +202,9 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportWeiboAppShareWithMultiImage() {
-        Threads.mustUi();
+        if (!Threads.mustUi()) {
+            return false;
+        }
 
         if (mLocalShareHelper == null) {
             Timber.e("mLocalShareHelper is null");
