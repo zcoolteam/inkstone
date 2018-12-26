@@ -3,7 +3,7 @@ package com.zcool.inkstone.ext.share.process;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.zcool.inkstone.ext.share.LifecyclerShareHelper;
+import com.zcool.inkstone.ext.share.LifecycleShareHelper;
 import com.zcool.inkstone.ext.share.ShareHelper;
 import com.zcool.inkstone.ext.share.util.AuthUtil;
 import com.zcool.inkstone.ext.share.util.ShareUtil;
@@ -83,7 +83,7 @@ public class ProcessShareActivity extends AppCompatActivity {
 
     public ShareHelper getShareHelper(boolean autoCreate) {
         if (mShareHelper == null && autoCreate) {
-            mShareHelper = LifecyclerShareHelper.create(
+            mShareHelper = LifecycleShareHelper.create(
                     this,
                     mAuthListener,
                     mShareListener);

@@ -9,12 +9,12 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
-public class LifecyclerShareHelper implements LifecycleObserver {
+public class LifecycleShareHelper implements LifecycleObserver {
 
     private Lifecycle mLifecycle;
     private ShareHelper mShareHelper;
 
-    private LifecyclerShareHelper(Lifecycle lifecycle, ShareHelper shareHelper) {
+    private LifecycleShareHelper(Lifecycle lifecycle, ShareHelper shareHelper) {
         mLifecycle = lifecycle;
         mShareHelper = shareHelper;
 
@@ -35,8 +35,8 @@ public class LifecyclerShareHelper implements LifecycleObserver {
 
     public static ShareHelper create(@NonNull FragmentActivity activity, @Nullable ShareHelper.AuthListener authListener, @Nullable ShareHelper.ShareListener shareListener) {
         ShareHelper shareHelper = new ShareHelper(activity, authListener, shareListener);
-        LifecyclerShareHelper lifecyclerShareHelper = new LifecyclerShareHelper(activity.getLifecycle(), shareHelper);
-        return lifecyclerShareHelper.mShareHelper;
+        LifecycleShareHelper lifecycleShareHelper = new LifecycleShareHelper(activity.getLifecycle(), shareHelper);
+        return lifecycleShareHelper.mShareHelper;
     }
 
 }
