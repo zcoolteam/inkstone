@@ -36,6 +36,7 @@ import com.zcool.inkstone.ext.share.util.AuthUtil;
 import com.zcool.inkstone.ext.share.util.ShareUtil;
 import com.zcool.inkstone.ext.share.weibo.ShareWeiboHelper;
 import com.zcool.inkstone.ext.share.weixin.ShareWeixinHelper;
+import com.zcool.inkstone.thread.Threads;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -44,6 +45,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
 import timber.log.Timber;
 
 public class ProcessShareActivity extends AppCompatActivity {
@@ -739,12 +741,33 @@ public class ProcessShareActivity extends AppCompatActivity {
     protected void onResume() {
         Timber.v("onResume");
         super.onResume();
+
+        // bug fix: 当分享到微信时, 如果选择了留在微信，那么将不会接收到任何回调通知.
+        if (mHasPause) {
+            Threads.postUi(new Runnable() {
+                @Override
+                public void run() {
+                    ProcessShareActivity activity = ProcessShareActivity.this;
+                    if (activity.isFinishing()) {
+                        return;
+                    }
+
+                    if (activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                        activity.finish();
+                    }
+                }
+            }, 100);
+        }
     }
+
+    private boolean mHasPause;
 
     @Override
     protected void onPause() {
         Timber.v("onPause");
         super.onPause();
+
+        mHasPause = true;
     }
 
     @Override
