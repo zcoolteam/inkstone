@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.zcool.inkstone.ext.share.process.entity.ImageShareQQParams;
+import com.zcool.inkstone.ext.share.process.entity.ImageShareWeixinParams;
+import com.zcool.inkstone.ext.share.process.entity.ImageShareWeixinTimelineParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareQQParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareQzoneParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeiboParams;
@@ -46,6 +49,7 @@ public class ProcessShareHelper {
     public static final String EXTRA_PROCESS_SHARE_ACTION_SUB_TYPE = "process.share_action.sub_type";
 
     public static final String PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE_TEXT = "IMAGE_TEXT";
+    public static final String PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE = "IMAGE";
 
     /////////
     public static final String EXTRA_PROCESS_SHARE_ACTION_RESULT = "process.share_action.result";
@@ -110,6 +114,10 @@ public class ProcessShareHelper {
         return PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE_TEXT.equals(processShareActionSubType);
     }
 
+    public static boolean isProcessShareActionSubTypeImage(@Nullable String processShareActionSubType) {
+        return PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE.equals(processShareActionSubType);
+    }
+
     @Nullable
     public static String getProcessShareActionResult(@NonNull Intent intent) {
         return intent.getStringExtra(EXTRA_PROCESS_SHARE_ACTION_RESULT);
@@ -139,27 +147,11 @@ public class ProcessShareHelper {
 
     @UiThread
     public static void requestQQAuth(Activity activity) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_QQ_AUTH);
@@ -169,27 +161,11 @@ public class ProcessShareHelper {
 
     @UiThread
     public static void requestWeixinAuth(Activity activity) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_AUTH);
@@ -199,27 +175,11 @@ public class ProcessShareHelper {
 
     @UiThread
     public static void requestWeiboAuth(Activity activity) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIBO_AUTH);
@@ -229,32 +189,11 @@ public class ProcessShareHelper {
 
     @UiThread
     public static void requestQQShare(Activity activity, ImageTextShareQQParams params) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_QQ_SHARE);
@@ -268,33 +207,31 @@ public class ProcessShareHelper {
     }
 
     @UiThread
+    public static void requestQQShare(Activity activity, ImageShareQQParams params) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
+            return;
+        }
+
+        Intent intent = new Intent(activity, ProcessShareActivity.class);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_QQ_SHARE);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_SUB_TYPE, PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE);
+
+        Bundle extrasData = new Bundle();
+        params.writeToBundle(extrasData);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_REQUEST_DATA, extrasData);
+
+        fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
+    }
+
+    @UiThread
     public static void requestQzoneShare(Activity activity, ImageTextShareQzoneParams params) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_QZONE_SHARE);
@@ -309,32 +246,11 @@ public class ProcessShareHelper {
 
     @UiThread
     public static void requestWeixinShare(Activity activity, ImageTextShareWeixinParams params) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_SHARE);
@@ -348,33 +264,31 @@ public class ProcessShareHelper {
     }
 
     @UiThread
+    public static void requestWeixinShare(Activity activity, ImageShareWeixinParams params) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
+            return;
+        }
+
+        Intent intent = new Intent(activity, ProcessShareActivity.class);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_SHARE);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_SUB_TYPE, PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE);
+
+        Bundle extrasData = new Bundle();
+        params.writeToBundle(extrasData);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_REQUEST_DATA, extrasData);
+
+        fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
+    }
+
+    @UiThread
     public static void requestWeixinTimelineShare(Activity activity, ImageTextShareWeixinTimelineParams params) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_TIMELINE_SHARE);
@@ -388,33 +302,31 @@ public class ProcessShareHelper {
     }
 
     @UiThread
+    public static void requestWeixinTimelineShare(Activity activity, ImageShareWeixinTimelineParams params) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
+            return;
+        }
+
+        Intent intent = new Intent(activity, ProcessShareActivity.class);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_TIMELINE_SHARE);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_SUB_TYPE, PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE);
+
+        Bundle extrasData = new Bundle();
+        params.writeToBundle(extrasData);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_REQUEST_DATA, extrasData);
+
+        fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
+    }
+
+    @UiThread
     public static void requestWeixinMiniprogrameShare(Activity activity, ImageTextShareWeixinMiniprogrameParams params) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_MINIPROGRAME_SHARE);
@@ -429,32 +341,11 @@ public class ProcessShareHelper {
 
     @UiThread
     public static void requestWeiboShare(Activity activity, ImageTextShareWeiboParams params) {
-        if (!Threads.mustUi()) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
             return;
         }
-
-        if (activity == null) {
-            Timber.e("activity is null");
-            return;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return;
-        }
-
-        if (!(activity instanceof FragmentActivity)) {
-            Timber.e("activity must type of FragmentActivity %s", activity);
-            return;
-        }
-
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        if (fragmentActivity.getSupportFragmentManager().isStateSaved()) {
-            Timber.e("activity already state saved.");
-            return;
-        }
-
-        ProcessShareFragment fragment = ProcessShareFragment.getOrCreate(fragmentActivity);
 
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIBO_SHARE);
@@ -1013,6 +904,7 @@ public class ProcessShareHelper {
     }
 
     @UiThread
+    @Nullable
     private static ProcessShareFragment getOrCreateFragment(Activity activity) {
         if (!Threads.mustUi()) {
             return null;

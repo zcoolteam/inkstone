@@ -11,6 +11,7 @@ import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
@@ -18,6 +19,9 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.tauth.Tencent;
 import com.zcool.inkstone.ext.share.LifecycleShareHelper;
 import com.zcool.inkstone.ext.share.ShareHelper;
+import com.zcool.inkstone.ext.share.process.entity.ImageShareQQParams;
+import com.zcool.inkstone.ext.share.process.entity.ImageShareWeixinParams;
+import com.zcool.inkstone.ext.share.process.entity.ImageShareWeixinTimelineParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareQQParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareQzoneParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeiboParams;
@@ -80,9 +84,12 @@ public class ProcessShareActivity extends AppCompatActivity {
                 // 图文分享到 QQ 好友
                 return requestQQShare(shareHelper, ImageTextShareQQParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
+            } else if (ProcessShareHelper.isProcessShareActionSubTypeImage(subType)) {
+                // 分享单图到 QQ 好友
+                return requestQQShare(shareHelper, ImageShareQQParams.readFromBundle(
+                        ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
-                // TODO
-                Timber.e("unknown sub type %s", subType);
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
                 return false;
             }
         } else if (ProcessShareHelper.isQzoneShare(processShareAction)) {
@@ -91,8 +98,7 @@ public class ProcessShareActivity extends AppCompatActivity {
                 return requestQzoneShare(shareHelper, ImageTextShareQzoneParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
-                // TODO
-                Timber.e("unknown sub type %s", subType);
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
                 return false;
             }
         } else if (ProcessShareHelper.isWeixinShare(processShareAction)) {
@@ -100,9 +106,12 @@ public class ProcessShareActivity extends AppCompatActivity {
                 // 图文分享到微信好友
                 return requestWeixinShare(shareHelper, ImageTextShareWeixinParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
+            } else if (ProcessShareHelper.isProcessShareActionSubTypeImage(subType)) {
+                // 分享单图到微信好友
+                return requestWeixinShare(shareHelper, ImageShareWeixinParams.readFromBundle(
+                        ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
-                // TODO
-                Timber.e("unknown sub type %s", subType);
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
                 return false;
             }
         } else if (ProcessShareHelper.isWeixinTimelineShare(processShareAction)) {
@@ -110,9 +119,12 @@ public class ProcessShareActivity extends AppCompatActivity {
                 // 图文分享到朋友圈
                 return requestWeixinTimelineShare(shareHelper, ImageTextShareWeixinTimelineParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
+            } else if (ProcessShareHelper.isProcessShareActionSubTypeImage(subType)) {
+                // 分享单图到朋友圈
+                return requestWeixinTimelineShare(shareHelper, ImageShareWeixinTimelineParams.readFromBundle(
+                        ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
-                // TODO
-                Timber.e("unknown sub type %s", subType);
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
                 return false;
             }
         } else if (ProcessShareHelper.isWeixinMiniprogrameShare(processShareAction)) {
@@ -121,8 +133,7 @@ public class ProcessShareActivity extends AppCompatActivity {
                 return requestWeixinMiniprogrameShare(shareHelper, ImageTextShareWeixinMiniprogrameParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
-                // TODO
-                Timber.e("unknown sub type %s", subType);
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
                 return false;
             }
         } else if (ProcessShareHelper.isWeiboShare(processShareAction)) {
@@ -131,8 +142,7 @@ public class ProcessShareActivity extends AppCompatActivity {
                 return requestWeiboShare(shareHelper, ImageTextShareWeiboParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
-                // TODO
-                Timber.e("unknown sub type %s", subType);
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
                 return false;
             }
         } else {
@@ -175,6 +185,38 @@ public class ProcessShareActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(params.image)) {
             bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, params.image);
         }
+
+        tencent.shareToQQ(
+                shareHelper.getActivity(),
+                bundle,
+                shareQQHelper.getShareListener());
+        return true;
+    }
+
+    @UiThread
+    private boolean requestQQShare(ShareHelper shareHelper, ImageShareQQParams params) {
+        if (shareHelper == null) {
+            Timber.e("shareHelper is null");
+            return false;
+        }
+
+        if (params == null) {
+            Timber.e("params is null");
+            return false;
+        }
+
+        ShareQQHelper shareQQHelper = shareHelper.getShareQQHelper();
+        if (shareQQHelper == null) {
+            Timber.e("shareQQHelper is null");
+            return false;
+        }
+
+        final Tencent tencent = shareQQHelper.getTencent();
+
+        Bundle bundle = new Bundle();
+
+        bundle.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
+        bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL, params.localImage);
 
         tencent.shareToQQ(
                 shareHelper.getActivity(),
@@ -263,6 +305,38 @@ public class ProcessShareActivity extends AppCompatActivity {
     }
 
     @UiThread
+    private boolean requestWeixinShare(ShareHelper shareHelper, ImageShareWeixinParams params) {
+        if (shareHelper == null) {
+            Timber.e("shareHelper is null");
+            return false;
+        }
+
+        if (params == null) {
+            Timber.e("params is null");
+            return false;
+        }
+
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        final IWXAPI iwxapi = shareWeixinHelper.getApi();
+
+        WXImageObject imageObject = new WXImageObject();
+        imageObject.imagePath = params.localImage;
+        WXMediaMessage mediaMessage = new WXMediaMessage(imageObject);
+        mediaMessage.thumbData = params.thumbImage;
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = UUID.randomUUID().toString();
+        req.message = mediaMessage;
+        req.scene = SendMessageToWX.Req.WXSceneSession;
+        return iwxapi.sendReq(req);
+    }
+
+    @UiThread
     private boolean requestWeixinTimelineShare(ShareHelper shareHelper, ImageTextShareWeixinTimelineParams params) {
         if (shareHelper == null) {
             Timber.e("shareHelper is null");
@@ -288,6 +362,38 @@ public class ProcessShareActivity extends AppCompatActivity {
         mediaMessage.title = params.title;
         mediaMessage.description = params.content;
         mediaMessage.thumbData = params.image;
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = UUID.randomUUID().toString();
+        req.message = mediaMessage;
+        req.scene = SendMessageToWX.Req.WXSceneTimeline;
+        return iwxapi.sendReq(req);
+    }
+
+    @UiThread
+    private boolean requestWeixinTimelineShare(ShareHelper shareHelper, ImageShareWeixinTimelineParams params) {
+        if (shareHelper == null) {
+            Timber.e("shareHelper is null");
+            return false;
+        }
+
+        if (params == null) {
+            Timber.e("params is null");
+            return false;
+        }
+
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        final IWXAPI iwxapi = shareWeixinHelper.getApi();
+
+        WXImageObject imageObject = new WXImageObject();
+        imageObject.imagePath = params.localImage;
+        WXMediaMessage mediaMessage = new WXMediaMessage(imageObject);
+        mediaMessage.thumbData = params.thumbImage;
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = UUID.randomUUID().toString();
