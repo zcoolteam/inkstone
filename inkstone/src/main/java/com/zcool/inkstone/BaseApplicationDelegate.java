@@ -13,6 +13,7 @@ import com.zcool.inkstone.util.ContextUtil;
 import androidx.annotation.CallSuper;
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
+import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
 @Keep
@@ -50,6 +51,11 @@ public class BaseApplicationDelegate {
         // set global context first
         ContextUtil.setContext(context);
         context = ContextUtil.getContext();
+
+        // config RxJava2
+        RxJavaPlugins.setErrorHandler(e -> {
+            // ignore
+        });
 
         getInstance().onCreate(context);
     }
