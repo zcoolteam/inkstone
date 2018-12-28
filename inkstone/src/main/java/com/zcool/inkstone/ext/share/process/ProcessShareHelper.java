@@ -891,7 +891,7 @@ public class ProcessShareHelper {
         void onWeiboAuthCancel();
     }
 
-    public static class SampleAuthResultReceiver implements AuthResultReceiver {
+    public static class SimpleAuthResultReceiver implements AuthResultReceiver {
 
         @Override
         public void onQQAuthSuccess(QQAuthInfo result) {
