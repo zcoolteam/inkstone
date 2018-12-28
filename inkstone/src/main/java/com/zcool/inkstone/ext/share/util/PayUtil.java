@@ -49,7 +49,7 @@ public class PayUtil {
         };
     }
 
-    public static class SamplePayListener implements PayListener {
+    public static class SimplePayListener implements PayListener {
 
         @Override
         public void onWeixinPaySuccess() {

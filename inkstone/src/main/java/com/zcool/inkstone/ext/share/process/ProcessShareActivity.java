@@ -606,7 +606,7 @@ public class ProcessShareActivity extends AppCompatActivity {
         return mShareHelper;
     }
 
-    private ShareHelper.PayListener mPayListener = PayUtil.newPayListener(new PayUtil.SamplePayListener() {
+    private ShareHelper.PayListener mPayListener = PayUtil.newPayListener(new PayUtil.SimplePayListener() {
         @Override
         public void onWeixinPaySuccess() {
             super.onWeixinPaySuccess();
