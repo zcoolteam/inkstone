@@ -28,7 +28,7 @@ public class ShareHelper implements Closeable {
     private ShareWeixinHelper mShareWeixinHelper;
     private ShareWeiboHelper mShareWeiboHelper;
 
-    public ShareHelper(@NonNull Activity activity, @Nullable AuthListener authListener, @Nullable ShareListener shareListener) {
+    public ShareHelper(@NonNull Activity activity, @Nullable AuthListener authListener, @Nullable ShareListener shareListener, @Nullable PayListener payListener) {
         mActivity = activity;
 
         if (ShareConfig.hasConfigQQ()) {
@@ -36,7 +36,7 @@ public class ShareHelper implements Closeable {
         }
 
         if (ShareConfig.hasConfigWeixin()) {
-            mShareWeixinHelper = new ShareWeixinHelper(AuthListenerWeixinAdapter.create(authListener), ShareListenerWeixinAdapter.create(shareListener));
+            mShareWeixinHelper = new ShareWeixinHelper(AuthListenerWeixinAdapter.create(authListener), ShareListenerWeixinAdapter.create(shareListener), PayListenerWeixinAdapter.create(payListener));
         }
 
         if (ShareConfig.hasConfigWeibo()) {
@@ -92,6 +92,12 @@ public class ShareHelper implements Closeable {
 
         if (mShareWeiboHelper != null) {
             mShareWeiboHelper.setShareListener(ShareListenerWeiboAdapter.create(shareListener));
+        }
+    }
+
+    public void setPayListener(@Nullable PayListener payListener) {
+        if (mShareWeixinHelper != null) {
+            mShareWeixinHelper.setPayListener(PayListenerWeixinAdapter.create(payListener));
         }
     }
 
@@ -203,6 +209,26 @@ public class ShareHelper implements Closeable {
         @Nullable
         public static AuthListenerWeixinAdapter create(@Nullable AuthListener authListener) {
             return authListener == null ? null : new AuthListenerWeixinAdapter(authListener);
+        }
+    }
+
+    private static class PayListenerWeixinAdapter implements ShareWeixinHelper.IWXListener {
+
+        @NonNull
+        private final PayListener mOutListener;
+
+        private PayListenerWeixinAdapter(@NonNull PayListener outListener) {
+            mOutListener = outListener;
+        }
+
+        @Override
+        public void onWXCallback(BaseResp baseResp) {
+            mOutListener.onWeixinCallback(baseResp);
+        }
+
+        @Nullable
+        public static PayListenerWeixinAdapter create(@Nullable PayListener payListener) {
+            return payListener == null ? null : new PayListenerWeixinAdapter(payListener);
         }
     }
 
@@ -318,6 +344,12 @@ public class ShareHelper implements Closeable {
         void onWeiboAuthException(WbConnectErrorMessage e);
 
         void onWeiboAuthCancel();
+    }
+
+    public interface PayListener {
+
+        void onWeixinCallback(BaseResp baseResp);
+
     }
 
 }

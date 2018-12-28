@@ -59,7 +59,7 @@ public class ProcessShareFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         IOUtil.closeQuietly(mLocalShareHelper);
-        mLocalShareHelper = new ShareHelper(getActivity(), null, null);
+        mLocalShareHelper = new ShareHelper(getActivity(), null, null, null);
     }
 
     @UiThread
@@ -145,6 +145,26 @@ public class ProcessShareFragment extends Fragment {
 
     @UiThread
     public boolean isSupportWeixinAppShare() {
+        if (!Threads.mustUi()) {
+            return false;
+        }
+
+        if (mLocalShareHelper == null) {
+            Timber.e("mLocalShareHelper is null");
+            return false;
+        }
+
+        ShareWeixinHelper shareWeixinHelper = mLocalShareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null, you may not config weixin share");
+            return false;
+        }
+
+        return shareWeixinHelper.getApi().isWXAppInstalled();
+    }
+
+    @UiThread
+    public boolean isSupportWeixinAppPay() {
         if (!Threads.mustUi()) {
             return false;
         }

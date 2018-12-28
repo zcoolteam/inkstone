@@ -33,8 +33,11 @@ public class LifecycleShareHelper implements LifecycleObserver {
         mLifecycle.removeObserver(this);
     }
 
-    public static ShareHelper create(@NonNull FragmentActivity activity, @Nullable ShareHelper.AuthListener authListener, @Nullable ShareHelper.ShareListener shareListener) {
-        ShareHelper shareHelper = new ShareHelper(activity, authListener, shareListener);
+    public static ShareHelper create(@NonNull FragmentActivity activity,
+                                     @Nullable ShareHelper.AuthListener authListener,
+                                     @Nullable ShareHelper.ShareListener shareListener,
+                                     @Nullable ShareHelper.PayListener payListener) {
+        ShareHelper shareHelper = new ShareHelper(activity, authListener, shareListener, payListener);
         LifecycleShareHelper lifecycleShareHelper = new LifecycleShareHelper(activity.getLifecycle(), shareHelper);
         return lifecycleShareHelper.mShareHelper;
     }

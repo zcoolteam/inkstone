@@ -4,6 +4,7 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelpay.PayResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -24,11 +25,12 @@ public final class ShareWeixinHelper implements Closeable {
     private final IWXAPI mApi;
     private final IWXListenerAdapter mAuthListener;
     private final IWXListenerAdapter mShareListener;
+    private final IWXListenerAdapter mPayListener;
 
     private static final GlobalWXAPIEventHandler sGlobalWXAPIEventHandler =
             new GlobalWXAPIEventHandler();
 
-    public ShareWeixinHelper(IWXListener authListener, IWXListener shareListener) {
+    public ShareWeixinHelper(IWXListener authListener, IWXListener shareListener, IWXListener payListener) {
         mApi = WXAPIFactory.createWXAPI(
                 ContextUtil.getContext(), ShareConfig.getWeixinAppKey(), false);
         mApi.registerApp(ShareConfig.getWeixinAppKey());
@@ -38,6 +40,9 @@ public final class ShareWeixinHelper implements Closeable {
 
         mShareListener = new IWXListenerAdapter();
         mShareListener.setOutListener(shareListener);
+
+        mPayListener = new IWXListenerAdapter();
+        mPayListener.setOutListener(payListener);
     }
 
     public void resume() {
@@ -49,6 +54,11 @@ public final class ShareWeixinHelper implements Closeable {
 
             if (baseResp instanceof SendMessageToWX.Resp) {
                 mShareListener.onWXCallback(baseResp);
+                return;
+            }
+
+            if (baseResp instanceof PayResp) {
+                mPayListener.onWXCallback(baseResp);
                 return;
             }
 
@@ -64,6 +74,10 @@ public final class ShareWeixinHelper implements Closeable {
         mShareListener.setOutListener(shareListener);
     }
 
+    public void setPayListener(IWXListener payListener) {
+        mPayListener.setOutListener(payListener);
+    }
+
     @NonNull
     public IWXAPI getApi() {
         return mApi;
@@ -73,6 +87,7 @@ public final class ShareWeixinHelper implements Closeable {
     public void close() throws IOException {
         mAuthListener.setOutListener(null);
         mShareListener.setOutListener(null);
+        mPayListener.setOutListener(null);
     }
 
     public interface IWXListener {

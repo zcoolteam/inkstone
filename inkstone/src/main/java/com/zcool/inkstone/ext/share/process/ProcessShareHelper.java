@@ -886,6 +886,12 @@ public class ProcessShareHelper {
     }
 
     @UiThread
+    public static boolean isSupportWeixinAppPay(Activity activity) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        return fragment != null && fragment.isSupportWeixinAppPay();
+    }
+
+    @UiThread
     public static boolean isSupportWeiboAppAuth(Activity activity) {
         ProcessShareFragment fragment = getOrCreateFragment(activity);
         return fragment != null && fragment.isSupportWeiboAppAuth();

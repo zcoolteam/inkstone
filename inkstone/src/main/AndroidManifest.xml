@@ -67,6 +67,21 @@
             android:screenOrientation="behind"
             android:targetActivity="com.zcool.inkstone.ext.share.weixin.ShareWXEntryActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name="com.zcool.inkstone.ext.share.weixin.ShareWXPayEntryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity-alias
+            android:name="${applicationId}.wxapi.WXPayEntryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="behind"
+            android:targetActivity="com.zcool.inkstone.ext.share.weixin.ShareWXPayEntryActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
         <receiver
             android:name="com.zcool.inkstone.ext.share.weixin.ShareWeixinAppRegister"
             android:exported="true"
