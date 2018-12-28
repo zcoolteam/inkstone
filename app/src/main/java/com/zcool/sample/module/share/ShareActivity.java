@@ -38,4 +38,9 @@ public class ShareActivity extends AppCompatActivity implements ProcessShareHelp
         return new ProcessShareHelper.SampleAuthResultReceiver();
     }
 
+    @Override
+    public ProcessShareHelper.PayResultReceiver getPayResultReceiver() {
+        return null;
+    }
+
 }
