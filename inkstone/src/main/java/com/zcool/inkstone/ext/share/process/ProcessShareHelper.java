@@ -853,7 +853,7 @@ public class ProcessShareHelper {
         void onWeixinPayCancel();
     }
 
-    public static class SamplePayResultReceiver implements PayResultReceiver {
+    public static class SimplePayResultReceiver implements PayResultReceiver {
 
         @Override
         public void onWeixinPaySucess() {
