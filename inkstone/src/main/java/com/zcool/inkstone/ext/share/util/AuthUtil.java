@@ -2,11 +2,8 @@ package com.zcool.inkstone.ext.share.util;
 
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
-import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.zcool.inkstone.ext.share.ShareHelper;
 import com.zcool.inkstone.ext.share.process.entity.QQAuthInfo;
@@ -15,62 +12,12 @@ import com.zcool.inkstone.ext.share.process.entity.WeixinAuthInfo;
 
 import org.json.JSONObject;
 
-import java.util.UUID;
-
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class AuthUtil {
 
     private AuthUtil() {
-    }
-
-    public static boolean requestQQAuth(ShareHelper shareHelper) {
-        if (shareHelper == null) {
-            return false;
-        }
-
-        Tencent tencent = shareHelper.getShareQQHelper().getTencent(shareHelper.getActivity());
-        if (tencent == null) {
-            return false;
-        }
-
-        tencent.logout(shareHelper.getActivity());
-        tencent.login(
-                shareHelper.getActivity(),
-                "get_simple_userinfo",
-                shareHelper.getShareQQHelper().getAuthListener());
-        return true;
-    }
-
-    public static boolean requestWeixinAuth(ShareHelper shareHelper) {
-        if (shareHelper == null) {
-            return false;
-        }
-
-        IWXAPI api = shareHelper.getShareWeixinHelper().getApi();
-        if (api == null) {
-            return false;
-        }
-
-        SendAuth.Req req = new SendAuth.Req();
-        req.scope = "snsapi_userinfo";
-        req.state = UUID.randomUUID().toString();
-        api.sendReq(req);
-        return true;
-    }
-
-    public static boolean requestWeiboAuth(ShareHelper shareHelper) {
-        if (shareHelper == null) {
-            return false;
-        }
-
-        SsoHandler ssoHandler = shareHelper.getShareWeiboHelper().getSsoHandler();
-        if (ssoHandler == null) {
-            return false;
-        }
-        ssoHandler.authorize(shareHelper.getShareWeiboHelper().getAuthListener());
-        return true;
     }
 
     public interface AuthListener {

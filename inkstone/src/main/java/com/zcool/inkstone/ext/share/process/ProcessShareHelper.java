@@ -13,6 +13,7 @@ import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeiboParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeixinMiniprogrameParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeixinParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeixinTimelineParams;
+import com.zcool.inkstone.ext.share.process.entity.PayWeixinParams;
 import com.zcool.inkstone.ext.share.process.entity.QQAuthInfo;
 import com.zcool.inkstone.ext.share.process.entity.WeiboAuthInfo;
 import com.zcool.inkstone.ext.share.process.entity.WeixinAuthInfo;
@@ -37,6 +38,7 @@ public class ProcessShareHelper {
     public static final String PROCESS_SHARE_ACTION_QQ_SHARE = "QQ_SHARE";
     public static final String PROCESS_SHARE_ACTION_QZONE_SHARE = "QZONE_SHARE";
     public static final String PROCESS_SHARE_ACTION_WEIXIN_SHARE = "WEIXIN_SHARE";
+    public static final String PROCESS_SHARE_ACTION_WEIXIN_PAY = "WEIXIN_PAY";
     public static final String PROCESS_SHARE_ACTION_WEIXIN_TIMELINE_SHARE = "WEIXIN_TIMELINE_SHARE";
     public static final String PROCESS_SHARE_ACTION_WEIXIN_MINIPROGRAME_SHARE = "WEIXIN_MINIPROGRAME_SHARE";
     public static final String PROCESS_SHARE_ACTION_WEIBO_SHARE = "WEIBO_SHARE";
@@ -50,6 +52,7 @@ public class ProcessShareHelper {
 
     public static final String PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE_TEXT = "IMAGE_TEXT";
     public static final String PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE = "IMAGE";
+    public static final String PROCESS_SHARE_ACTION_SUB_TYPE_PAY = "PAY";
 
     /////////
     public static final String EXTRA_PROCESS_SHARE_ACTION_RESULT = "process.share_action.result";
@@ -79,6 +82,10 @@ public class ProcessShareHelper {
 
     public static boolean isWeixinShare(@Nullable String processShareAction) {
         return PROCESS_SHARE_ACTION_WEIXIN_SHARE.equals(processShareAction);
+    }
+
+    public static boolean isWeixinPay(@Nullable String processShareAction) {
+        return PROCESS_SHARE_ACTION_WEIXIN_PAY.equals(processShareAction);
     }
 
     public static boolean isWeixinTimelineShare(@Nullable String processShareAction) {
@@ -112,6 +119,10 @@ public class ProcessShareHelper {
 
     public static boolean isProcessShareActionSubTypeImageText(@Nullable String processShareActionSubType) {
         return PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE_TEXT.equals(processShareActionSubType);
+    }
+
+    public static boolean isProcessShareActionSubTypePay(@Nullable String processShareActionSubType) {
+        return PROCESS_SHARE_ACTION_SUB_TYPE_PAY.equals(processShareActionSubType);
     }
 
     public static boolean isProcessShareActionSubTypeImage(@Nullable String processShareActionSubType) {
@@ -274,6 +285,25 @@ public class ProcessShareHelper {
         Intent intent = new Intent(activity, ProcessShareActivity.class);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_SHARE);
         intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_SUB_TYPE, PROCESS_SHARE_ACTION_SUB_TYPE_IMAGE);
+
+        Bundle extrasData = new Bundle();
+        params.writeToBundle(extrasData);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_REQUEST_DATA, extrasData);
+
+        fragment.startActivityForResult(intent, REQUEST_CODE_DEFAULT);
+    }
+
+    @UiThread
+    public static void requestWeixinPay(Activity activity, PayWeixinParams params) {
+        ProcessShareFragment fragment = getOrCreateFragment(activity);
+        if (fragment == null) {
+            Timber.e("fragment is null");
+            return;
+        }
+
+        Intent intent = new Intent(activity, ProcessShareActivity.class);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION, PROCESS_SHARE_ACTION_WEIXIN_PAY);
+        intent.putExtra(EXTRA_PROCESS_SHARE_ACTION_SUB_TYPE, PROCESS_SHARE_ACTION_SUB_TYPE_PAY);
 
         Bundle extrasData = new Bundle();
         params.writeToBundle(extrasData);
@@ -566,6 +596,32 @@ public class ProcessShareHelper {
                 Timber.e("unknown weixin share result:%s", result);
                 return;
             }
+        } else if (isWeixinPay(processShareAction)) {
+            String result = getProcessShareActionResult(data);
+            Timber.v("weixin pay result:%s", result);
+
+            PayResultReceiver payResultReceiver = shareResultReceiverHost.getPayResultReceiver();
+            if (payResultReceiver == null) {
+                Timber.e("pay result receiver is null");
+                return;
+            }
+
+            if (isResultSuccess(result)) {
+                Timber.v("weixin pay success");
+                payResultReceiver.onWeixinPaySucess();
+                return;
+            } else if (isResultFail(result)) {
+                Timber.v("weixin pay fail");
+                payResultReceiver.onWeixinPayFail();
+                return;
+            } else if (isResultCancel(result)) {
+                Timber.v("weixin pay cancel");
+                payResultReceiver.onWeixinPayCancel();
+                return;
+            } else {
+                Timber.e("unknown weixin pay result:%s", result);
+                return;
+            }
         } else if (isWeixinTimelineShare(processShareAction)) {
             String result = getProcessShareActionResult(data);
             Timber.v("weixin timeline share result:%s", result);
@@ -654,6 +710,8 @@ public class ProcessShareHelper {
         ShareResultReceiver getShareResultReceiver();
 
         AuthResultReceiver getAuthResultReceiver();
+
+        PayResultReceiver getPayResultReceiver();
     }
 
     public interface ShareResultReceiver {
@@ -784,6 +842,32 @@ public class ProcessShareHelper {
         @Override
         public void onWeiboShareCancel() {
             Timber.v("onWeiboShareCancel");
+        }
+    }
+
+    public interface PayResultReceiver {
+        void onWeixinPaySucess();
+
+        void onWeixinPayFail();
+
+        void onWeixinPayCancel();
+    }
+
+    public static class SamplePayResultReceiver implements PayResultReceiver {
+
+        @Override
+        public void onWeixinPaySucess() {
+            Timber.v("onWeixinPaySucess");
+        }
+
+        @Override
+        public void onWeixinPayFail() {
+            Timber.v("onWeixinPaySucess");
+        }
+
+        @Override
+        public void onWeixinPayCancel() {
+            Timber.v("onWeixinPaySucess");
         }
     }
 

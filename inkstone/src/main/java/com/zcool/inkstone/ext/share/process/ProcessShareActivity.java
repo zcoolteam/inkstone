@@ -7,14 +7,17 @@ import android.text.TextUtils;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.connect.share.QQShare;
 import com.tencent.connect.share.QzoneShare;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.tauth.Tencent;
 import com.zcool.inkstone.ext.share.LifecycleShareHelper;
@@ -28,11 +31,13 @@ import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeiboParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeixinMiniprogrameParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeixinParams;
 import com.zcool.inkstone.ext.share.process.entity.ImageTextShareWeixinTimelineParams;
+import com.zcool.inkstone.ext.share.process.entity.PayWeixinParams;
 import com.zcool.inkstone.ext.share.process.entity.QQAuthInfo;
 import com.zcool.inkstone.ext.share.process.entity.WeiboAuthInfo;
 import com.zcool.inkstone.ext.share.process.entity.WeixinAuthInfo;
 import com.zcool.inkstone.ext.share.qq.ShareQQHelper;
 import com.zcool.inkstone.ext.share.util.AuthUtil;
+import com.zcool.inkstone.ext.share.util.PayUtil;
 import com.zcool.inkstone.ext.share.util.ShareUtil;
 import com.zcool.inkstone.ext.share.weibo.ShareWeiboHelper;
 import com.zcool.inkstone.ext.share.weixin.ShareWeixinHelper;
@@ -73,14 +78,11 @@ public class ProcessShareActivity extends AppCompatActivity {
         }
 
         if (ProcessShareHelper.isQQAuth(processShareAction)) {
-            AuthUtil.requestQQAuth(shareHelper);
-            return true;
+            return requestQQAuth(shareHelper);
         } else if (ProcessShareHelper.isWeixinAuth(processShareAction)) {
-            AuthUtil.requestWeixinAuth(shareHelper);
-            return true;
+            return requestWeixinAuth(shareHelper);
         } else if (ProcessShareHelper.isWeiboAuth(processShareAction)) {
-            AuthUtil.requestWeiboAuth(shareHelper);
-            return true;
+            return requestWeiboAuth(shareHelper);
         } else if (ProcessShareHelper.isQQShare(processShareAction)) {
             if (ProcessShareHelper.isProcessShareActionSubTypeImageText(subType)) {
                 // 图文分享到 QQ 好友
@@ -111,6 +113,15 @@ public class ProcessShareActivity extends AppCompatActivity {
             } else if (ProcessShareHelper.isProcessShareActionSubTypeImage(subType)) {
                 // 分享单图到微信好友
                 return requestWeixinShare(shareHelper, ImageShareWeixinParams.readFromBundle(
+                        ProcessShareHelper.getProcessShareActionRequestData(intent)));
+            } else {
+                Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
+                return false;
+            }
+        } else if (ProcessShareHelper.isWeixinPay(processShareAction)) {
+            if (ProcessShareHelper.isProcessShareActionSubTypePay(subType)) {
+                // 微信支付
+                return requestWeixinPay(shareHelper, PayWeixinParams.readFromBundle(
                         ProcessShareHelper.getProcessShareActionRequestData(intent)));
             } else {
                 Timber.e("unknown sub type %s for processShareAction %s", subType, processShareAction);
@@ -151,6 +162,66 @@ public class ProcessShareActivity extends AppCompatActivity {
             Timber.e("unknown process share action:%s", processShareAction);
             return false;
         }
+    }
+
+    @UiThread
+    private boolean requestQQAuth(ShareHelper shareHelper) {
+        if (shareHelper == null) {
+            Timber.e("shareHelper is null");
+            return false;
+        }
+
+        ShareQQHelper shareQQHelper = shareHelper.getShareQQHelper();
+        if (shareQQHelper == null) {
+            Timber.e("shareQQHelper is null");
+            return false;
+        }
+
+        final Tencent tencent = shareQQHelper.getTencent();
+
+        tencent.logout(shareHelper.getActivity());
+        tencent.login(
+                shareHelper.getActivity(),
+                "get_simple_userinfo",
+                shareQQHelper.getAuthListener());
+        return true;
+    }
+
+    @UiThread
+    private boolean requestWeixinAuth(ShareHelper shareHelper) {
+        if (shareHelper == null) {
+            return false;
+        }
+
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        IWXAPI api = shareWeixinHelper.getApi();
+
+        SendAuth.Req req = new SendAuth.Req();
+        req.scope = "snsapi_userinfo";
+        req.state = UUID.randomUUID().toString();
+        return api.sendReq(req);
+    }
+
+    @UiThread
+    private boolean requestWeiboAuth(ShareHelper shareHelper) {
+        if (shareHelper == null) {
+            return false;
+        }
+
+        ShareWeiboHelper shareWeiboHelper = shareHelper.getShareWeiboHelper();
+        if (shareWeiboHelper == null) {
+            Timber.e("shareWeiboHelper is null");
+            return false;
+        }
+
+        SsoHandler ssoHandler = shareWeiboHelper.getSsoHandler();
+        ssoHandler.authorize(shareWeiboHelper.getAuthListener());
+        return true;
     }
 
     @UiThread
@@ -339,6 +410,38 @@ public class ProcessShareActivity extends AppCompatActivity {
     }
 
     @UiThread
+    private boolean requestWeixinPay(ShareHelper shareHelper, PayWeixinParams params) {
+        if (shareHelper == null) {
+            Timber.e("shareHelper is null");
+            return false;
+        }
+
+        if (params == null) {
+            Timber.e("params is null");
+            return false;
+        }
+
+        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
+        if (shareWeixinHelper == null) {
+            Timber.e("shareWeixinHelper is null");
+            return false;
+        }
+
+        final IWXAPI iwxapi = shareWeixinHelper.getApi();
+
+        PayReq req = new PayReq();
+        req.appId = params.appId;
+        req.partnerId = params.partnerId;
+        req.prepayId = params.prepayId;
+        req.nonceStr = params.nonceStr;
+        req.timeStamp = params.timeStamp;
+        req.packageValue = params.packageValue;
+        req.sign = params.sign;
+
+        return iwxapi.sendReq(req);
+    }
+
+    @UiThread
     private boolean requestWeixinTimelineShare(ShareHelper shareHelper, ImageTextShareWeixinTimelineParams params) {
         if (shareHelper == null) {
             Timber.e("shareHelper is null");
@@ -497,10 +600,49 @@ public class ProcessShareActivity extends AppCompatActivity {
             mShareHelper = LifecycleShareHelper.create(
                     this,
                     mAuthListener,
-                    mShareListener);
+                    mShareListener,
+                    mPayListener);
         }
         return mShareHelper;
     }
+
+    private ShareHelper.PayListener mPayListener = PayUtil.newPayListener(new PayUtil.SamplePayListener() {
+        @Override
+        public void onWeixinPaySuccess() {
+            super.onWeixinPaySuccess();
+
+            Intent data = new Intent();
+            data.putExtra(ProcessShareHelper.EXTRA_PROCESS_SHARE_ACTION, ProcessShareHelper.PROCESS_SHARE_ACTION_WEIXIN_PAY);
+            data.putExtra(ProcessShareHelper.EXTRA_PROCESS_SHARE_ACTION_RESULT, ProcessShareHelper.PROCESS_SHARE_ACTION_RESULT_SUCCESS);
+            setResult(RESULT_FIRST_USER, data);
+
+            finish();
+        }
+
+        @Override
+        public void onWeixinPayFail() {
+            super.onWeixinPayFail();
+
+            Intent data = new Intent();
+            data.putExtra(ProcessShareHelper.EXTRA_PROCESS_SHARE_ACTION, ProcessShareHelper.PROCESS_SHARE_ACTION_WEIXIN_PAY);
+            data.putExtra(ProcessShareHelper.EXTRA_PROCESS_SHARE_ACTION_RESULT, ProcessShareHelper.PROCESS_SHARE_ACTION_RESULT_FAIL);
+            setResult(RESULT_FIRST_USER, data);
+
+            finish();
+        }
+
+        @Override
+        public void onWeixinPayCancel() {
+            super.onWeixinPayCancel();
+
+            Intent data = new Intent();
+            data.putExtra(ProcessShareHelper.EXTRA_PROCESS_SHARE_ACTION, ProcessShareHelper.PROCESS_SHARE_ACTION_WEIXIN_PAY);
+            data.putExtra(ProcessShareHelper.EXTRA_PROCESS_SHARE_ACTION_RESULT, ProcessShareHelper.PROCESS_SHARE_ACTION_RESULT_CANCEL);
+            setResult(RESULT_FIRST_USER, data);
+
+            finish();
+        }
+    });
 
     private ShareHelper.AuthListener mAuthListener = AuthUtil.newAuthListener(new AuthUtil.SimpleAuthListener() {
         @Override

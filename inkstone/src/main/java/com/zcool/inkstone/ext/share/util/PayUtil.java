@@ -1,62 +1,14 @@
 package com.zcool.inkstone.ext.share.util;
 
 import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.modelpay.PayResp;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.zcool.inkstone.ext.share.ShareConfig;
 import com.zcool.inkstone.ext.share.ShareHelper;
-import com.zcool.inkstone.ext.share.weixin.ShareWeixinHelper;
 
 import timber.log.Timber;
 
 public class PayUtil {
 
     private PayUtil() {
-    }
-
-    public static class WeixinPayParams {
-        public String appId = ShareConfig.getWeixinAppKey();
-        public String partnerId;
-        public String prepayId;
-        public String nonceStr;
-        public String timeStamp;
-        public String packageValue;
-        public String sign;
-    }
-
-    /**
-     * 请求微信支付
-     */
-    public static boolean requestWeixinPay(ShareHelper shareHelper, WeixinPayParams params) {
-        if (shareHelper == null) {
-            Timber.e("shareHelper is null");
-            return false;
-        }
-
-        if (params == null) {
-            Timber.e("params is null");
-            return false;
-        }
-
-        ShareWeixinHelper shareWeixinHelper = shareHelper.getShareWeixinHelper();
-        if (shareWeixinHelper == null) {
-            Timber.e("shareWeixinHelper is null");
-            return false;
-        }
-
-        IWXAPI wxapi = shareWeixinHelper.getApi();
-
-        PayReq req = new PayReq();
-        req.appId = params.appId;
-        req.partnerId = params.partnerId;
-        req.prepayId = params.prepayId;
-        req.nonceStr = params.nonceStr;
-        req.timeStamp = params.timeStamp;
-        req.packageValue = params.packageValue;
-        req.sign = params.sign;
-
-        return wxapi.sendReq(req);
     }
 
     public interface PayListener {
