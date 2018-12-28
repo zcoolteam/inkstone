@@ -752,7 +752,7 @@ public class ProcessShareHelper {
         void onWeiboShareCancel();
     }
 
-    public static class SampleShareResultReceiver implements ShareResultReceiver {
+    public static class SimpleShareResultReceiver implements ShareResultReceiver {
 
         @Override
         public void onQQShareSuccess() {
