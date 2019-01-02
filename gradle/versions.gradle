@@ -70,43 +70,102 @@ def createGitVersionCode() {
     if (cmdResult) {
         gitVersionCode += cmdResult
     }
+
+    println("gitVersionCode: " + gitVersionCode)
     return gitVersionCode
 }
 
 def createGitVersionName() {
-    // 使用距离最近的标签名 + '.' + 距离该标签的 commit 数量 作为版本名称, 通常标签使用如 1.0 命名方式
-    // 忽略标签开始的 parent-
-    // 如果没有标签, 则使用 '0.0' 作为默认值
-    def cmd = 'git describe --tags'
-    def cmdResult = cmd.execute().text.trim()
-    def tagDesc = '0.0'
-    if (cmdResult) {
-        tagDesc = cmdResult
+    // 根据 git 最近的 tag 计算 version name
+
+    // 结果形如 latesTagName-offsetCommitCount-gLatestCommitId 例如: parent-0.1-83-gbb12abc, 0.1-83-gbb12abc
+    // 如果当前的 tag 就标记在最近一次的提交上, 则结果直接是 latesTagName 例如: parent-0.1, 0.1
+    def cmdTagCommit = 'git describe --tags'
+
+    def cmdTagCommitResult = cmdTagCommit.execute().text.trim()
+    if (!cmdTagCommitResult) {
+        println("gitVersionName: invalid cmdTagCommitResult, default to 0.0.0")
+        return '0.0.0'
     }
 
-    def pattern = '-(\\d+)-g'
-    def matcher = tagDesc =~ pattern
-
-    def tagName
-    def commitCount
-
-    if (matcher) {
-        tagName = tagDesc.substring(0, matcher.start())
-        commitCount = matcher[0][1]
-    } else {
-        tagName = tagDesc
-        commitCount = '0'
+    def cmdLatestTagCommit = 'git rev-list --tags --max-count=1'
+    def cmdLatestTagCommitResult = cmdLatestTagCommit.execute().text.trim()
+    if (!cmdLatestTagCommitResult) {
+        println("gitVersionName: invalid cmdLatestTagCommitResult, default to 0.0.0")
+        return '0.0.0'
     }
 
-    if (tagName.startsWith("parent")) {
-        tagName = tagName.substring(6)
-    }
-    if (tagName.startsWith("-")) {
-        tagName = tagName.substring(1)
+    def cmdLatestTag = 'git describe --tags ' + cmdLatestTagCommitResult
+    def cmdLatestTagResult = cmdLatestTag.execute().text.trim()
+    if (!cmdLatestTagResult) {
+        println("gitVersionName: invalid cmdLatestTagResult, default to 0.0.0")
+        return '0.0.0'
     }
 
-    def gitVersionName = tagName + '.' + commitCount
-    return gitVersionName
+    def tagCommitDesc = cmdTagCommitResult
+    def latestTagName = cmdLatestTagResult
+    def offsetCommitCount = 0
+
+    def pattern = /-(\d+)-g(?!.*-g)/
+    def matcher = tagCommitDesc =~ pattern
+
+    if (latestTagName == tagCommitDesc) {
+        println("latestTagName equals to tagCommitDesc, latest tag is add to latest commit, use latest tag direct.")
+    } else if (matcher) {
+        latestTagName = tagCommitDesc.substring(0, matcher.start())
+        offsetCommitCount = matcher[0][1]
+    }
+
+    if (latestTagName != cmdLatestTagResult) {
+        println("latestTagName not equals to cmdLatestTagResult, default to 0.0.0")
+        return '0.0.0'
+    }
+
+    // 分析 latestTagName 语义
+    def versionNamePrefix
+    def versionNameSuffix
+    def versionName
+
+    println("latestTagName: " + latestTagName + ", offsetCommitCount: " + offsetCommitCount)
+    // TagName                   prefix                     suffix
+    // 0.1                       0.1                        .offsetCommitCount           (1)
+    // parent-0.1                0.1                        .offsetCommitCount           (2)
+    // parent-0.1-alpha          0.1-alpha                  offsetCommitCount            (3)
+    // parent-0.1-beta           0.1-beta                   offsetCommitCount            (4)
+    // parent-0.1-release        0.1                        .offsetCommitCount           (5)
+    // other                     other                      .offsetCommitCount           (6)
+
+    // 匹配 (1) (2) (5)
+    def parentReleasePattern = /^(?:parent-)?((?:\d+\.)*\d+)(?:-release)?$/
+    def parentReleasePatternMatcher = latestTagName =~ parentReleasePattern
+    if (parentReleasePatternMatcher) {
+        versionNamePrefix = parentReleasePatternMatcher[0][1]
+        versionNameSuffix = "." + offsetCommitCount
+        versionName = versionNamePrefix + versionNameSuffix
+
+        println("gitVersionName: parentReleasePatternMatcher is true, prefix: " + versionNamePrefix + ", suffix: " + versionNameSuffix + " -> " + versionName)
+        return versionName
+    }
+
+    // 匹配 (3) (4)
+    def parentAlphaBetaPattern = /^(?:parent-)?((?:\d+\.)*\d+(?:-alpha)?(?:-beta)?)$/
+    def parentAlphaBetaPatternMatcher = latestTagName =~ parentAlphaBetaPattern
+    if (parentAlphaBetaPatternMatcher) {
+        versionNamePrefix = parentAlphaBetaPatternMatcher[0][1]
+        versionNameSuffix = offsetCommitCount
+        versionName = versionNamePrefix + versionNameSuffix
+
+        println("gitVersionName: parentAlphaBetaPatternMatcher is true, prefix: " + versionNamePrefix + ", suffix: " + versionNameSuffix + " -> " + versionName)
+        return versionName
+    }
+
+    // 其它情况 (6)
+    versionNamePrefix = latestTagName
+    versionNameSuffix = "." + offsetCommitCount
+    versionName = versionNamePrefix + versionNameSuffix
+
+    println("gitVersionName: default, prefix: " + versionNamePrefix + ", suffix: " + versionNameSuffix + " -> " + versionName)
+    return versionName
 }
 
 
