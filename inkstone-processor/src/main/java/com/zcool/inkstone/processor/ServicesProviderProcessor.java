@@ -33,8 +33,12 @@ public class ServicesProviderProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Set<? extends Element> all = roundEnv.getElementsAnnotatedWith(ServicesProvider.class);
+        if (all == null || all.isEmpty()) {
+            return false;
+        }
+
         for (Element item : all) {
-            if (item.getKind() != ElementKind.CLASS) {
+            if (!ElementKind.CLASS.equals(item.getKind())) {
                 throw new IllegalArgumentException(ServicesProvider.class.getName() + " must set on class");
             }
 
