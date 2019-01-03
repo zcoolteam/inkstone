@@ -49,7 +49,7 @@ public class ApplicationDelegateProcessor extends AbstractProcessor {
             }
         }
 
-        return true;
+        return false;
     }
 
     private void generateForTargetClass(String className) throws Throwable {

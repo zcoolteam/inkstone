@@ -50,7 +50,7 @@ public class ServicesProviderProcessor extends AbstractProcessor {
             }
         }
 
-        return true;
+        return false;
     }
 
     private void generateForTargetClass(String className) throws Throwable {
