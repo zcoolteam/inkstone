@@ -1,1 +1,1 @@
-include ':app', ':inkstone', ':inkstone-annotation', ':inkstone-processor'
+include ':app', ':inkstone', ':inkstone-annotation', ':inkstone-processor', ':appmodule'

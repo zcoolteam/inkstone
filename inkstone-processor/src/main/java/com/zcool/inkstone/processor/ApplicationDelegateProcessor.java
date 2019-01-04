@@ -28,6 +28,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 
 @AutoService(Processor.class)
 public class ApplicationDelegateProcessor extends AbstractProcessor {
@@ -55,6 +56,8 @@ public class ApplicationDelegateProcessor extends AbstractProcessor {
                 if (old != null) {
                     throw new RuntimeException("ApplicationDelegateProcessor process found duplicate class " + targetClass);
                 }
+
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "ApplicationDelegateProcessor process found target class " + targetClass);
             }
         }
 

@@ -5,7 +5,9 @@ dependencies {
     implementation project(':inkstone-annotation')
 
     implementation 'com.squareup:javapoet:1.10.0'
-    implementation 'com.google.auto.service:auto-service:1.0-rc2'
+
+    compileOnly 'com.google.auto.service:auto-service:1.0-rc2'
+    compileOnly files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
