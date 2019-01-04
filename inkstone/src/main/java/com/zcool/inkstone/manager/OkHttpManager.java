@@ -2,7 +2,7 @@ package com.zcool.inkstone.manager;
 
 import android.text.TextUtils;
 
-import com.zcool.inkstone.BaseApplicationDelegate;
+import com.zcool.inkstone.ApplicationDelegateRoot;
 import com.zcool.inkstone.Debug;
 import com.zcool.inkstone.lang.OkHttp3CookieJar;
 import com.zcool.inkstone.lang.Singleton;
@@ -86,7 +86,7 @@ public class OkHttpManager {
 
                         String defaultUserAgent = customUserAgent;
                         if (TextUtils.isEmpty(defaultUserAgent)) {
-                            defaultUserAgent = BaseApplicationDelegate.getInstance().getDefaultUserAgent();
+                            defaultUserAgent = ApplicationDelegateRoot.getInstance().getDefaultUserAgent();
                         }
                         if (TextUtils.isEmpty(defaultUserAgent)) {
                             return chain.proceed(chain.request());

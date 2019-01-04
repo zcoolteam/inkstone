@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
-import com.zcool.inkstone.BaseApplicationDelegate;
+import com.zcool.inkstone.SubApplicationDelegate;
 import com.zcool.inkstone.annotation.ApplicationDelegate;
 import com.zcool.inkstone.ext.share.ShareConfig;
 
@@ -12,8 +12,7 @@ import androidx.annotation.Keep;
 
 @Keep
 @ApplicationDelegate
-public class MainApplicationDelegate extends BaseApplicationDelegate {
-    // 注解 @ApplicationDelegate 必不可少，全局有且只有一个类标记此注解
+public class MainApplicationDelegate implements SubApplicationDelegate {
 
     @Override
     public void onCreate(Context context) {
@@ -24,8 +23,6 @@ public class MainApplicationDelegate extends BaseApplicationDelegate {
             LeakCanary.install((Application) context.getApplicationContext());
         }
 
-        super.onCreate(context);
-
         // 示例：配置分享参数
         new ShareConfig.Builder()
                 .setQQ(BuildConfig.QQ_APP_ID)
@@ -33,6 +30,10 @@ public class MainApplicationDelegate extends BaseApplicationDelegate {
                 .setWeibo(BuildConfig.WEIBO_APP_KEY)
                 .setWeiboRedirectUrl(BuildConfig.WEIBO_REDIRECT_URL)
                 .init();
+    }
+
+    @Override
+    public void onStartBackgroundService() {
     }
 
 }

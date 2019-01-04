@@ -3,15 +3,15 @@ package com.zcool.inkstone;
 public class Debug {
 
     public static boolean isDebug() {
-        return BaseApplicationDelegate.getInstance().isDebug();
+        return ApplicationDelegateRoot.getInstance().isDebug();
     }
 
     public static boolean isDebugHttpBody() {
-        return BaseApplicationDelegate.getInstance().isDebugHttpBody();
+        return ApplicationDelegateRoot.getInstance().isDebugHttpBody();
     }
 
     public static boolean isDebugWidget() {
-        return BaseApplicationDelegate.getInstance().isDebugWidget();
+        return ApplicationDelegateRoot.getInstance().isDebugWidget();
     }
 
 }

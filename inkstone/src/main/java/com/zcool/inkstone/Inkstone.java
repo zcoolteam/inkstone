@@ -8,7 +8,7 @@ public class Inkstone {
     }
 
     public static void init(Context context) {
-        BaseApplicationDelegate.init(context);
+        ApplicationDelegateRoot.init(context);
     }
 
 }

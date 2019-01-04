@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.zcool.inkstone.BaseApplicationDelegate;
+import com.zcool.inkstone.Inkstone;
 import com.zcool.inkstone.util.ContextUtil;
 
 import androidx.annotation.NonNull;
@@ -21,7 +21,7 @@ public class DefaultServiceContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        BaseApplicationDelegate.init(getContext());
+        Inkstone.init(getContext());
         return true;
     }
 

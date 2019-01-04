@@ -2,41 +2,30 @@ package com.zcool.inkstone;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
+import com.google.common.base.Preconditions;
 import com.zcool.inkstone.lang.NotInitException;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.manager.FrescoManager;
 import com.zcool.inkstone.service.InkstoneService;
 import com.zcool.inkstone.util.ContextUtil;
 
+import java.util.List;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
 @Keep
-public class BaseApplicationDelegate {
+public class ApplicationDelegateRoot {
 
-    private static final String LOG_TAG = "BaseApplicationDelegate";
-
-    private static final Singleton<BaseApplicationDelegate> INSTANCE = new Singleton<BaseApplicationDelegate>() {
+    private static final Singleton<ApplicationDelegateRoot> INSTANCE = new Singleton<ApplicationDelegateRoot>() {
         @Override
-        protected BaseApplicationDelegate create() {
-            final String className = "com.zcool.inkstone.ApplicationDelegateInstance";
-
-            BaseApplicationDelegate target;
-            try {
-                target = (BaseApplicationDelegate) Class.forName(className).getDeclaredMethod("get").invoke(null);
-                if (target == null) {
-                    throw new NullPointerException(className + " static method get return null");
-                }
-                Log.v(LOG_TAG, "init BaseApplicationDelegate with " + target.getClass().getName());
-            } catch (Throwable e) {
-                throw new RuntimeException("init BaseApplicationDelegate fail", e);
-            }
-            return target;
+        protected ApplicationDelegateRoot create() {
+            return new ApplicationDelegateRoot();
         }
     };
 
@@ -60,18 +49,30 @@ public class BaseApplicationDelegate {
         getInstance().onCreate(context);
     }
 
-    public static BaseApplicationDelegate getInstance() {
+    public static ApplicationDelegateRoot getInstance() {
         throwIfNotInit();
         return INSTANCE.get();
     }
 
     private static boolean sCallConstructor;
 
-    protected BaseApplicationDelegate() {
+    @NonNull
+    private final List<SubApplicationDelegate> mSubApplicationDelegates;
+
+    private ApplicationDelegateRoot() {
         if (sCallConstructor) {
-            throw new IllegalStateException("can not create more than one BaseApplicationDelegate instance");
+            throw new IllegalStateException("can not create more than one ApplicationDelegateRoot instance");
         }
         sCallConstructor = true;
+
+        final String className = "com.zcool.inkstone.SubApplicationDelegateGroup";
+        try {
+            mSubApplicationDelegates = (List<SubApplicationDelegate>) Class.forName(className).getDeclaredMethod("get").invoke(null);
+            Preconditions.checkNotNull(mSubApplicationDelegates, "mSubApplicationDelegates can not be null");
+        } catch (Throwable e) {
+            throw new RuntimeException("fail to create ApplicationDelegateRoot", e);
+        }
+
     }
 
     /**
@@ -82,6 +83,10 @@ public class BaseApplicationDelegate {
         throwIfNotInit();
 
         InkstoneService.start(ContextUtil.getContext());
+
+        for (SubApplicationDelegate item : mSubApplicationDelegates) {
+            item.onStartBackgroundService();
+        }
     }
 
     private synchronized static void throwIfNotInit() {
@@ -101,13 +106,17 @@ public class BaseApplicationDelegate {
             Timber.plant(new Timber.DebugTree());
         }
 
-        Timber.v(new Throwable("[only print BaseApplicationDelegate#onCreate call stack]"));
+        Timber.v(new Throwable("[only print ApplicationDelegateRoot#onCreate call stack]"));
 
         mAppCallbacks = new AppCallbacks();
         mAppCallbacks.addApplicationCallbacks(mServiceStarterCallback);
 
         // init builtin
         FrescoManager.getInstance();
+
+        for (SubApplicationDelegate item : mSubApplicationDelegates) {
+            item.onCreate(context);
+        }
     }
 
     private final AppCallbacks.SimpleApplicationCallbacks mServiceStarterCallback = new AppCallbacks.SimpleApplicationCallbacks() {
@@ -120,7 +129,7 @@ public class BaseApplicationDelegate {
 
             if (!mServiceStarted) {
                 mServiceStarted = true;
-                BaseApplicationDelegate.getInstance().onStartBackgroundService();
+                ApplicationDelegateRoot.getInstance().onStartBackgroundService();
             }
         }
     };
