@@ -1,0 +1,74 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def siteUrl = 'https://github.com/zcoolteam/inkstone'
+def gitUrl = 'https://github.com/zcoolteam/inkstone.git'
+group = 'com.zcool.inkstone'
+version = rootProject.ext.bcfg.ver.versionName
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'jar'
+                name 'inkstone gradle plugin'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'idonans'
+                        name 'idonans'
+                        email 'idonans@126.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    javadoc.options.addStringOption('encoding', 'UTF-8')
+    javadoc.options.addStringOption('charset', 'UTF-8')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+bintray {
+    Properties localProperties = new Properties()
+    rootProject.file('local.properties').withInputStream {
+        localProperties.load(it)
+    }
+
+    user = localProperties.getProperty('bintray.user')
+    key = localProperties.getProperty('bintray.apikey')
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'inkstone-gradle-plugin'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        publish = true
+    }
+}
+

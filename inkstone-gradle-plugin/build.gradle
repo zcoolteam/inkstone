@@ -1,0 +1,15 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'kotlin'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    compileOnly gradleApi()
+
+    implementation rootProject.ext.bcfg.deps.android_gradle_plugin
+    implementation rootProject.ext.bcfg.deps.javapoet
+    implementation rootProject.ext.bcfg.deps.kotlin_stdlib_jdk8
+}
+
+apply from: ('bintray.gradle')
