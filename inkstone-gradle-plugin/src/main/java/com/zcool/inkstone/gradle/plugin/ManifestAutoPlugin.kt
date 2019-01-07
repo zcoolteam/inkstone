@@ -52,6 +52,7 @@ class ManifestAutoPlugin : Plugin<Project> {
                 if (once.compareAndSet(false, true)) {
                     project.tasks.create("generate${variant.name.capitalize()}InkstoneManifest").doLast {
                         println("task genManifest doLast")
+                        outputDir.mkdirs()
                         val xmlFile = File(outputDir, "AndroidManifest.xml")
                         xmlFile.createNewFile()
                     }
