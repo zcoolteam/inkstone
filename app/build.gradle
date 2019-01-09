@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.zcool.inkstone'
 
 android {
     compileSdkVersion rootProject.ext.bcfg.ver.target_sdk
@@ -101,6 +102,7 @@ dependencies {
     implementation project(':inkstone')
     annotationProcessor project(':inkstone-processor')
     implementation project(':appmodule')
+    implementation project(':appmodule2')
 
     implementation rootProject.ext.bcfg.deps.butterknife
     annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor

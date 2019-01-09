@@ -1,0 +1,32 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'com.zcool.inkstone'
+
+android {
+    compileSdkVersion rootProject.ext.bcfg.ver.target_sdk
+    buildToolsVersion rootProject.ext.bcfg.ver.build_tools
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.bcfg.ver.min_sdk
+        targetSdkVersion rootProject.ext.bcfg.ver.target_sdk
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api project(':inkstone')
+    annotationProcessor project(':inkstone-processor')
+
+    api rootProject.ext.bcfg.deps.butterknife
+    annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor
+}

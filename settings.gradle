@@ -1,1 +1,1 @@
-include ':app', ':inkstone', ':inkstone-annotation', ':inkstone-processor', ':appmodule', ':inkstone-gradle-plugin'
+include ':app', ':inkstone', ':inkstone-annotation', ':inkstone-processor', ':appmodule', ':inkstone-gradle-plugin', ':appmodule2'

@@ -3,6 +3,7 @@ apply plugin: 'java-library'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':inkstone-annotation')
+    implementation rootProject.ext.bcfg.deps.gson
 
     implementation 'com.squareup:javapoet:1.10.0'
 
