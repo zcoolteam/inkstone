@@ -47,7 +47,9 @@ class BuildInkstonePlugin : Plugin<Project> {
                     "generated/source/buildInkstone/${variant.dirName}")
             // val pkg = getPackageName(variant)
             val once = AtomicBoolean()
+            variant.mergeResources.sourceFolderInputs.add(outputDir)
             variant.outputs.all { output ->
+                println("output dir:" + output.processManifest.manifestOutputDirectory)
                 if (once.compareAndSet(false, true)) {
                     project.tasks.create("generate${variant.name.capitalize()}BuildInkstone").doLast {
                         outputDir.mkdirs()

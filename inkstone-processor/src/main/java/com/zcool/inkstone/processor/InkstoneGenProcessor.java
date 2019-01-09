@@ -78,6 +78,7 @@ public class InkstoneGenProcessor extends AbstractProcessor {
 
             // now tmpFile is apt dir
             mManifestFile = new File(tmpFile.getParentFile(), "buildInkstone" + File.separator + variantDirName + File.separator + "AndroidManifest.xml");
+            // mManifestFile = new File(new File(filePath).getParentFile(), "AndroidManifest.xml");
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Manifest file path: " + mManifestFile.getAbsolutePath());
             mManifestFile.getParentFile().mkdirs();
         } catch (Throwable e) {
