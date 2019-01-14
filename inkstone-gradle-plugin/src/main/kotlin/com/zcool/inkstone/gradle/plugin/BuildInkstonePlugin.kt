@@ -31,11 +31,12 @@ open class BuildInkstonePlugin : Plugin<Project> {
             variant.mergeResources.sourceFolderInputs.add(outputDir)
             variant.outputs.all { output ->
                 val manifestDir = output.processManifest.manifestOutputDirectory
-
-                project.tasks.create("generate${variant.name.capitalize()}BuildInkstone", BuildInkstoneGenerator::class.java) {
-                    it.outputDir = outputDir
-                    it.manifestDir = manifestDir
-                    variant.registerJavaGeneratingTask(it, outputDir)
+                manifestDir?.run {
+                    project.tasks.create("generate${variant.name.capitalize()}BuildInkstone", BuildInkstoneGenerator::class.java) {
+                        it.outputDir = outputDir
+                        it.manifestDir = manifestDir
+                        variant.registerJavaGeneratingTask(it, outputDir)
+                    }
                 }
             }
         }
