@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.zcool.inkstone'
+// apply plugin: 'com.zcool.inkstone'
 
 android {
     compileSdkVersion rootProject.ext.bcfg.ver.target_sdk

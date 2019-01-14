@@ -7,7 +7,7 @@ buildscript {
         classpath rootProject.ext.bcfg.deps.gradle_bintray_plugin
         classpath rootProject.ext.bcfg.deps.butterknife_gradle_plugin
         classpath rootProject.ext.bcfg.deps.kotlin_gradle_plugin
-        classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.95'
+        // classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.95'
     }
 }
 
@@ -20,4 +20,4 @@ task clean(type: Delete) {
 }
 
 // bintray upload command
-// ./gradlew :inkstone-annotation:clean :inkstone-annotation:install :inkstone-annotation:bintrayUpload :inkstone-processor:clean :inkstone-processor:install :inkstone-processor:bintrayUpload :inkstone:clean :inkstone:install :inkstone:bintrayUpload
+// ./gradlew :inkstone-annotation:clean :inkstone-annotation:install :inkstone-annotation:bintrayUpload :inkstone-processor:clean :inkstone-processor:install :inkstone-processor:bintrayUpload :inkstone-gradle-plugin:clean :inkstone-gradle-plugin:install :inkstone-gradle-plugin:bintrayUpload :inkstone:clean :inkstone:install :inkstone:bintrayUpload
