@@ -4,10 +4,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':inkstone-annotation')
     implementation rootProject.ext.bcfg.deps.gson
+    implementation rootProject.ext.bcfg.deps.javapoet
+    implementation rootProject.ext.bcfg.deps.auto_service
+    implementation rootProject.ext.bcfg.deps.guava
 
-    implementation 'com.squareup:javapoet:1.10.0'
-
-    compileOnly 'com.google.auto.service:auto-service:1.0-rc2'
     compileOnly files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 }
 

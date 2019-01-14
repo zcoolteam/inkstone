@@ -22,6 +22,14 @@
             android:value="E8KjXZ6vgCuIvLQcYfKutWpoqhG30YoB" />
 
         <activity
+            android:name="com.zcool.inkstone.app.InkstoneConfigActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.zcool.sample.R" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="com.zcool.sample.module.main.MainActivity"
             android:exported="true">
             <intent-filter>

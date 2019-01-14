@@ -1,1 +1,13 @@
-<manifest package="com.example.appmodule" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.appmodule">
+
+    <application>
+        <activity
+            android:name="com.zcool.inkstone.app.InkstoneConfigActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.appmodule.R" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

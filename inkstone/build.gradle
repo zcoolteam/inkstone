@@ -12,6 +12,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ['INKSTONE_R_PACKAGE_NAME': "com.zcool.inkstone"]
+            }
+        }
     }
 
     buildTypes {
@@ -30,6 +35,7 @@ android {
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     api project(':inkstone-annotation')
+    annotationProcessor project(':inkstone-processor')
 
     api rootProject.ext.bcfg.deps.androidx_annotation
     api rootProject.ext.bcfg.deps.androidx_appcompat

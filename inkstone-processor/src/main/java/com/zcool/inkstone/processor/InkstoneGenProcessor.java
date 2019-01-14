@@ -1,14 +1,16 @@
 package com.zcool.inkstone.processor;
 
 import com.google.auto.service.AutoService;
+import com.google.common.base.Strings;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
 import com.zcool.inkstone.annotation.ApplicationDelegate;
+import com.zcool.inkstone.annotation.Config;
+import com.zcool.inkstone.annotation.ModuleConfig;
 import com.zcool.inkstone.annotation.ServicesProvider;
 
-import org.w3c.dom.Document;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,19 +24,9 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 @AutoService(Processor.class)
 public class InkstoneGenProcessor extends AbstractProcessor {
@@ -42,48 +34,22 @@ public class InkstoneGenProcessor extends AbstractProcessor {
     private Map<String, TypeElement> mApplicationDelegateElements = new HashMap<>();
     private Map<String, TypeElement> mServicesProviderElements = new HashMap<>();
 
-    private File mManifestFile;
-    private String mVariantDirName;
+    private String mInkstoneRPackageName;
 
     @Override
-    public synchronized void init(ProcessingEnvironment processingEnvironment) {
-        super.init(processingEnvironment);
+    public synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
 
-        try {
-            FileObject fileObject = processingEnv.getFiler().getResource(StandardLocation.SOURCE_OUTPUT, "", "_inkstone_tmp_" + System.currentTimeMillis());
-            String filePath = fileObject.toUri().getPath();
-
-            // debug
-            // debug/myflavor
-            // release/Flavor1Flavor2
-            String variantDirName = null;
-
-            String tmpFilename;
-            File tmpFile = new File(filePath);
-            tmpFile = tmpFile.getParentFile();
-            tmpFilename = tmpFile.getName();
-
-            while (!"apt".equals(tmpFilename)) {
-                if (variantDirName == null) {
-                    variantDirName = tmpFilename;
-                } else {
-                    variantDirName = tmpFilename + File.separator + variantDirName;
-                }
-                tmpFile = tmpFile.getParentFile();
-                tmpFilename = tmpFile.getName();
-            }
-
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "apt dir is: " + tmpFile.getAbsolutePath() + " variantDirName is: " + variantDirName);
-            mVariantDirName = variantDirName;
-
-            // now tmpFile is apt dir
-            mManifestFile = new File(tmpFile.getParentFile(), "buildInkstone" + File.separator + variantDirName + File.separator + "AndroidManifest.xml");
-            // mManifestFile = new File(new File(filePath).getParentFile(), "AndroidManifest.xml");
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Manifest file path: " + mManifestFile.getAbsolutePath());
-            mManifestFile.getParentFile().mkdirs();
-        } catch (Throwable e) {
-            throw new RuntimeException("fail to create AndroidManifest.xml", e);
+        mInkstoneRPackageName = processingEnv.getOptions().get("INKSTONE_R_PACKAGE_NAME");
+        if (mInkstoneRPackageName != null) {
+            mInkstoneRPackageName = mInkstoneRPackageName.trim();
         }
+
+        if (Strings.isNullOrEmpty(mInkstoneRPackageName)) {
+            throw new RuntimeException("need config INKSTONE_R_PACKAGE_NAME annotation processor options or config is empty");
+        }
+
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "find options config INKSTONE_R_PACKAGE_NAME: " + mInkstoneRPackageName);
     }
 
     @Override
@@ -129,67 +95,45 @@ public class InkstoneGenProcessor extends AbstractProcessor {
         }
 
         if (roundEnv.processingOver()) {
-            genManifest();
+            genConfig();
         }
 
         return false;
     }
 
-    private void genManifest() {
-        if (mManifestFile.exists()) {
-            if (!mManifestFile.delete()) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "InkstoneGenProcessor fail to delete Manifest file " + mManifestFile);
-            }
-        }
-
+    private void genConfig() {
         try {
-            if (!mManifestFile.createNewFile()) {
-                throw new IllegalAccessException("Manifest createNewFile return false " + mManifestFile);
-            }
+            CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
+            codeBlockBuilder.addStatement("$T result = new $T()", Config.class, Config.class);
+
+            mApplicationDelegateElements.forEach((key, value) -> codeBlockBuilder.addStatement(
+                    "result.addApplicationDelegate($T.valueOf($S, $L))",
+                    Config.ApplicationDelegate.class,
+                    key,
+                    value.getAnnotation(ApplicationDelegate.class).priority()));
+            mServicesProviderElements.forEach((key, value) -> codeBlockBuilder.addStatement(
+                    "result.addServicesProvider($T.valueOf($S, $L))",
+                    Config.ServicesProvider.class,
+                    key,
+                    value.getAnnotation(ServicesProvider.class).priority()));
+
+            codeBlockBuilder.addStatement("return result");
+
+            TypeSpec.Builder targetClassBuilder = TypeSpec.classBuilder("InkstoneModuleConfigImpl")
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addSuperinterface(ModuleConfig.class)
+                    .addMethod(MethodSpec.methodBuilder("getConfig")
+                            .addModifiers(Modifier.PUBLIC)
+                            .returns(Config.class)
+                            .addAnnotation(Override.class)
+                            .addCode(codeBlockBuilder.build())
+                            .build());
+            JavaFile.builder(mInkstoneRPackageName, targetClassBuilder.build())
+                    .build()
+                    .writeTo(processingEnv.getFiler());
         } catch (Throwable e) {
-            throw new RuntimeException("fail to create Manifest file", e);
+            throw new RuntimeException("fail to generate ModuleConfigImpl class", e);
         }
-
-        try (OutputStream os = new FileOutputStream(mManifestFile)) {
-            writeManifestContent(os);
-        } catch (Throwable e) {
-            throw new RuntimeException("fail to write Manifest content", e);
-        }
-    }
-
-    private void writeManifestContent(OutputStream os) throws ParserConfigurationException, TransformerException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.newDocument();
-        document.setXmlStandalone(true);
-
-        org.w3c.dom.Element manifestNode = document.createElement("manifest");
-        manifestNode.setAttribute("xmlns:android", "http://schemas.android.com/apk/res/android");
-
-        org.w3c.dom.Element applicationNode = document.createElement("application");
-        org.w3c.dom.Element innerActivityNode = document.createElement("activity");
-
-        innerActivityNode.setAttribute("android:name", "com.zcool.inkstone.app.InkstoneInnerActivity");
-        innerActivityNode.setAttribute("android:exported", "false");
-
-        org.w3c.dom.Element innerIntentFilterNode = document.createElement("intent-filter");
-        for (Map.Entry<String, TypeElement> item : mApplicationDelegateElements.entrySet()) {
-            org.w3c.dom.Element applicationDelegateActionNode = document.createElement("action");
-            applicationDelegateActionNode.setAttribute("android:name", "inkstone#ApplicationDelegate#" + item.getValue().getAnnotation(ApplicationDelegate.class).priority() + "#" + item.getKey());
-            innerIntentFilterNode.appendChild(applicationDelegateActionNode);
-        }
-
-        manifestNode.appendChild(applicationNode);
-        applicationNode.appendChild(innerActivityNode);
-        innerActivityNode.appendChild(innerIntentFilterNode);
-
-        document.appendChild(manifestNode);
-
-        TransformerFactory tff = TransformerFactory.newInstance();
-        Transformer tf = tff.newTransformer();
-        tf.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        tf.transform(new DOMSource(document), new StreamResult(os));
     }
 
     @Override

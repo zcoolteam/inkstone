@@ -32,6 +32,14 @@
             android:exported="false"
             android:process=":inkstone" />
 
+        <activity
+            android:name="com.zcool.inkstone.app.InkstoneConfigActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.zcool.inkstone.R" />
+            </intent-filter>
+        </activity>
+
         <!-- share -->
         <activity
             android:name="com.tencent.connect.common.AssistActivity"

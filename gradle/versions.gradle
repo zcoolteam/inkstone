@@ -41,6 +41,7 @@ bcfg.deps.leakcanary = "com.squareup.leakcanary:leakcanary-android:1.6.2"
 bcfg.deps.leakcanary_no_op = "com.squareup.leakcanary:leakcanary-android-no-op:1.6.2"
 bcfg.deps.guava = "com.google.guava:guava:27.0.1-android"
 bcfg.deps.javapoet = "com.squareup:javapoet:1.10.0"
+bcfg.deps.auto_service = "com.google.auto.service:auto-service:1.0-rc2"
 
 bcfg.deps.timber = "com.jakewharton.timber:timber:4.7.1"
 bcfg.deps.rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.4"
