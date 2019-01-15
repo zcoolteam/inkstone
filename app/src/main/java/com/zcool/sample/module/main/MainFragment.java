@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.zcool.inkstone.util.ViewUtil;
 import com.zcool.sample.R;
+import com.zcool.sample.manager.SessionManager;
 import com.zcool.sample.module.design.DesignActivity;
 import com.zcool.sample.module.imagedownload.ImageDownloadActivity;
 import com.zcool.sample.module.share.ShareActivity;
@@ -51,6 +52,9 @@ public class MainFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new DataAdapter());
+
+        String token = SessionManager.getInstance().getToken();
+        Timber.v("token: %s", token);
     }
 
     @Override
