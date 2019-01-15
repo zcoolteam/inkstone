@@ -7,7 +7,7 @@ buildscript {
         classpath rootProject.ext.bcfg.deps.gradle_bintray_plugin
         classpath rootProject.ext.bcfg.deps.butterknife_gradle_plugin
         classpath rootProject.ext.bcfg.deps.kotlin_gradle_plugin
-        // classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.95'
+        classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.103'
     }
 }
 
