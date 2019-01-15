@@ -55,7 +55,7 @@ public class FileUtil {
 
         final boolean exists = targetDir.exists();
         final boolean notDirectory = !targetDir.isDirectory();
-        Timber.e("fail to init dir(getAppMediaDir) exists:%s, notDirectory:%s, path:", exists, notDirectory, targetDir.getPath());
+        Timber.e("fail to init dir(getAppMediaDir) exists:%s, notDirectory:%s, path:%s", exists, notDirectory, targetDir.getPath());
         return null;
     }
 
