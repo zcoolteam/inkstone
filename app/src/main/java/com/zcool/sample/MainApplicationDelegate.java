@@ -9,6 +9,7 @@ import com.zcool.inkstone.annotation.ApplicationDelegate;
 import com.zcool.inkstone.ext.share.ShareConfig;
 
 import androidx.annotation.Keep;
+import timber.log.Timber;
 
 @Keep
 @ApplicationDelegate
@@ -16,6 +17,8 @@ public class MainApplicationDelegate implements ModuleApplicationDelegate {
 
     @Override
     public void onCreate(Context context) {
+        Timber.v("[priority default] onCreate");
+
         // App 启动入口, 在此处配置自定义初始化内容
 
         // 示例：配置 LeakCanary
@@ -34,6 +37,7 @@ public class MainApplicationDelegate implements ModuleApplicationDelegate {
 
     @Override
     public void onStartBackgroundService() {
+        Timber.v("[priority default] onStartBackgroundService");
     }
 
 }

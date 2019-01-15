@@ -7,6 +7,7 @@ import com.zcool.inkstone.ModuleServicesProvider;
 import com.zcool.inkstone.annotation.ServicesProvider;
 
 import androidx.annotation.Keep;
+import timber.log.Timber;
 
 @Keep
 @ServicesProvider
@@ -17,6 +18,8 @@ public final class InkstoneServicesProvider implements ModuleServicesProvider {
 
     @Override
     public void onCreate(Inkstone.ServicesProviderHost host) {
+        Timber.v("[priority default] onCreate");
+
         host.addService(SERVICE_STORAGE, new Inkstone.StaticServiceFetcher<IBinder>() {
             @Override
             public IBinder createService() {
