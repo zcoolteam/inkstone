@@ -39,8 +39,8 @@ fun brewJava(outputDir: File, manifestDir: File) {
                             is Element -> {
                                 if (targetActivity.getAttribute("android:name") == "com.zcool.inkstone.app.InkstoneConfigActivity") {
                                     targetActivity.getElementsByTagName("action")?.run {
-                                        for (i in 0 until this.length) {
-                                            val action = this.item(i)
+                                        for (j in 0 until this.length) {
+                                            val action = this.item(j)
                                             when (action) {
                                                 is Element -> {
                                                     val actionName = action.getAttribute("android:name")

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion rootProject.ext.bcfg.ver.target_sdk
@@ -36,6 +37,9 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     api project(':inkstone-annotation')
     annotationProcessor project(':inkstone-processor')
+
+    api rootProject.ext.bcfg.deps.butterknife
+    annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor
 
     api rootProject.ext.bcfg.deps.androidx_annotation
     api rootProject.ext.bcfg.deps.androidx_appcompat
