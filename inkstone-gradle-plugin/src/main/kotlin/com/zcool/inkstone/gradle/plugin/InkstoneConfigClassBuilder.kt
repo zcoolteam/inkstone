@@ -19,7 +19,7 @@ class InkstoneConfigClassBuilder {
         codeBlockBuilder.addStatement("\$T result = new \$T()", Config::class.java, Config::class.java)
         rClassPackageNames.forEach {
             val moduleConfigClassName = ClassName.bestGuess(it.substring(0, it.length - 1) + "InkstoneModuleConfigImpl")
-            codeBlockBuilder.addStatement("result.add(new \$T())", moduleConfigClassName)
+            codeBlockBuilder.addStatement("result.add(new \$T().getConfig())", moduleConfigClassName)
         }
         codeBlockBuilder.addStatement("return result")
 
