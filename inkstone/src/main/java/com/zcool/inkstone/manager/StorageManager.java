@@ -3,8 +3,8 @@ package com.zcool.inkstone.manager;
 import android.os.RemoteException;
 
 import com.zcool.inkstone.lang.Singleton;
-import com.zcool.inkstone.service.BaseServicesProvider;
 import com.zcool.inkstone.service.IStorageService;
+import com.zcool.inkstone.service.InkstoneServicesProvider;
 
 import timber.log.Timber;
 
@@ -68,7 +68,7 @@ public class StorageManager {
 
     private IStorageService getService() throws RemoteException {
         return IStorageService.Stub.asInterface(
-                ServiceManager.getInstance().fetchService(BaseServicesProvider.SERVICE_STORAGE));
+                ServiceManager.getInstance().fetchService(InkstoneServicesProvider.SERVICE_STORAGE));
     }
 
 }

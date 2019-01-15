@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.google.common.base.Preconditions;
+import com.zcool.inkstone.annotation.Config;
+import com.zcool.inkstone.annotation.ModuleConfig;
 import com.zcool.inkstone.lang.NotInitException;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.manager.FrescoManager;
-import com.zcool.inkstone.service.InkstoneService;
 import com.zcool.inkstone.util.ContextUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.CallSuper;
@@ -20,12 +23,12 @@ import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
 @Keep
-public class ApplicationDelegateRoot {
+public final class InkstoneDelegate {
 
-    private static final Singleton<ApplicationDelegateRoot> INSTANCE = new Singleton<ApplicationDelegateRoot>() {
+    private static final Singleton<InkstoneDelegate> INSTANCE = new Singleton<InkstoneDelegate>() {
         @Override
-        protected ApplicationDelegateRoot create() {
-            return new ApplicationDelegateRoot();
+        protected InkstoneDelegate create() {
+            return new InkstoneDelegate();
         }
     };
 
@@ -49,42 +52,66 @@ public class ApplicationDelegateRoot {
         getInstance().onCreate(context);
     }
 
-    public static ApplicationDelegateRoot getInstance() {
+    static InkstoneDelegate getInstance() {
         throwIfNotInit();
         return INSTANCE.get();
     }
 
-    private static boolean sCallConstructor;
+    @NonNull
+    private final ModuleConfig mAppConfig;
+    @NonNull
+    private final List<Config.ApplicationDelegate> mSortApplicationDelegateConfig;
+    @NonNull
+    private final List<Config.ServicesProvider> mSortServicesProviderConfig;
+    @NonNull
+    private final List<ModuleApplicationDelegate> mModuleApplicationDelegates;
+
+    private InkstoneDelegate() {
+        final String className = "com.zcool.inkstone.InkstoneAppConfigImpl";
+        try {
+            mAppConfig = (ModuleConfig) Class.forName(className).newInstance();
+            Preconditions.checkNotNull(mAppConfig, "mAppConfig can not be null");
+
+            List<Config.ApplicationDelegate> sortApplicationDelegateConfig = new ArrayList<>(
+                    mAppConfig.getConfig().getApplicationDelegates());
+            Collections.sort(sortApplicationDelegateConfig, (left, right) -> left.priority - right.priority);
+            mSortApplicationDelegateConfig = sortApplicationDelegateConfig;
+
+            List<Config.ServicesProvider> sortServicesProviderConfig = new ArrayList<>(
+                    mAppConfig.getConfig().getServicesProviders());
+            Collections.sort(sortServicesProviderConfig, (left, right) -> left.priority - right.priority);
+            mSortServicesProviderConfig = sortServicesProviderConfig;
+        } catch (Throwable e) {
+            throw new RuntimeException("fail to create InkstoneDelegate", e);
+        }
+
+        mModuleApplicationDelegates = new ArrayList<>();
+        try {
+            for (Config.ApplicationDelegate item : mSortApplicationDelegateConfig) {
+                mModuleApplicationDelegates.add((ModuleApplicationDelegate) Class.forName(item.clazz).newInstance());
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException("fail to instance module application delegates", e);
+        }
+    }
 
     @NonNull
-    private final List<SubApplicationDelegate> mSubApplicationDelegates;
+    public List<Config.ApplicationDelegate> getSortApplicationDelegateConfig() {
+        return mSortApplicationDelegateConfig;
+    }
 
-    private ApplicationDelegateRoot() {
-        if (sCallConstructor) {
-            throw new IllegalStateException("can not create more than one ApplicationDelegateRoot instance");
-        }
-        sCallConstructor = true;
-
-        final String className = "com.zcool.inkstone.SubApplicationDelegateGroup";
-        try {
-            mSubApplicationDelegates = (List<SubApplicationDelegate>) Class.forName(className).getDeclaredMethod("get").invoke(null);
-            Preconditions.checkNotNull(mSubApplicationDelegates, "mSubApplicationDelegates can not be null");
-        } catch (Throwable e) {
-            throw new RuntimeException("fail to create ApplicationDelegateRoot", e);
-        }
-
+    @NonNull
+    public List<Config.ServicesProvider> getSortServicesProviderConfig() {
+        return mSortServicesProviderConfig;
     }
 
     /**
      * Android 8.0+ 系统权限控制，不允许在 APP 后台运行的情况下启动 service
      */
-    @CallSuper
-    public void onStartBackgroundService() {
+    private void onStartBackgroundService() {
         throwIfNotInit();
 
-        InkstoneService.start(ContextUtil.getContext());
-
-        for (SubApplicationDelegate item : mSubApplicationDelegates) {
+        for (ModuleApplicationDelegate item : mModuleApplicationDelegates) {
             item.onStartBackgroundService();
         }
     }
@@ -106,7 +133,7 @@ public class ApplicationDelegateRoot {
             Timber.plant(new Timber.DebugTree());
         }
 
-        Timber.v(new Throwable("[only print ApplicationDelegateRoot#onCreate call stack]"));
+        Timber.v(new Throwable("[only print InkstoneDelegate#onCreate call stack]"));
 
         mAppCallbacks = new AppCallbacks();
         mAppCallbacks.addApplicationCallbacks(mServiceStarterCallback);
@@ -114,7 +141,7 @@ public class ApplicationDelegateRoot {
         // init builtin
         FrescoManager.getInstance();
 
-        for (SubApplicationDelegate item : mSubApplicationDelegates) {
+        for (ModuleApplicationDelegate item : mModuleApplicationDelegates) {
             item.onCreate(context);
         }
     }
@@ -129,7 +156,7 @@ public class ApplicationDelegateRoot {
 
             if (!mServiceStarted) {
                 mServiceStarted = true;
-                ApplicationDelegateRoot.getInstance().onStartBackgroundService();
+                InkstoneDelegate.getInstance().onStartBackgroundService();
             }
         }
     };

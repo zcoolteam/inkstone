@@ -2,14 +2,14 @@ package com.zcool.sample;
 
 import android.content.Context;
 
-import com.zcool.inkstone.SubApplicationDelegate;
+import com.zcool.inkstone.ModuleApplicationDelegate;
 import com.zcool.inkstone.annotation.ApplicationDelegate;
 
 import androidx.annotation.Keep;
 
 @Keep
 @ApplicationDelegate(priority = -2)
-public class MainApplicationDelegate2 implements SubApplicationDelegate {
+public class MainApplicationDelegate2 implements ModuleApplicationDelegate {
 
     @Override
     public void onCreate(Context context) {

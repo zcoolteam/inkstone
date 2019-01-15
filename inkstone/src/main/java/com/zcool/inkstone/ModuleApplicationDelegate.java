@@ -5,7 +5,7 @@ import android.content.Context;
 import androidx.annotation.Keep;
 
 @Keep
-public interface SubApplicationDelegate {
+public interface ModuleApplicationDelegate {
 
     void onCreate(Context context);
 

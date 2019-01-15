@@ -16,13 +16,13 @@ public class ContextUtil {
     public static Context getContext() {
         if (sContext == null) {
             throw new IllegalAccessError(
-                    "context not found, @see ApplicationDelegateRoot#init(Context)");
+                    "context not found, @see InkstoneDelegate#init(Context)");
         }
         return sContext;
     }
 
     /**
-     * do not call this method direct, and use ApplicationDelegateRoot.init(Context) instead.
+     * do not call this method direct, and use InkstoneDelegate.init(Context) instead.
      */
     public static synchronized void setContext(@NonNull Context context) {
         if (sContext != null) {

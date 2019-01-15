@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 
-import com.zcool.inkstone.ApplicationDelegateRoot;
+import com.zcool.inkstone.Inkstone;
 import com.zcool.inkstone.lang.CommonFileProvider;
 import com.zcool.inkstone.manager.ProcessManager;
 import com.zcool.inkstone.manager.TmpFileManager;
@@ -42,7 +42,7 @@ public class FileUtil {
             Timber.e("Environment.getExternalStorageDirectory() return null");
             return null;
         }
-        String mediaDirName = ApplicationDelegateRoot.getInstance().getMediaDirName();
+        String mediaDirName = Inkstone.getMediaDirName();
         if (TextUtils.isEmpty(mediaDirName)) {
             Timber.e("mediaDirName is empty");
             return null;

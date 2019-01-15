@@ -3,8 +3,8 @@ package com.zcool.inkstone.manager;
 import android.os.RemoteException;
 
 import com.zcool.inkstone.lang.Singleton;
-import com.zcool.inkstone.service.BaseServicesProvider;
 import com.zcool.inkstone.service.ICookieStoreService;
+import com.zcool.inkstone.service.InkstoneServicesProvider;
 
 import java.util.List;
 
@@ -96,7 +96,7 @@ public class CookieStoreManager {
 
     private ICookieStoreService getService() throws RemoteException {
         return ICookieStoreService.Stub.asInterface(
-                ServiceManager.getInstance().fetchService(BaseServicesProvider.SERVICE_COOKIE_STORE));
+                ServiceManager.getInstance().fetchService(InkstoneServicesProvider.SERVICE_COOKIE_STORE));
     }
 
 }
