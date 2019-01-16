@@ -45,7 +45,7 @@ fun brewJava(outputDir: File, manifestDir: File) {
                                                 is Element -> {
                                                     val actionName = action.getAttribute("android:name")
                                                     actionName?.endsWith(".R").takeIf {
-                                                        addModuleRClassPackageName(actionName)
+                                                        addModuleRClassPackageName(actionName.substring(0, actionName.length - 2))
                                                         true
                                                     }
                                                 }
