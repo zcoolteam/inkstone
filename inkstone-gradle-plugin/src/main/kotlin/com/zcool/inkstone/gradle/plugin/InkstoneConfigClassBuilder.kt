@@ -8,16 +8,16 @@ import javax.lang.model.element.Modifier
 
 class InkstoneConfigClassBuilder {
 
-    private var rClassPackageNames = mutableListOf<String>()
+    private var modulePackageNames = mutableListOf<String>()
 
-    fun addModuleRClassPackageName(className: String) {
-        rClassPackageNames.add(className)
+    fun addModulePackageName(modulePackageName: String) {
+        modulePackageNames.add(modulePackageName)
     }
 
     fun create(outputDir: File) {
         val codeBlockBuilder = CodeBlock.builder()
         codeBlockBuilder.addStatement("\$T result = new \$T()", Config::class.java, Config::class.java)
-        rClassPackageNames.forEach {
+        modulePackageNames.forEach {
             val moduleConfigClassName = ClassName.bestGuess("$it.InkstoneModuleConfigImpl")
             codeBlockBuilder.addStatement("result.add(new \$T().getConfig())", moduleConfigClassName)
         }

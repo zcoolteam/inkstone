@@ -6,7 +6,7 @@
             android:name="com.zcool.inkstone.app.InkstoneConfigActivity"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.appmodule2.R" />
+                <action android:name="MODULE_MANIFEST_PACKAGE:com.example.appmodule2" />
             </intent-filter>
         </activity>
     </application>

@@ -11,9 +11,7 @@ import com.zcool.inkstone.annotation.Config;
 import com.zcool.inkstone.annotation.ModuleConfig;
 import com.zcool.inkstone.annotation.ServicesProvider;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +19,8 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -29,27 +29,26 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 @AutoService(Processor.class)
+@SupportedOptions({Constants.OPTION_MODULE_MANIFEST_PACKAGE})
+@SupportedAnnotationTypes({Constants.ANNOTATION_TYPE_APPLICATION_DELEGATE, Constants.ANNOTATION_TYPE_SERVICES_PROVIDER})
 public class InkstoneGenProcessor extends AbstractProcessor {
 
+    private boolean mGen;
     private Map<String, TypeElement> mApplicationDelegateElements = new HashMap<>();
     private Map<String, TypeElement> mServicesProviderElements = new HashMap<>();
 
-    private String mInkstoneRPackageName;
+    private String mModuleManifestPackage;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
 
-        mInkstoneRPackageName = processingEnv.getOptions().get("INKSTONE_R_PACKAGE_NAME");
-        if (mInkstoneRPackageName != null) {
-            mInkstoneRPackageName = mInkstoneRPackageName.trim();
+        mModuleManifestPackage = processingEnv.getOptions().get(Constants.OPTION_MODULE_MANIFEST_PACKAGE);
+        if (mModuleManifestPackage != null) {
+            mModuleManifestPackage = mModuleManifestPackage.trim();
         }
 
-        if (Strings.isNullOrEmpty(mInkstoneRPackageName)) {
-            throw new RuntimeException("need config INKSTONE_R_PACKAGE_NAME annotation processor options or config is empty");
-        }
-
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "find options config INKSTONE_R_PACKAGE_NAME: " + mInkstoneRPackageName);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "option " + Constants.OPTION_MODULE_MANIFEST_PACKAGE + ": " + mModuleManifestPackage);
     }
 
     @Override
@@ -94,14 +93,21 @@ public class InkstoneGenProcessor extends AbstractProcessor {
             }
         }
 
-        if (roundEnv.processingOver()) {
-            genConfig();
+        if (!mGen &&
+                (!mApplicationDelegateElements.isEmpty() || !mServicesProviderElements.isEmpty())) {
+            mGen = true;
+
+            if (Strings.isNullOrEmpty(mModuleManifestPackage)) {
+                throw new RuntimeException(Constants.TIP_NO_OPTION_MODULE_MANIFEST_PACKAGE);
+            }
+
+            brewJava();
         }
 
         return false;
     }
 
-    private void genConfig() {
+    private void brewJava() {
         try {
             CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
             codeBlockBuilder.addStatement("$T result = new $T()", Config.class, Config.class);
@@ -128,22 +134,12 @@ public class InkstoneGenProcessor extends AbstractProcessor {
                             .addAnnotation(Override.class)
                             .addCode(codeBlockBuilder.build())
                             .build());
-            JavaFile.builder(mInkstoneRPackageName, targetClassBuilder.build())
+            JavaFile.builder(mModuleManifestPackage, targetClassBuilder.build())
                     .build()
                     .writeTo(processingEnv.getFiler());
         } catch (Throwable e) {
             throw new RuntimeException("fail to generate ModuleConfigImpl class", e);
         }
-    }
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> types = new HashSet<>();
-
-        types.add(ApplicationDelegate.class.getName());
-        types.add(ServicesProvider.class.getName());
-
-        return Collections.unmodifiableSet(types);
     }
 
     @Override

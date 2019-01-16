@@ -25,7 +25,7 @@
             android:name="com.zcool.inkstone.app.InkstoneConfigActivity"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.zcool.sample.R" />
+                <action android:name="MODULE_MANIFEST_PACKAGE:com.zcool.sample" />
             </intent-filter>
         </activity>
 

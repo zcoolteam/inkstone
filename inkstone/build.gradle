@@ -15,7 +15,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ['INKSTONE_R_PACKAGE_NAME': "com.zcool.inkstone"]
+                arguments = ['MODULE_MANIFEST_PACKAGE': "com.zcool.inkstone"]
             }
         }
     }
