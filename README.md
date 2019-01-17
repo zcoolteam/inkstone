@@ -1,5 +1,5 @@
 inkstone
-========
+=========
 
 Android 应用开发中间件, 支持多进程与模块化
 
@@ -133,7 +133,7 @@ dependencies {
 ```
 
 提高兼容性
------
+----------
 为了提高兼容性，如果你有自定义的 Application, ContentProvider, Service, BroadcastReceiver,
 需要在其对应的入口处调用 `Inkstone.init(Context)` 方法.**
 ```java
