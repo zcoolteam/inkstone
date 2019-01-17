@@ -7,7 +7,7 @@ Android 应用开发中间件, 支持多进程与模块化
 - [如何使用](#如何使用)
    - [必须配置](#必须配置)
    - [按需配置](#按需配置)
-- [提高兼容性][#提高兼容性]
+- [提高兼容性](#提高兼容性)
 
 版本要求
 --------
@@ -18,6 +18,7 @@ Android 应用开发中间件, 支持多进程与模块化
 --------
 
 ### 必须配置
+
 /build.gradle
 ```groovy
 buildscript {
@@ -34,6 +35,7 @@ apply plugin: 'com.zcool.inkstone'
 ```
 
 ### 按需配置
+
 /app/build.gradle
 ```groovy
 apply plugin: 'com.android.application'
@@ -134,8 +136,9 @@ dependencies {
 
 提高兼容性
 ----------
+
 为了提高兼容性，如果你有自定义的 Application, ContentProvider, Service, BroadcastReceiver,
-需要在其对应的入口处调用 `Inkstone.init(Context)` 方法.**
+需要在其对应的入口处调用 Inkstone.init(Context) 方法.
 ```java
 public class MyApplication extends MultiDexApplication {
 
