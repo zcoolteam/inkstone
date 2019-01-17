@@ -29,8 +29,8 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api project(':inkstone')
-    annotationProcessor project(':inkstone-processor')
+    api rootProject.ext.bcfg.deps.inkstone
+    annotationProcessor rootProject.ext.bcfg.deps.inkstone_processor
 
     api rootProject.ext.bcfg.deps.butterknife
     annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor

@@ -42,6 +42,9 @@ bcfg.deps.leakcanary_no_op = "com.squareup.leakcanary:leakcanary-android-no-op:1
 bcfg.deps.guava = "com.google.guava:guava:27.0.1-android"
 bcfg.deps.javapoet = "com.squareup:javapoet:1.10.0"
 bcfg.deps.auto_service = "com.google.auto.service:auto-service:1.0-rc2"
+bcfg.deps.inkstone = "com.zcool.inkstone:inkstone:0.1.110"
+bcfg.deps.inkstone_processor = "com.zcool.inkstone:inkstone-processor:0.1.110"
+bcfg.deps.inkstone_gradle_plugin = "com.zcool.inkstone:inkstone-gradle-plugin:0.1.110"
 
 bcfg.deps.timber = "com.jakewharton.timber:timber:4.7.1"
 bcfg.deps.rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.4"
