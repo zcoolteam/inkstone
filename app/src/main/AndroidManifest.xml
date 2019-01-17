@@ -21,9 +21,7 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="E8KjXZ6vgCuIvLQcYfKutWpoqhG30YoB" />
 
-        <activity
-            android:name="com.zcool.inkstone.app.InkstoneConfigActivity"
-            android:exported="false">
+        <activity android:name="com.zcool.inkstone.app.InkstoneConfigActivity">
             <intent-filter>
                 <action android:name="MODULE_MANIFEST_PACKAGE:com.zcool.sample" />
             </intent-filter>
