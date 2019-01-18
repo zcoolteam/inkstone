@@ -1,29 +1,26 @@
 package com.zcool.inkstone;
 
 import android.app.Activity;
+import android.app.ActivityThread;
+import android.app.Application;
 import android.content.Context;
 
 import com.google.common.base.Preconditions;
 import com.zcool.inkstone.annotation.Config;
 import com.zcool.inkstone.annotation.ModuleConfig;
-import com.zcool.inkstone.lang.NotInitException;
 import com.zcool.inkstone.lang.Singleton;
-import com.zcool.inkstone.manager.FrescoManager;
 import com.zcool.inkstone.util.ContextUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
-@Keep
-public final class InkstoneDelegate {
+final class InkstoneDelegate {
 
     private static final Singleton<InkstoneDelegate> INSTANCE = new Singleton<InkstoneDelegate>() {
         @Override
@@ -32,41 +29,81 @@ public final class InkstoneDelegate {
         }
     };
 
-    private static boolean sInit;
+    public static InkstoneDelegate getInstance() {
+        return INSTANCE.get();
+    }
 
-    public synchronized static void init(Context context) {
-        if (sInit) {
+    private boolean mInit;
+    private Application mApplication;
+    private Attr mAttr;
+
+    private AppCallbacks mAppCallbacks;
+
+    private ModuleConfig mAppConfig;
+    private List<Config.ApplicationDelegate> mSortApplicationDelegateConfig;
+    private List<Config.ServicesProvider> mSortServicesProviderConfig;
+    private List<ModuleApplicationDelegate> mModuleApplicationDelegates;
+
+    private InkstoneDelegate() {
+    }
+
+    synchronized void init(@NonNull Context context) {
+        if (mInit) {
             return;
         }
-        sInit = true;
 
-        // set global context first
-        ContextUtil.setContext(context);
-        context = ContextUtil.getContext();
+        Application application;
+        if (context instanceof Application) {
+            application = (Application) context;
+        } else {
+            application = (Application) context.getApplicationContext();
+        }
+
+        if (application == null) {
+            Timber.e("application not found from Context %s", context);
+            new RuntimeException("application not found, invalid context " + context).printStackTrace();
+            return;
+        }
+
+        mInit = true;
+
+        mApplication = application;
 
         // config RxJava2
         RxJavaPlugins.setErrorHandler(e -> {
             // ignore
         });
 
-        getInstance().onCreate(context);
+        if (Debug.isDebug()) {
+            Timber.plant(new Timber.DebugTree());
+        }
+
+        Timber.v(new Throwable("[only print call stack]"));
+
+        mAttr = new Attr();
+        mAppCallbacks = new AppCallbacks();
+        mAppCallbacks.addApplicationCallbacks(mServiceStarterCallback);
+
+        loadConfig();
+        onCreate(context);
     }
 
-    static InkstoneDelegate getInstance() {
-        throwIfNotInit();
-        return INSTANCE.get();
+    synchronized void checkInit() {
+        if (!mInit) {
+            Context context = ActivityThread.currentApplication();
+            if (context != null) {
+                init(context);
+                return;
+            }
+            Timber.e("auto init fail, ActivityThread.currentApplication() return null");
+        }
+
+        if (!mInit) {
+            throw new RuntimeException("inkstone not init, try manual init with Inkstone.init(Context)");
+        }
     }
 
-    @NonNull
-    private final ModuleConfig mAppConfig;
-    @NonNull
-    private final List<Config.ApplicationDelegate> mSortApplicationDelegateConfig;
-    @NonNull
-    private final List<Config.ServicesProvider> mSortServicesProviderConfig;
-    @NonNull
-    private final List<ModuleApplicationDelegate> mModuleApplicationDelegates;
-
-    private InkstoneDelegate() {
+    private void loadConfig() {
         final String className = "com.zcool.inkstone.InkstoneAppConfigImpl";
         try {
             mAppConfig = (ModuleConfig) Class.forName(className).newInstance();
@@ -81,68 +118,43 @@ public final class InkstoneDelegate {
                     mAppConfig.getConfig().getServicesProviders());
             Collections.sort(sortServicesProviderConfig, (left, right) -> left.priority - right.priority);
             mSortServicesProviderConfig = sortServicesProviderConfig;
-        } catch (Throwable e) {
-            throw new RuntimeException("fail to create InkstoneDelegate", e);
-        }
 
-        mModuleApplicationDelegates = new ArrayList<>();
-        try {
+            // all process need module application delegates class instance
+            mModuleApplicationDelegates = new ArrayList<>();
             for (Config.ApplicationDelegate item : mSortApplicationDelegateConfig) {
                 mModuleApplicationDelegates.add((ModuleApplicationDelegate) Class.forName(item.clazz).newInstance());
             }
         } catch (Throwable e) {
-            throw new RuntimeException("fail to instance module application delegates", e);
+            throw new RuntimeException("loadConfig fail", e);
         }
     }
 
-    @NonNull
-    public List<Config.ApplicationDelegate> getSortApplicationDelegateConfig() {
-        return mSortApplicationDelegateConfig;
-    }
+    private void onCreate(Context context) {
+        checkInit();
 
-    @NonNull
-    public List<Config.ServicesProvider> getSortServicesProviderConfig() {
-        return mSortServicesProviderConfig;
+        for (ModuleApplicationDelegate item : mModuleApplicationDelegates) {
+            try {
+                item.onCreate(context);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                Timber.e(e);
+            }
+        }
     }
 
     /**
      * Android 8.0+ 系统权限控制，不允许在 APP 后台运行的情况下启动 service
      */
     private void onStartBackgroundService() {
-        throwIfNotInit();
+        checkInit();
 
         for (ModuleApplicationDelegate item : mModuleApplicationDelegates) {
-            item.onStartBackgroundService();
-        }
-    }
-
-    private synchronized static void throwIfNotInit() {
-        if (!sInit) {
-            throw new NotInitException();
-        }
-    }
-
-    private AppCallbacks mAppCallbacks;
-    private String mDefaultUserAgent;
-
-    @CallSuper
-    public void onCreate(Context context) {
-        throwIfNotInit();
-
-        if (Debug.isDebug()) {
-            Timber.plant(new Timber.DebugTree());
-        }
-
-        Timber.v(new Throwable("[only print InkstoneDelegate#onCreate call stack]"));
-
-        mAppCallbacks = new AppCallbacks();
-        mAppCallbacks.addApplicationCallbacks(mServiceStarterCallback);
-
-        // init builtin
-        FrescoManager.getInstance();
-
-        for (ModuleApplicationDelegate item : mModuleApplicationDelegates) {
-            item.onCreate(context);
+            try {
+                item.onStartBackgroundService();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                Timber.e(e);
+            }
         }
     }
 
@@ -154,40 +166,85 @@ public final class InkstoneDelegate {
         public void onActivityResumed(Activity activity) {
             super.onActivityResumed(activity);
 
-            if (!mServiceStarted) {
-                mServiceStarted = true;
-                InkstoneDelegate.getInstance().onStartBackgroundService();
+            synchronized (this) {
+                if (!mServiceStarted) {
+                    mServiceStarted = true;
+
+                    InkstoneDelegate.this.onStartBackgroundService();
+                }
             }
         }
     };
 
-    public boolean isDebug() {
-        return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug);
+    @NonNull
+    public Application getApplication() {
+        checkInit();
+
+        Preconditions.checkNotNull(mApplication);
+        return mApplication;
     }
 
-    public boolean isDebugHttpBody() {
-        return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug_http_body);
+    @NonNull
+    public List<Config.ApplicationDelegate> getSortApplicationDelegateConfig() {
+        checkInit();
+
+        Preconditions.checkNotNull(mSortApplicationDelegateConfig);
+        return mSortApplicationDelegateConfig;
     }
 
-    public boolean isDebugWidget() {
-        return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug_widget);
+    @NonNull
+    public List<Config.ServicesProvider> getSortServicesProviderConfig() {
+        checkInit();
+
+        Preconditions.checkNotNull(mSortServicesProviderConfig);
+        return mSortServicesProviderConfig;
     }
 
+    @NonNull
     public AppCallbacks getAppCallbacks() {
+        checkInit();
+
+        Preconditions.checkNotNull(mAppCallbacks);
         return mAppCallbacks;
     }
 
-    public void setDefaultUserAgent(@Nullable String userAgent) {
-        mDefaultUserAgent = userAgent;
+    @NonNull
+    public Attr getAttr() {
+        checkInit();
+
+        Preconditions.checkNotNull(mAttr);
+        return mAttr;
     }
 
-    @Nullable
-    public String getDefaultUserAgent() {
-        return mDefaultUserAgent;
-    }
+    public static class Attr {
 
-    public String getMediaDirName() {
-        return ContextUtil.getContext().getResources().getString(ContextUtil.getContext().getApplicationInfo().labelRes);
+        private String mDefaultUserAgent;
+
+        public String getMediaDirName() {
+            return ContextUtil.getContext().getResources().getString(ContextUtil.getContext().getApplicationInfo().labelRes);
+        }
+
+        public void setDefaultUserAgent(@Nullable String userAgent) {
+            mDefaultUserAgent = userAgent;
+        }
+
+        @Nullable
+        public String getDefaultUserAgent() {
+            return mDefaultUserAgent;
+        }
+
+        public boolean isDebug() {
+            return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug);
+        }
+
+        public boolean isDebugHttpBody() {
+            return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug_http_body);
+        }
+
+        public boolean isDebugWidget() {
+            return ContextUtil.getContext().getResources().getBoolean(R.bool.inkstone_debug_widget);
+        }
+
     }
 
 }

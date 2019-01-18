@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion rootProject.ext.bcfg.ver.target_sdk
@@ -8,16 +7,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.bcfg.ver.min_sdk
         targetSdkVersion rootProject.ext.bcfg.ver.target_sdk
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ['MODULE_MANIFEST_PACKAGE': "com.zcool.inkstone"]
-            }
-        }
     }
 
     buildTypes {
@@ -35,14 +26,6 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-
-    compileOnly project(':inkstone-build-hook')
-
-    api project(':inkstone-annotation')
-    annotationProcessor project(':inkstone-processor')
-
-    api rootProject.ext.bcfg.deps.butterknife
-    annotationProcessor rootProject.ext.bcfg.deps.butterknife_processor
 
     api rootProject.ext.bcfg.deps.androidx_annotation
     api rootProject.ext.bcfg.deps.androidx_appcompat
@@ -69,9 +52,4 @@ dependencies {
     api rootProject.ext.bcfg.deps.retrofit
     api rootProject.ext.bcfg.deps.retrofit_gson
     api rootProject.ext.bcfg.deps.retrofit_rxjava2
-
-    api "com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.1.6"
-    api 'com.sina.weibo.sdk:core:4.3.6:openDefaultRelease@aar'
 }
-
-apply from: ('bintray.gradle')

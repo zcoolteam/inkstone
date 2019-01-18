@@ -1,5 +1,6 @@
 package com.zcool.inkstone;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.IBinder;
 
@@ -16,7 +17,15 @@ public class Inkstone {
     }
 
     public static void init(Context context) {
-        InkstoneDelegate.init(context);
+        InkstoneDelegate.getInstance().init(context);
+    }
+
+    public static void checkInit() {
+        InkstoneDelegate.getInstance().checkInit();
+    }
+
+    public static Application getApplication() {
+        return InkstoneDelegate.getInstance().getApplication();
     }
 
     @NonNull
@@ -25,32 +34,33 @@ public class Inkstone {
     }
 
     public static boolean isDebug() {
-        return InkstoneDelegate.getInstance().isDebug();
+        return InkstoneDelegate.getInstance().getAttr().isDebug();
     }
 
     public static boolean isDebugHttpBody() {
-        return InkstoneDelegate.getInstance().isDebugHttpBody();
+        return InkstoneDelegate.getInstance().getAttr().isDebugHttpBody();
     }
 
     public static boolean isDebugWidget() {
-        return InkstoneDelegate.getInstance().isDebugWidget();
+        return InkstoneDelegate.getInstance().getAttr().isDebugWidget();
     }
 
+    @NonNull
     public static AppCallbacks getAppCallbacks() {
         return InkstoneDelegate.getInstance().getAppCallbacks();
     }
 
     public static void setDefaultUserAgent(@Nullable String userAgent) {
-        InkstoneDelegate.getInstance().setDefaultUserAgent(userAgent);
+        InkstoneDelegate.getInstance().getAttr().setDefaultUserAgent(userAgent);
     }
 
     @Nullable
     public static String getDefaultUserAgent() {
-        return InkstoneDelegate.getInstance().getDefaultUserAgent();
+        return InkstoneDelegate.getInstance().getAttr().getDefaultUserAgent();
     }
 
     public static String getMediaDirName() {
-        return InkstoneDelegate.getInstance().getMediaDirName();
+        return InkstoneDelegate.getInstance().getAttr().getMediaDirName();
     }
 
     public interface ServiceFetcher<T> {
