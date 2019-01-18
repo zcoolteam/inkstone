@@ -7,7 +7,6 @@ Android 应用多进程开发与模块化开发中间件
 - [如何使用](#如何使用)
    - [必须配置](#必须配置)
    - [按需配置](#按需配置)
-- [提高兼容性](#提高兼容性)
 
 版本要求
 --------
@@ -134,57 +133,3 @@ dependencies {
 </manifest>
 ```
 
-提高兼容性
-----------
-
-为了提高兼容性，如果你有自定义的 Application, ContentProvider, Service, BroadcastReceiver,
-需要在其对应的入口处调用 Inkstone.init(Context) 方法.
-```java
-public class MyApplication extends MultiDexApplication {
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Inkstone.init(this);
-    }
-
-}
-```
-```java
-public class MyService extends Service {
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Inkstone.init(this);
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-}
-```
-```java
-public class MyContentProvider extends ContentProvider {
-
-    @Override
-    public boolean onCreate() {
-        Inkstone.init(getContext());
-        return true;
-    }
-
-}
-```
-```java
-public class MyBroadcastReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Inkstone.init(context);
-    }
-
-}
-```
