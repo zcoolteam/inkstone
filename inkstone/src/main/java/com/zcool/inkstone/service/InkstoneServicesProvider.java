@@ -10,7 +10,7 @@ import androidx.annotation.Keep;
 import timber.log.Timber;
 
 @Keep
-@ServicesProvider
+@ServicesProvider(priority = -10000)
 public final class InkstoneServicesProvider implements ModuleServicesProvider {
 
     public static final String SERVICE_STORAGE = "storage";

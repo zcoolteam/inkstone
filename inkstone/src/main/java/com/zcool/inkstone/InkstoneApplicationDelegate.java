@@ -11,7 +11,7 @@ import androidx.annotation.Keep;
 import timber.log.Timber;
 
 @Keep
-@ApplicationDelegate
+@ApplicationDelegate(priority = -10000)
 public class InkstoneApplicationDelegate implements ModuleApplicationDelegate {
 
     @Override
