@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'gradle/versions.gradle'
+    apply from: 'versions.gradle'
     rootProject.ext.bcfg.addRepos(repositories)
     dependencies {
         classpath rootProject.ext.bcfg.deps.android_gradle_plugin
