@@ -1,15 +1,19 @@
 package com.zcool.inkstone.security;
 
+import android.util.Base64;
+
 import com.zcool.inkstone.lang.Charsets;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.util.ContextUtil;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import androidx.annotation.NonNull;
@@ -50,16 +54,21 @@ public class AES {
 
                 {
                     Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                    cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+                    byte[] args = new byte[cipher.getBlockSize()];
+                    Arrays.fill(args, (byte) 0);
+                    cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
                     mEncoder = cipher;
                 }
 
                 {
                     Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                    cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+                    byte[] args = new byte[cipher.getBlockSize()];
+                    Arrays.fill(args, (byte) 0);
+                    cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
                     mDecoder = cipher;
                 }
             } catch (Throwable e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
@@ -74,7 +83,7 @@ public class AES {
 
             try {
                 byte[] output = mEncoder.doFinal(input.getBytes(Charsets.UTF8));
-                String encoded = new String(output, Charsets.UTF8);
+                String encoded = Base64.encodeToString(output, Base64.NO_WRAP | Base64.URL_SAFE);
                 return addVersionFlag(encoded);
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -96,7 +105,7 @@ public class AES {
             input = removeVersionFlag(input);
 
             try {
-                byte[] output = mDecoder.doFinal(input.getBytes(Charsets.UTF8));
+                byte[] output = mDecoder.doFinal(Base64.decode(input, Base64.NO_WRAP | Base64.URL_SAFE));
                 String decoded = new String(output, Charsets.UTF8);
                 return unwrap(decoded);
             } catch (Throwable e) {

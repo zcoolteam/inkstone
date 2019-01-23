@@ -68,6 +68,7 @@ final class InkstoneDelegate {
         mInit = true;
 
         mApplication = application;
+        mAttr = new Attr();
 
         // config RxJava2
         RxJavaPlugins.setErrorHandler(e -> {
@@ -80,7 +81,6 @@ final class InkstoneDelegate {
 
         Timber.v(new Throwable("[only print call stack]"));
 
-        mAttr = new Attr();
         mAppCallbacks = new AppCallbacks();
         mAppCallbacks.addApplicationCallbacks(mServiceStarterCallback);
 
