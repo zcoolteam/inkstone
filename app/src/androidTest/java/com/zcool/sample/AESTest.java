@@ -25,7 +25,9 @@ public class AESTest {
                 "",
                 "0",
                 "true",
-                "{\"name\":\"peny\", \"age\":2}"
+                "{\"name\":\"peny\", \"age\":2}",
+                "鹅鹅鹅，曲项向天歌",
+                "==;&%^*<>《》｀、|"
         };
         String[] outputs = new String[inputs.length];
 
