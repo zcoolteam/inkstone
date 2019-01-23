@@ -1,7 +1,6 @@
 package com.zcool.inkstone.security;
 
-import android.util.Base64;
-
+import com.zcool.inkstone.lang.Base64;
 import com.zcool.inkstone.lang.Charsets;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.util.ContextUtil;
@@ -83,7 +82,7 @@ public class AES {
 
             try {
                 byte[] output = mEncoder.doFinal(input.getBytes(Charsets.UTF8));
-                String encoded = Base64.encodeToString(output, Base64.NO_WRAP | Base64.URL_SAFE);
+                String encoded = Base64.encode(output);
                 return addVersionFlag(encoded);
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -105,7 +104,7 @@ public class AES {
             input = removeVersionFlag(input);
 
             try {
-                byte[] output = mDecoder.doFinal(Base64.decode(input, Base64.NO_WRAP | Base64.URL_SAFE));
+                byte[] output = mDecoder.doFinal(Base64.decode(input));
                 String decoded = new String(output, Charsets.UTF8);
                 return unwrap(decoded);
             } catch (Throwable e) {
