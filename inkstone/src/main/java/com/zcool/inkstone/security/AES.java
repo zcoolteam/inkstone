@@ -8,7 +8,6 @@ import com.zcool.inkstone.util.ContextUtil;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -16,7 +15,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import androidx.annotation.NonNull;
-import timber.log.Timber;
+import androidx.annotation.Nullable;
 
 public class AES {
 
@@ -26,117 +25,132 @@ public class AES {
         mV1 = new V1(key);
     }
 
-    public String encode(@Nullable String input, @Nullable String defaultValue) {
-        return mV1.encode(input, defaultValue);
+    @NonNull
+    public String encode(@Nullable String input) throws Exception {
+        return mV1.encode(input);
     }
 
-    public String decode(@Nullable String input, @Nullable String defaultValue) {
-        return mV1.decode(input, defaultValue);
+    @Nullable
+    public String decode(@NonNull String input) throws Exception {
+        return mV1.decode(input);
     }
 
-    private static class V1 {
+    private static class V1 implements Encoder, Decoder {
 
-        private static final String VERSION = "V1";
+        // version + split + noise + split + type + split + original string
+
+        private static final String VERSION = "AES.V1";
+
+        private static final String TYPE_NULL = "null";
+        private static final String TYPE_EMPTY = "empty";
+        private static final String TYPE_NORMAL = "normal";
+
+        private static final String SPLIT = ":";
+
         private final String mKey;
-        private final Cipher mEncoder;
-        private final Cipher mDecoder;
 
         private V1(@Nullable String key) {
             String packageName = ContextUtil.getContext().getPackageName();
             mKey = key + ";" + packageName;
-
-            try {
-                KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-                keyGenerator.init(128, new SecureRandom(mKey.getBytes(Charsets.UTF8)));
-                SecretKey secretKey = keyGenerator.generateKey();
-                SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
-
-                {
-                    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                    byte[] args = new byte[cipher.getBlockSize()];
-                    Arrays.fill(args, (byte) 0);
-                    cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
-                    mEncoder = cipher;
-                }
-
-                {
-                    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                    byte[] args = new byte[cipher.getBlockSize()];
-                    Arrays.fill(args, (byte) 0);
-                    cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
-                    mDecoder = cipher;
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
         }
 
-        public String encode(@Nullable String input, @Nullable String defaultValue) {
-            if (input == null) {
-                return defaultValue;
-            }
+        private Cipher createEncoder() throws Exception {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(128, new SecureRandom(mKey.getBytes(Charsets.UTF8)));
+            SecretKey secretKey = keyGenerator.generateKey();
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
 
-            String noise = nextRandomNoise();
-            input = wrap(input, noise);
-
-            try {
-                byte[] output = mEncoder.doFinal(input.getBytes(Charsets.UTF8));
-                String encoded = Base64.encode(output);
-                return addVersionFlag(encoded);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                Timber.e(e);
-                return defaultValue;
-            }
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            byte[] args = new byte[cipher.getBlockSize()];
+            Arrays.fill(args, (byte) 0);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
+            return cipher;
         }
 
-        public String decode(@Nullable String input, @Nullable String defaultValue) {
-            if (input == null) {
-                return defaultValue;
-            }
+        private Cipher createDecoder() throws Exception {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(128, new SecureRandom(mKey.getBytes(Charsets.UTF8)));
+            SecretKey secretKey = keyGenerator.generateKey();
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
 
-            if (!matchVersionFlag(input)) {
-                Timber.v("version flag not match");
-                return defaultValue;
-            }
-
-            input = removeVersionFlag(input);
-
-            try {
-                byte[] output = mDecoder.doFinal(Base64.decode(input));
-                String decoded = new String(output, Charsets.UTF8);
-                return unwrap(decoded);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                Timber.e(e);
-                return defaultValue;
-            }
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            byte[] args = new byte[cipher.getBlockSize()];
+            Arrays.fill(args, (byte) 0);
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
+            return cipher;
         }
 
         @NonNull
-        private String addVersionFlag(@NonNull String input) {
-            return VERSION + ":" + input;
+        @Override
+        public String encode(@Nullable String input) throws Exception {
+            final String formatInput = wrapVersion(wrapNoise(wrapType(input)));
+            byte[] inputBytes = formatInput.getBytes(Charsets.UTF8);
+            byte[] outputBytes = createEncoder().doFinal(inputBytes);
+            String output = Base64.encodeUrl(outputBytes);
+            return wrapVersion(output);
+        }
+
+        @Nullable
+        @Override
+        public String decode(@NonNull String input) throws Exception {
+            input = unwrapVersion(input);
+            byte[] inputBytes = Base64.decode(input);
+            byte[] outputBytes = createDecoder().doFinal(inputBytes);
+            String output = new String(outputBytes, Charsets.UTF8);
+            output = unwrapType(unwrapNoise(unwrapVersion(output)));
+            return output;
         }
 
         @NonNull
-        private String removeVersionFlag(@NonNull String input) {
-            return input.substring(VERSION.length());
+        private String wrapType(@Nullable String str) {
+            if (str == null) {
+                return TYPE_NULL + SPLIT;
+            }
+            if (str.isEmpty()) {
+                return TYPE_EMPTY + SPLIT;
+            }
+            return TYPE_NORMAL + SPLIT + str;
         }
 
-        private boolean matchVersionFlag(@NonNull String input) {
-            return input.startsWith(VERSION + ":");
+        @Nullable
+        private String unwrapType(@NonNull String str) {
+            if (str.startsWith(TYPE_NULL + SPLIT)) {
+                return null;
+            }
+            if (str.startsWith(TYPE_EMPTY + SPLIT)) {
+                return "";
+            }
+            if (str.startsWith(TYPE_NORMAL + SPLIT)) {
+                return str.substring((TYPE_NORMAL + SPLIT).length());
+            }
+            throw new RuntimeException("unknown type " + str.substring(0, Math.max(str.length(), 10)) + "[...]");
         }
 
         @NonNull
-        private String wrap(@NonNull String input, @NonNull String noise) {
-            return input + ":" + nextRandomNoise();
+        private String wrapNoise(@NonNull String str) {
+            return nextRandomNoise() + SPLIT + str;
         }
 
         @NonNull
-        private String unwrap(@NonNull String input) {
-            int index = input.lastIndexOf(":");
-            return input.substring(0, index);
+        private String unwrapNoise(@NonNull String str) {
+            return str.substring(str.indexOf(SPLIT));
+        }
+
+        @NonNull
+        private String wrapVersion(@NonNull String str) {
+            return VERSION + SPLIT + str;
+        }
+
+        private boolean matchVersion(@NonNull String str) {
+            return str.startsWith(VERSION + SPLIT);
+        }
+
+        @NonNull
+        private String unwrapVersion(@NonNull String str) {
+            if (!matchVersion(str)) {
+                throw new RuntimeException("unknown version " + str.substring(0, Math.max(str.length(), 10)) + "[...]");
+            }
+            return str.substring((VERSION + SPLIT).length());
         }
 
         @NonNull
@@ -158,5 +172,15 @@ public class AES {
             return new AES(DEFAULT_KEY);
         }
     };
+
+    private interface Encoder {
+        @NonNull
+        String encode(@Nullable String input) throws Exception;
+    }
+
+    private interface Decoder {
+        @Nullable
+        String decode(@NonNull String input) throws Exception;
+    }
 
 }

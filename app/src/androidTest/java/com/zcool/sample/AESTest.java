@@ -4,10 +4,13 @@ import android.content.Context;
 
 import com.zcool.inkstone.Inkstone;
 import com.zcool.inkstone.security.AES;
+import com.zcool.inkstone.util.AssetUtil;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import androidx.test.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
@@ -16,32 +19,23 @@ import androidx.test.runner.AndroidJUnit4;
 public class AESTest {
 
     @Test
-    public void useAppContext() {
+    public void testDefaultAES() throws Throwable {
         Context context = InstrumentationRegistry.getTargetContext();
         Inkstone.init(context);
 
-        String[] inputs = {
-                "null",
-                "",
-                "0",
-                "true",
-                "{\"name\":\"peny\", \"age\":2}",
-                "鹅鹅鹅，曲项向天歌",
-                "==;&%^*<>《》｀、|"
-        };
-        String[] outputs = new String[inputs.length];
+        List<String> inputs = AssetUtil.readAllLines("AESTestData", null, null);
 
-        for (int i = 0; i < inputs.length; i++) {
-            outputs[i] = AES.getDefault().encode(inputs[i], "default value");
-
-            System.out.print(inputs[i] + " -> ");
-            System.out.print(outputs[i]);
-
-            String result = AES.getDefault().decode(outputs[i], "default result value");
-            System.out.println(" -> " + result);
-
-            Assert.assertEquals(inputs[i], result);
-        }
+        inputs.forEach(input -> {
+            try {
+                String encode = AES.getDefault().encode(input);
+                String decode = AES.getDefault().decode(encode);
+                System.out.println(input + " >>>>> " + encode + " >>>>> " + decode);
+                Assert.assertEquals(input, decode);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }
