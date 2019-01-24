@@ -5,12 +5,9 @@ import com.zcool.inkstone.lang.Charsets;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.util.ContextUtil;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -48,35 +45,29 @@ public class AES {
         private static final String SPLIT = ":";
 
         private final String mKey;
+        private final byte[] mKeyBytes;
+        private final byte[] mIvBytes;
 
         private V1(@Nullable String key) {
             String packageName = ContextUtil.getContext().getPackageName();
             mKey = key + ";" + packageName;
+            mKeyBytes = new byte[16];
+            mIvBytes = new byte[16];
+            fillBytes(mKey, mKeyBytes);
+            fillBytes(mKey, mIvBytes);
         }
 
         private Cipher createEncoder() throws Exception {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(128, new SecureRandom(mKey.getBytes(Charsets.UTF8)));
-            SecretKey secretKey = keyGenerator.generateKey();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
-
+            SecretKeySpec secretKeySpec = new SecretKeySpec(mKeyBytes, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            byte[] args = new byte[cipher.getBlockSize()];
-            Arrays.fill(args, (byte) 0);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(mIvBytes));
             return cipher;
         }
 
         private Cipher createDecoder() throws Exception {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(128, new SecureRandom(mKey.getBytes(Charsets.UTF8)));
-            SecretKey secretKey = keyGenerator.generateKey();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
-
+            SecretKeySpec secretKeySpec = new SecretKeySpec(mKeyBytes, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            byte[] args = new byte[cipher.getBlockSize()];
-            Arrays.fill(args, (byte) 0);
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(args));
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(mIvBytes));
             return cipher;
         }
 
@@ -133,7 +124,7 @@ public class AES {
 
         @NonNull
         private String unwrapNoise(@NonNull String str) {
-            return str.substring(str.indexOf(SPLIT));
+            return str.substring(str.indexOf(SPLIT) + 1);
         }
 
         @NonNull
@@ -155,7 +146,23 @@ public class AES {
 
         @NonNull
         private String nextRandomNoise() {
-            return String.valueOf(((int) (Math.random() * 1000)) % 10);
+            return String.valueOf((int) (Math.random() * 10000));
+        }
+
+        private void fillBytes(String str, final byte[] out) {
+            try {
+                final byte[] bytes = String.valueOf(str).getBytes(Charsets.UTF8);
+                Arrays.fill(out, (byte) 0);
+
+                for (int i = 0; i < out.length; i++) {
+                    out[i] += bytes[i % bytes.length];
+                }
+                for (int i = 0; i < bytes.length; i++) {
+                    out[i % out.length] += bytes[i];
+                }
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
