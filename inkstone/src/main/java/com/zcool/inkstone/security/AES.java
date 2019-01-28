@@ -25,7 +25,12 @@ public class AES {
 
     @NonNull
     public String encode(@Nullable String input) throws Exception {
-        return mV1.encode(input);
+        return encode(input, false);
+    }
+
+    @NonNull
+    public String encode(@Nullable String input, boolean stable) throws Exception {
+        return mV1.encode(input, stable);
     }
 
     @Nullable
@@ -46,6 +51,7 @@ public class AES {
         private static final String SPLIT = ":";
 
         private final String mKey;
+        private final String mPackageName;
         private final byte[] mKeyBytes;
         private final byte[] mIvBytes;
 
@@ -54,6 +60,7 @@ public class AES {
             TextUtil.checkStringNotEmpty(packageName, "package name not found");
 
             mKey = key + ";" + packageName;
+            mPackageName = packageName;
             mKeyBytes = new byte[16];
             mIvBytes = new byte[16];
             fillBytes(mKey, mKeyBytes);
@@ -76,8 +83,8 @@ public class AES {
 
         @NonNull
         @Override
-        public String encode(@Nullable String input) throws Exception {
-            final String formatInput = wrapVersion(wrapNoise(wrapType(input)));
+        public String encode(@Nullable String input, boolean stable) throws Exception {
+            final String formatInput = wrapVersion(wrapNoise(wrapType(input), stable));
             byte[] inputBytes = formatInput.getBytes(Charsets.UTF8);
             byte[] outputBytes = createEncoder().doFinal(inputBytes);
             String output = Base64.encodeUrl(outputBytes);
@@ -121,8 +128,8 @@ public class AES {
         }
 
         @NonNull
-        private String wrapNoise(@NonNull String str) {
-            return nextRandomNoise() + SPLIT + str;
+        private String wrapNoise(@NonNull String str, boolean stable) {
+            return nextRandomNoise(stable) + SPLIT + str;
         }
 
         @NonNull
@@ -148,8 +155,12 @@ public class AES {
         }
 
         @NonNull
-        private String nextRandomNoise() {
-            return String.valueOf((int) (Math.random() * 10000));
+        private String nextRandomNoise(boolean stable) {
+            if (stable) {
+                return String.valueOf(mPackageName.length());
+            } else {
+                return String.valueOf((int) (Math.random() * 10000));
+            }
         }
 
         private void fillBytes(String str, final byte[] out) {
@@ -185,7 +196,7 @@ public class AES {
 
     private interface Encoder {
         @NonNull
-        String encode(@Nullable String input) throws Exception;
+        String encode(@Nullable String input, boolean stable) throws Exception;
     }
 
     private interface Decoder {
