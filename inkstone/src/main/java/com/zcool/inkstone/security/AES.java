@@ -4,6 +4,7 @@ import com.zcool.inkstone.lang.Base64;
 import com.zcool.inkstone.lang.Charsets;
 import com.zcool.inkstone.lang.Singleton;
 import com.zcool.inkstone.util.ContextUtil;
+import com.zcool.inkstone.util.TextUtil;
 
 import java.util.Arrays;
 
@@ -49,12 +50,14 @@ public class AES {
         private final byte[] mIvBytes;
 
         private V1(@Nullable String key) {
-            String packageName = ContextUtil.getContext().getPackageName();
+            final String packageName = ContextUtil.getContext().getPackageName();
+            TextUtil.checkStringNotEmpty(packageName, "package name not found");
+
             mKey = key + ";" + packageName;
             mKeyBytes = new byte[16];
             mIvBytes = new byte[16];
             fillBytes(mKey, mKeyBytes);
-            fillBytes(mKey, mIvBytes);
+            fillBytes(packageName, mIvBytes);
         }
 
         private Cipher createEncoder() throws Exception {
