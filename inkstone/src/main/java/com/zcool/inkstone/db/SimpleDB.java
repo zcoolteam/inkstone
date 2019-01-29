@@ -101,6 +101,7 @@ public class SimpleDB {
                             key, value, update,
                             contentValues.get(COLUMN_KEY), contentValues.get(COLUMN_VALUE), contentValues.get(COLUMN_UPDATE));
                     db.replace(TABLE_NAME, null, contentValues);
+                    db.delete(TABLE_NAME, COLUMN_KEY + "=?", new String[]{key});
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
