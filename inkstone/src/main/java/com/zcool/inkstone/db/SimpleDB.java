@@ -56,9 +56,12 @@ public class SimpleDB {
 
                     @Override
                     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+                        Timber.v("upgrade from version %s to %s", oldVersion, newVersion);
                         // v1 -> v2
                         if (oldVersion == 1 && newVersion == 2) {
+                            // v2 增加了加密模式
                             upgradeWithEncodeAllData(db);
+                            return;
                         }
 
                         throw new IllegalAccessError("not support upgrade from version " + oldVersion + " to " + newVersion);
