@@ -7,13 +7,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
 import com.zcool.inkstone.manager.ProcessManager;
+import com.zcool.inkstone.security.AES;
 import com.zcool.inkstone.util.ContextUtil;
 import com.zcool.inkstone.util.IOUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import timber.log.Timber;
@@ -23,7 +23,7 @@ import timber.log.Timber;
  */
 public class SimpleDB {
 
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static final String TABLE_NAME = "t_simple";
     private static final String COLUMN_KEY = "c_key";
@@ -56,19 +56,62 @@ public class SimpleDB {
 
                     @Override
                     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-                        throw new UnsupportedOperationException(
-                                db.getPath() + " onUpgrade " + oldVersion + "->" + newVersion);
+                        // v1 -> v2
+                        if (oldVersion == 1 && newVersion == 2) {
+                            upgradeWithEncodeAllData(db);
+                        }
+
+                        throw new IllegalAccessError("not support upgrade from version " + oldVersion + " to " + newVersion);
                     }
                 };
     }
 
-    @CheckResult
+    /**
+     * 所有数据转换为加密模式
+     */
+    private void upgradeWithEncodeAllData(SQLiteDatabase db) {
+        Timber.v("upgrade with encode all data");
+        Cursor cursor = null;
+        try {
+            cursor = db.query(TABLE_NAME,
+                    new String[]{COLUMN_KEY, COLUMN_VALUE, COLUMN_UPDATE},
+                    null,
+                    null,
+                    null,
+                    null,
+                    COLUMN_UPDATE + " asc");
+            for (; cursor.moveToNext(); ) {
+                try {
+                    String key = cursor.getString(0);
+                    String value = cursor.getString(1);
+                    long update = cursor.getLong(2);
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(COLUMN_KEY, encodeKey(key));
+                    contentValues.put(COLUMN_VALUE, encodeValue(value));
+                    contentValues.put(COLUMN_UPDATE, update);
+                    db.replace(TABLE_NAME, null, contentValues);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        } finally {
+            IOUtil.closeQuietly(cursor);
+        }
+    }
+
+    @Nullable
     public String get(@Nullable String key) {
         if (TextUtils.isEmpty(key)) {
             return null;
         }
+
         Cursor cursor = null;
         try {
+            key = encodeKey(key);
+
             SQLiteDatabase db = mOpenHelper.getWritableDatabase();
             cursor =
                     db.query(
@@ -80,7 +123,13 @@ public class SimpleDB {
                             null,
                             null);
             if (cursor.moveToFirst()) {
-                return cursor.getString(0);
+                String value = cursor.getString(0);
+
+                if (value != null) {
+                    value = decodeValue(value);
+                }
+
+                return value;
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -90,7 +139,7 @@ public class SimpleDB {
         return null;
     }
 
-    @CheckResult
+    @Nullable
     public Map<String, String> getAll() {
         Cursor cursor = null;
         try {
@@ -106,6 +155,10 @@ public class SimpleDB {
             for (; cursor.moveToNext(); ) {
                 String key = cursor.getString(0);
                 String value = cursor.getString(1);
+
+                key = decodeKey(key);
+                value = decodeValue(value);
+
                 data.put(key, value);
             }
             return data;
@@ -127,6 +180,9 @@ public class SimpleDB {
         }
 
         try {
+            key = encodeKey(key);
+            value = encodeValue(value);
+
             SQLiteDatabase db = this.mOpenHelper.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put(COLUMN_KEY, key);
@@ -144,6 +200,8 @@ public class SimpleDB {
         }
 
         try {
+            key = encodeKey(key);
+
             SQLiteDatabase db = this.mOpenHelper.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put(COLUMN_UPDATE, System.currentTimeMillis());
@@ -216,6 +274,8 @@ public class SimpleDB {
             return;
         }
         try {
+            key = encodeKey(key);
+
             SQLiteDatabase db = this.mOpenHelper.getWritableDatabase();
             db.delete(TABLE_NAME, COLUMN_KEY + "=?", new String[]{key});
         } catch (Throwable e) {
@@ -269,6 +329,10 @@ public class SimpleDB {
                 key = cursor.getString(0);
                 value = cursor.getString(1);
                 update = cursor.getLong(2);
+
+                key = decodeKey(key);
+                value = decodeValue(value);
+
                 Timber.d(dbName + " " + update + ", " + key + ", " + value);
             }
             Timber.d("--" + tag + "-- end");
@@ -278,4 +342,25 @@ public class SimpleDB {
             IOUtil.closeQuietly(cursor);
         }
     }
+
+    @NonNull
+    private static String encodeKey(@Nullable final String key) throws Exception {
+        return AES.getDefault().encode(key, true);
+    }
+
+    @Nullable
+    private static String decodeKey(@NonNull final String encodedKey) throws Exception {
+        return AES.getDefault().decode(encodedKey);
+    }
+
+    @NonNull
+    private static String encodeValue(@Nullable final String value) throws Exception {
+        return AES.getDefault().encode(value);
+    }
+
+    @Nullable
+    private static String decodeValue(@NonNull final String encodedValue) throws Exception {
+        return AES.getDefault().decode(encodedValue);
+    }
+
 }
