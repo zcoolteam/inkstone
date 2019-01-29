@@ -80,7 +80,9 @@ public class SimpleDB {
                     null,
                     null,
                     COLUMN_UPDATE + " asc");
+            int count = cursor.getCount();
             for (; cursor.moveToNext(); ) {
+                count--;
                 try {
                     String key = cursor.getString(0);
                     String value = cursor.getString(1);
@@ -90,6 +92,11 @@ public class SimpleDB {
                     contentValues.put(COLUMN_KEY, encodeKey(key));
                     contentValues.put(COLUMN_VALUE, encodeValue(value));
                     contentValues.put(COLUMN_UPDATE, update);
+
+                    Timber.v("[%s]upgrade with encode data: [%s, %s, %s] -> [%s, %s, %s]",
+                            count,
+                            key, value, update,
+                            contentValues.get(COLUMN_KEY), contentValues.get(COLUMN_VALUE), contentValues.get(COLUMN_UPDATE));
                     db.replace(TABLE_NAME, null, contentValues);
                 } catch (Throwable e) {
                     e.printStackTrace();
