@@ -22,7 +22,7 @@ Android 应用多进程开发与模块化开发中间件
 ```groovy
 buildscript {
     dependencies {
-        classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.110'
+        classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.137'
     }
 }
 ```
@@ -41,7 +41,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.zcool.inkstone'
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.110"
+    implementation "com.zcool.inkstone:inkstone:0.1.137"
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 apply plugin: 'com.android.library'
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.110"
+    implementation "com.zcool.inkstone:inkstone:0.1.137"
 }
 ```
 
@@ -74,8 +74,8 @@ android {
 }
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.110"
-    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.110"
+    implementation "com.zcool.inkstone:inkstone:0.1.137"
+    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.137"
 }
 ```
 /app/src/main/AndroidManifest.xml
@@ -113,8 +113,8 @@ android {
 }
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.110"
-    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.110"
+    implementation "com.zcool.inkstone:inkstone:0.1.137"
+    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.137"
 }
 ```
 /appmodule/src/main/AndroidManifest.xml
