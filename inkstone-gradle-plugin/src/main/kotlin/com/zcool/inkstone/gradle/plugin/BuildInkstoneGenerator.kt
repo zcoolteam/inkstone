@@ -26,7 +26,7 @@ open class BuildInkstoneGenerator : DefaultTask() {
 fun brewJava(outputDir: File, manifestDir: File) {
     val manifestFile = File(manifestDir, "AndroidManifest.xml")
 
-    val actionPrefix = "MODULE_MANIFEST_PACKAGE:"
+    val actionPrefix = "INKSTONE_MODULE_MANIFEST_PACKAGE:"
 
     val factory = DocumentBuilderFactory.newInstance()
     val builder = factory.newDocumentBuilder()

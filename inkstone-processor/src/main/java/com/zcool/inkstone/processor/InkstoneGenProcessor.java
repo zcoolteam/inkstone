@@ -48,6 +48,10 @@ public class InkstoneGenProcessor extends AbstractProcessor {
             mModuleManifestPackage = mModuleManifestPackage.trim();
         }
 
+        if (Strings.isNullOrEmpty(mModuleManifestPackage)) {
+            throw new RuntimeException(Constants.TIP_NO_OPTION_MODULE_MANIFEST_PACKAGE);
+        }
+
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "option " + Constants.OPTION_MODULE_MANIFEST_PACKAGE + ": " + mModuleManifestPackage);
     }
 
@@ -93,13 +97,8 @@ public class InkstoneGenProcessor extends AbstractProcessor {
             }
         }
 
-        if (!mGen &&
-                (!mApplicationDelegateElements.isEmpty() || !mServicesProviderElements.isEmpty())) {
+        if (!mGen) {
             mGen = true;
-
-            if (Strings.isNullOrEmpty(mModuleManifestPackage)) {
-                throw new RuntimeException(Constants.TIP_NO_OPTION_MODULE_MANIFEST_PACKAGE);
-            }
 
             brewJava();
         }
@@ -138,7 +137,7 @@ public class InkstoneGenProcessor extends AbstractProcessor {
                     .build()
                     .writeTo(processingEnv.getFiler());
         } catch (Throwable e) {
-            throw new RuntimeException("fail to generate ModuleConfigImpl class", e);
+            throw new RuntimeException("fail to generate InkstoneModuleConfigImpl class", e);
         }
     }
 
