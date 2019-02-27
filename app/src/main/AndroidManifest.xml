@@ -23,7 +23,7 @@
 
         <activity android:name="com.zcool.inkstone.app.InkstoneConfigActivity">
             <intent-filter>
-                <action android:name="MODULE_MANIFEST_PACKAGE:com.zcool.sample" />
+                <action android:name="INKSTONE_MODULE_MANIFEST_PACKAGE:com.zcool.sample" />
             </intent-filter>
         </activity>
 

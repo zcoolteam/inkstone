@@ -4,7 +4,7 @@
     <application>
         <activity android:name="com.zcool.inkstone.app.InkstoneConfigActivity">
             <intent-filter>
-                <action android:name="MODULE_MANIFEST_PACKAGE:com.example.appmodule" />
+                <action android:name="INKSTONE_MODULE_MANIFEST_PACKAGE:com.example.appmodule" />
             </intent-filter>
         </activity>
     </application>
