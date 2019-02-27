@@ -12,7 +12,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ['MODULE_MANIFEST_PACKAGE': "com.example.appmodule2"]
+                arguments = ['INKSTONE_MODULE_MANIFEST_PACKAGE': "com.example.appmodule2"]
             }
         }
     }
