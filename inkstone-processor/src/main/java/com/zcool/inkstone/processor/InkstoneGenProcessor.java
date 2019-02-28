@@ -112,12 +112,12 @@ public class InkstoneGenProcessor extends AbstractProcessor {
             codeBlockBuilder.addStatement("$T result = new $T()", Config.class, Config.class);
 
             mApplicationDelegateElements.forEach((key, value) -> codeBlockBuilder.addStatement(
-                    "result.addApplicationDelegate($T.valueOf($S, $L))",
+                    "result.addApplicationDelegate($T.valueOf($L.class, $L))",
                     Config.ApplicationDelegate.class,
                     key,
                     value.getAnnotation(ApplicationDelegate.class).priority()));
             mServicesProviderElements.forEach((key, value) -> codeBlockBuilder.addStatement(
-                    "result.addServicesProvider($T.valueOf($S, $L))",
+                    "result.addServicesProvider($T.valueOf($L.class, $L))",
                     Config.ServicesProvider.class,
                     key,
                     value.getAnnotation(ServicesProvider.class).priority()));
