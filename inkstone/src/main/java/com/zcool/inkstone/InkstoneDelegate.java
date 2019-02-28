@@ -72,7 +72,8 @@ final class InkstoneDelegate {
 
         // config RxJava2
         RxJavaPlugins.setErrorHandler(e -> {
-            // ignore
+            Timber.w(e, "RxJavaPlugins#errorHandler");
+            e.printStackTrace();
         });
 
         if (Debug.isDebug()) {
