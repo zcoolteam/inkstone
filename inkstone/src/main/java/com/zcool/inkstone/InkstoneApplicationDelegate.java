@@ -7,10 +7,8 @@ import com.zcool.inkstone.manager.FrescoManager;
 import com.zcool.inkstone.service.InkstoneService;
 import com.zcool.inkstone.util.ContextUtil;
 
-import androidx.annotation.Keep;
 import timber.log.Timber;
 
-@Keep
 @ApplicationDelegate(priority = -10000)
 public class InkstoneApplicationDelegate implements ModuleApplicationDelegate {
 

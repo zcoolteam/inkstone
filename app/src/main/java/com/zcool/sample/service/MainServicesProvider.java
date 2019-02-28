@@ -6,10 +6,8 @@ import com.zcool.inkstone.Inkstone;
 import com.zcool.inkstone.ModuleServicesProvider;
 import com.zcool.inkstone.annotation.ServicesProvider;
 
-import androidx.annotation.Keep;
 import timber.log.Timber;
 
-@Keep
 @ServicesProvider
 public class MainServicesProvider implements ModuleServicesProvider {
     // 注解 @ServicesProvider 必不可少

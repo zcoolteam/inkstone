@@ -6,10 +6,8 @@ import com.zcool.inkstone.Inkstone;
 import com.zcool.inkstone.ModuleServicesProvider;
 import com.zcool.inkstone.annotation.ServicesProvider;
 
-import androidx.annotation.Keep;
 import timber.log.Timber;
 
-@Keep
 @ServicesProvider(priority = -10000)
 public final class InkstoneServicesProvider implements ModuleServicesProvider {
 

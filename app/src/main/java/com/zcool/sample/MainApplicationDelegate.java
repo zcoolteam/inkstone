@@ -8,10 +8,8 @@ import com.zcool.inkstone.ModuleApplicationDelegate;
 import com.zcool.inkstone.annotation.ApplicationDelegate;
 import com.zcool.inkstone.ext.share.ShareConfig;
 
-import androidx.annotation.Keep;
 import timber.log.Timber;
 
-@Keep
 @ApplicationDelegate
 public class MainApplicationDelegate implements ModuleApplicationDelegate {
 

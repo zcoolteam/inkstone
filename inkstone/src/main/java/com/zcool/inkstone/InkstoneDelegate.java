@@ -123,7 +123,7 @@ final class InkstoneDelegate {
             // all process need module application delegates class instance
             mModuleApplicationDelegates = new ArrayList<>();
             for (Config.ApplicationDelegate item : mSortApplicationDelegateConfig) {
-                mModuleApplicationDelegates.add((ModuleApplicationDelegate) Class.forName(item.clazz).newInstance());
+                mModuleApplicationDelegates.add((ModuleApplicationDelegate) item.clazz.newInstance());
             }
         } catch (Throwable e) {
             throw new RuntimeException("loadConfig fail", e);

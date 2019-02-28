@@ -104,7 +104,7 @@ public class DefaultServiceContentProvider extends ContentProvider {
             mModuleServicesProviders = new ArrayList<>();
             try {
                 for (Config.ServicesProvider item : sortServicesProviderConfig) {
-                    mModuleServicesProviders.add((ModuleServicesProvider) Class.forName(item.clazz).newInstance());
+                    mModuleServicesProviders.add((ModuleServicesProvider) item.clazz.newInstance());
                 }
             } catch (Throwable e) {
                 throw new RuntimeException("fail to instance module application delegates", e);

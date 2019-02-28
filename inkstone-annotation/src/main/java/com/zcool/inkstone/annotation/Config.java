@@ -30,10 +30,10 @@ public class Config {
     }
 
     public static class ApplicationDelegate {
-        public String clazz;
+        public Class<?> clazz;
         public int priority;
 
-        public static ApplicationDelegate valueOf(String clazz, int priority) {
+        public static ApplicationDelegate valueOf(Class<?> clazz, int priority) {
             ApplicationDelegate target = new ApplicationDelegate();
             target.clazz = clazz;
             target.priority = priority;
@@ -47,20 +47,23 @@ public class Config {
 
             ApplicationDelegate that = (ApplicationDelegate) o;
 
+            if (priority != that.priority) return false;
             return clazz != null ? clazz.equals(that.clazz) : that.clazz == null;
         }
 
         @Override
         public int hashCode() {
-            return clazz != null ? clazz.hashCode() : 0;
+            int result = clazz != null ? clazz.hashCode() : 0;
+            result = 31 * result + priority;
+            return result;
         }
     }
 
     public static class ServicesProvider {
-        public String clazz;
+        public Class<?> clazz;
         public int priority;
 
-        public static ServicesProvider valueOf(String clazz, int priority) {
+        public static ServicesProvider valueOf(Class<?> clazz, int priority) {
             ServicesProvider target = new ServicesProvider();
             target.clazz = clazz;
             target.priority = priority;
@@ -74,12 +77,15 @@ public class Config {
 
             ServicesProvider that = (ServicesProvider) o;
 
+            if (priority != that.priority) return false;
             return clazz != null ? clazz.equals(that.clazz) : that.clazz == null;
         }
 
         @Override
         public int hashCode() {
-            return clazz != null ? clazz.hashCode() : 0;
+            int result = clazz != null ? clazz.hashCode() : 0;
+            result = 31 * result + priority;
+            return result;
         }
     }
 
