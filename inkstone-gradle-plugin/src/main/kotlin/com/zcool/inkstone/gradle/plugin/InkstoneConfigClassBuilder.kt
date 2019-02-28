@@ -25,6 +25,7 @@ class InkstoneConfigClassBuilder {
 
         val targetClassBuilder = TypeSpec.classBuilder("InkstoneAppConfigImpl")
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addAnnotation(ClassName.bestGuess("androidx.annotation.Keep"))
                 .addSuperinterface(ModuleConfig::class.java)
                 .addMethod(MethodSpec.methodBuilder("getConfig")
                         .addModifiers(Modifier.PUBLIC)
