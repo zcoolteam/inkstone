@@ -91,6 +91,16 @@ android {
             debuggable true
             matchingFallbacks = "debug"
         }
+        devminify {
+            signingConfig signingConfigs.sample
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            resValue("bool", "inkstone_debug", "true")
+            resValue("bool", "inkstone_debug_http_body", "true")
+            resValue("bool", "inkstone_debug_widget", "true")
+            debuggable true
+            matchingFallbacks = "debug"
+        }
     }
 
     compileOptions {
@@ -125,6 +135,7 @@ dependencies {
     releaseImplementation rootProject.ext.bcfg.deps.leakcanary_no_op
     debugImplementation rootProject.ext.bcfg.deps.leakcanary
     devImplementation rootProject.ext.bcfg.deps.leakcanary
+    devminifyImplementation rootProject.ext.bcfg.deps.leakcanary
     testImplementation rootProject.ext.bcfg.deps.leakcanary
     androidTestImplementation rootProject.ext.bcfg.deps.leakcanary
 }
