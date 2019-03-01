@@ -22,7 +22,7 @@ Android 应用多进程开发与模块化开发中间件
 ```groovy
 buildscript {
     dependencies {
-        classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.137'
+        classpath 'com.zcool.inkstone:inkstone-gradle-plugin:0.1.150'
     }
 }
 ```
@@ -41,7 +41,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.zcool.inkstone'
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.137"
+    implementation "com.zcool.inkstone:inkstone:0.1.150"
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 apply plugin: 'com.android.library'
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.137"
+    implementation "com.zcool.inkstone:inkstone:0.1.150"
 }
 ```
 
@@ -67,15 +67,15 @@ android {
     defaultConfig {
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ['MODULE_MANIFEST_PACKAGE': "com.zcool.sample"]
+                arguments = ['INKSTONE_MODULE_MANIFEST_PACKAGE': "com.zcool.sample"]
             }
         }
     }
 }
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.137"
-    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.137"
+    implementation "com.zcool.inkstone:inkstone:0.1.150"
+    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.150"
 }
 ```
 /app/src/main/AndroidManifest.xml
@@ -87,7 +87,7 @@ dependencies {
         <activity
             android:name="com.zcool.inkstone.app.InkstoneConfigActivity">
             <intent-filter>
-                <action android:name="MODULE_MANIFEST_PACKAGE:com.zcool.sample" />
+                <action android:name="INKSTONE_MODULE_MANIFEST_PACKAGE:com.zcool.sample" />
             </intent-filter>
         </activity>
     </application>
@@ -106,15 +106,15 @@ android {
     defaultConfig {
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ['MODULE_MANIFEST_PACKAGE': "com.example.appmodule"]
+                arguments = ['INKSTONE_MODULE_MANIFEST_PACKAGE': "com.example.appmodule"]
             }
         }
     }
 }
 
 dependencies {
-    implementation "com.zcool.inkstone:inkstone:0.1.137"
-    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.137"
+    implementation "com.zcool.inkstone:inkstone:0.1.150"
+    annotationProcessor "com.zcool.inkstone:inkstone-processor:0.1.150"
 }
 ```
 /appmodule/src/main/AndroidManifest.xml
@@ -126,7 +126,7 @@ dependencies {
         <activity
             android:name="com.zcool.inkstone.app.InkstoneConfigActivity">
             <intent-filter>
-                <action android:name="MODULE_MANIFEST_PACKAGE:com.example.appmodule" />
+                <action android:name="INKSTONE_MODULE_MANIFEST_PACKAGE:com.example.appmodule" />
             </intent-filter>
         </activity>
     </application>
