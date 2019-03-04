@@ -273,6 +273,36 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         return mTarget.canScrollVertically(-1);
     }
 
+    public boolean canChildScrollDown() {
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            return false;
+        }
+
+        return mTarget.canScrollVertically(1);
+    }
+
+    public boolean canChildScrollLeft() {
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            return false;
+        }
+
+        return mTarget.canScrollHorizontally(-1);
+    }
+
+    public boolean canChildScrollRight() {
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            return false;
+        }
+
+        return mTarget.canScrollHorizontally(1);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -328,12 +358,9 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
 
         if (mHeader != null) {
             HeaderView headerView = (HeaderView) mHeader;
-            headerView.setOnRefreshListener(new OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    if (mOnRefreshListener != null) {
-                        mOnRefreshListener.onRefresh();
-                    }
+            headerView.setOnRefreshListener(() -> {
+                if (mOnRefreshListener != null) {
+                    mOnRefreshListener.onRefresh();
                 }
             });
         }
