@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.zcool.inkstone.ext.share.process.ProcessShareHelper;
 import com.zcool.sample.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -30,6 +33,21 @@ public class ShareFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mUnbinder = ButterKnife.bind(this, view);
+
+        mMsgView.setText(String.format("scrollX: %s -> %s\nscrollY: %s -> %s\nscrollLeft: %s\nscrollRight: %s\nscrollUp: %s\nscrollDown: %s",
+                mScrollView.getScrollX(), mScrollView.getScrollX(), mScrollView.getScrollY(), mScrollView.getScrollY(),
+                mScrollView.canScrollHorizontally(-1),
+                mScrollView.canScrollHorizontally(1),
+                mScrollView.canScrollVertically(-1),
+                mScrollView.canScrollVertically(1)));
+        mScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            mMsgView.setText(String.format("scrollX: %s -> %s\nscrollY: %s -> %s\nscrollLeft: %s\nscrollRight: %s\nscrollUp: %s\nscrollDown: %s",
+                    oldScrollX, scrollX, oldScrollY, scrollY,
+                    v.canScrollHorizontally(-1),
+                    v.canScrollHorizontally(1),
+                    v.canScrollVertically(-1),
+                    v.canScrollVertically(1)));
+        });
     }
 
     @OnClick(R.id.request_auth_qq)
@@ -61,6 +79,11 @@ public class ShareFragment extends Fragment {
     void onShareWeibo() {
         // TODO
     }
+
+    @BindView(R.id.msg_view)
+    TextView mMsgView;
+    @BindView(R.id.scroll_view)
+    NestedScrollView mScrollView;
 
     @Override
     public void onDestroyView() {
