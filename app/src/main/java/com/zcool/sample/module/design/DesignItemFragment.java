@@ -12,7 +12,7 @@ import com.zcool.inkstone.lang.DisposableHolder;
 import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
-import com.zcool.sample.widget.refreshlayout.RefreshLayout;
+import com.zcool.sample.widget.refreshlayout.PullLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class DesignItemFragment extends Fragment {
     private final DisposableHolder mRequestHolder = new DisposableHolder();
 
     @BindView(R.id.refresh_layout)
-    RefreshLayout mRefreshLayout;
+    PullLayout mPullLayout;
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -71,7 +71,7 @@ public class DesignItemFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new DataAdapter());
 
-        mRefreshLayout.setOnRefreshListener(new RefreshLayout.OnRefreshListener() {
+        mPullLayout.setOnRefreshListener(new PullLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mRequestHolder.set(Single.fromCallable(
@@ -87,13 +87,13 @@ public class DesignItemFragment extends Fragment {
                         .subscribe(new Consumer<Object>() {
                             @Override
                             public void accept(Object o) throws Exception {
-                                mRefreshLayout.setRefreshing(false);
+                                mPullLayout.setRefreshing(false);
                             }
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable e) throws Exception {
                                 e.printStackTrace();
-                                mRefreshLayout.setRefreshing(false);
+                                mPullLayout.setRefreshing(false);
                             }
                         }));
             }
