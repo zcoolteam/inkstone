@@ -240,7 +240,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         }
 
         Header header = (Header) mHeader;
-        return header.applyOffset(offset, mTarget);
+        return header.applyOffset(offset, mTarget, this);
     }
 
     /**
@@ -255,7 +255,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         }
 
         Header header = (Header) mHeader;
-        header.finishOffset(cancel, mTarget);
+        header.finishOffset(cancel, mTarget, this);
     }
 
     private boolean isPullVertical() {
@@ -462,7 +462,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         }
 
         Header header = (Header) mHeader;
-        header.setRefreshing(refreshing, false, mTarget);
+        header.setRefreshing(refreshing, false, mTarget, this);
     }
 
     // nested scroll parent
@@ -671,14 +671,14 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
 
         void setOnRefreshListener(OnRefreshListener onRefreshListener);
 
-        void setRefreshing(boolean refreshing, boolean notifyRefresh, View target);
+        void setRefreshing(boolean refreshing, boolean notifyRefresh, View target, PullLayout pullLayout);
 
         /**
          * 处理拉动距离变更值, 返回实际消耗的变更值
          */
-        int applyOffset(int offset, View target);
+        int applyOffset(int offset, View target, PullLayout pullLayout);
 
-        void finishOffset(boolean cancel, View target);
+        void finishOffset(boolean cancel, View target, PullLayout pullLayout);
 
     }
 
