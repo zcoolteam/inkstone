@@ -1,20 +1,12 @@
 package com.zcool.sample.widget.refreshlayout;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-
-import com.zcool.inkstone.util.DimenUtil;
-import com.zcool.inkstone.util.ViewUtil;
-import com.zcool.sample.R;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
@@ -25,336 +17,130 @@ import timber.log.Timber;
 public class PullHeader extends FrameLayout implements PullLayout.Header {
 
     public PullHeader(@NonNull Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public PullHeader(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public PullHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        initFromAttributes(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public PullHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        initFromAttributes(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    /**
-     * 空闲状态
-     */
-    private static final int STATUS_IDLE = 0;
-    /**
-     * 刷新状态中
-     */
-    private static final int STATUS_REFRESH = 1;
-
-    private int mRefreshStatus = STATUS_IDLE;
-    private int mCoreHeight; // 触发下拉刷新的高度
-    private int mMaxHeight; // 最大展示高度
-
-    private StatusHeaderView mStatusHeaderView;
-
-    private void init() {
-        Context context = getContext();
-
-        mStatusHeaderView = createStatusHeaderView();
-
-        mCoreHeight = mStatusHeaderView.mCoreHeight;
-        mMaxHeight = mStatusHeaderView.mMaxHeight;
-
-        if (mCoreHeight <= 0 || mMaxHeight < mCoreHeight) {
-            throw new IllegalArgumentException("core height or max height invalid [" + mCoreHeight + ", " + mMaxHeight + "]");
-        }
-
-        View contentView = mStatusHeaderView.createView(LayoutInflater.from(context), this);
-        if (contentView != null) {
-            addView(contentView);
-        }
+    private void initFromAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     }
 
-    public StatusHeaderView createStatusHeaderView() {
-        return new DefaultStatusHeaderView(this, DimenUtil.dp2px(48), DimenUtil.dp2px(200));
-    }
+    private ProgressBar mProgressBar;
 
-    @Override
-    public int applyOffset(int offset, View target, PullLayout pullLayout) {
-        if (mRefreshStatus != STATUS_IDLE) {
-            Timber.d("applyPullOffset refresh status not idle " + mRefreshStatus);
-            return 0;
-        }
-
-        int oldOffset = offset;
-
-        clearAnyOldAnimation();
-
-        offset = adjustOffset(offset);
-
-        float translationY = getTranslationY();
-        float oldTranslationY = translationY;
-
-        translationY += offset;
-        if (translationY < 0) {
-            translationY = 0;
-        }
-        if (translationY > mMaxHeight) {
-            translationY = mMaxHeight;
-        }
-        setTranslationY(translationY);
-
-        target.setTranslationY(translationY);
-
-        mStatusHeaderView.updateView(translationY, false, false);
-
-        if (oldTranslationY == translationY) {
-            // 如果应用滑动之后没有产生实际位置偏移，则认为此次没有消耗 offset
-            return 0;
-        }
-        return oldOffset;
-    }
-
-    protected int adjustOffset(int offset) {
-        float translationY = getTranslationY();
-        if (translationY < mCoreHeight) {
-            return offset;
-        } else {
-            return (int) (offset * Math.max(0.4f, 1 - (translationY - mCoreHeight) / (mMaxHeight - mCoreHeight)));
-        }
-    }
-
-    @Override
-    public void finishOffset(boolean cancel, View target, PullLayout pullLayout) {
-        if (mRefreshStatus != STATUS_IDLE) {
-            Timber.d("finishOffset refresh status not idle " + mRefreshStatus);
+    private void ensureProgressBar() {
+        if (mProgressBar != null) {
             return;
         }
 
-        float translationY = getTranslationY();
-        if (!cancel && translationY >= mCoreHeight) {
-            // 触发刷新
-            setRefreshInternal(true, true, target);
-        } else {
-            setRefreshInternal(false, false, target);
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View childView = getChildAt(i);
+            if (childView instanceof ProgressBar) {
+                mProgressBar = (ProgressBar) childView;
+                break;
+            }
         }
     }
+
+    private int mTotalUsedDx;
+    private int mTotalUsedDy;
 
     @Override
-    public void setRefreshing(boolean refreshing, boolean notifyRefresh, View target, PullLayout pullLayout) {
-        setRefreshInternal(refreshing, notifyRefresh, target);
-    }
-
-    private void setRefreshInternal(boolean refresh, boolean notifyRefresh, View target) {
-        if (!refresh) {
-            mRefreshStatus = STATUS_IDLE;
-            animateToStart(target);
-        } else {
-            if (mRefreshStatus == STATUS_REFRESH) {
-                notifyRefresh = false;
-            }
-
-            mRefreshStatus = STATUS_REFRESH;
-            animateToRefresh(target, notifyRefresh);
-        }
-    }
-
-    private void clearAnyOldAnimation() {
-        if (mToRefreshAnimator != null) {
-            mToRefreshAnimator.cancel();
-            mToRefreshAnimator = null;
-        }
-        if (mToStartAnimator != null) {
-            mToStartAnimator.cancel();
-            mToStartAnimator = null;
-        }
-    }
-
-    private ValueAnimator mToRefreshAnimator;
-
-    private PullLayout.OnRefreshListener mOnRefreshListener;
-
-    @Override
-    public void setOnRefreshListener(PullLayout.OnRefreshListener onRefreshListener) {
-        mOnRefreshListener = onRefreshListener;
-    }
-
-    private void animateToRefresh(final View target, final boolean notifyRefresh) {
-        clearAnyOldAnimation();
-
-        final float startTranslationY = getTranslationY();
-        final float targetTranslationY = mCoreHeight;
-        final long dur;
-        if (Math.abs(startTranslationY - targetTranslationY) > mCoreHeight / 3) {
-            dur = 220;
-        } else {
-            dur = 160;
+    public void applyOffset(int dx, int dy, @NonNull int[] consumed, PullLayout pullLayout) {
+        ensureProgressBar();
+        if (mProgressBar == null) {
+            Timber.v("progress bar is null");
+            return;
         }
 
-        mStatusHeaderView.updateView(startTranslationY, true, true);
-
-        ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
-        animator.setDuration(dur);
-        animator.addUpdateListener(animation -> {
-            float translationY = (float) animation.getAnimatedValue();
-            setTranslationY(translationY);
-            target.setTranslationY(translationY);
-
-            mStatusHeaderView.updateView(translationY, true, true);
-        });
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (notifyRefresh) {
-                    if (mOnRefreshListener != null) {
-                        mOnRefreshListener.onRefresh();
-                    }
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        animator.start();
-
-        mToRefreshAnimator = animator;
-    }
-
-    private ValueAnimator mToStartAnimator;
-
-    private void animateToStart(final View target) {
-        clearAnyOldAnimation();
-
-        final float startTranslationY = getTranslationY();
-        final float targetTranslationY = 0;
-        final long dur;
-        if (Math.abs(startTranslationY - targetTranslationY) > mCoreHeight / 3) {
-            dur = 220;
-        } else {
-            dur = 160;
+        int pullPosition = pullLayout.getPullPosition();
+        if (pullPosition == PullLayout.PULL_POSITION_TOP) {
+            consumed[1] = adjustOffset(-getMinimumHeight(), -getHeight(), mTotalUsedDy, dy);
+            mTotalUsedDy += consumed[1];
+        } else if (pullPosition == PullLayout.PULL_POSITION_BOTTOM) {
+            consumed[1] = adjustOffset(getMinimumHeight(), getHeight(), mTotalUsedDy, dy);
+            mTotalUsedDy += consumed[1];
+        } else if (pullPosition == PullLayout.PULL_POSITION_LEFT) {
+            consumed[0] = adjustOffset(-getMinimumWidth(), -getWidth(), mTotalUsedDx, dx);
+            mTotalUsedDx += consumed[0];
+        } else if (pullPosition == PullLayout.PULL_POSITION_RIGHT) {
+            consumed[0] = adjustOffset(getMinimumWidth(), getWidth(), mTotalUsedDx, dx);
+            mTotalUsedDx += consumed[0];
         }
 
-        mStatusHeaderView.updateView(startTranslationY, false, true);
-
-        ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
-        animator.setDuration(dur);
-        animator.addUpdateListener(animation -> {
-            float translationY = (float) animation.getAnimatedValue();
-            setTranslationY(translationY);
-            target.setTranslationY(translationY);
-
-            mStatusHeaderView.updateView(translationY, false, true);
-        });
-        animator.start();
-
-        mToStartAnimator = animator;
+        setTranslationX(mTotalUsedDx);
+        setTranslationY(mTotalUsedDy);
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxHeight, MeasureSpec.EXACTLY);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        clearAnyOldAnimation();
-    }
-
-    public static abstract class StatusHeaderView {
-
-        protected final LayoutInflater mInflater;
-
-        protected final int mCoreHeight;
-        protected final int mMaxHeight;
-
-        protected StatusHeaderView(ViewGroup parent, int coreHeight, int maxHeight) {
-            mInflater = LayoutInflater.from(parent.getContext());
-            mCoreHeight = coreHeight;
-            mMaxHeight = maxHeight;
-        }
-
-        /**
-         * 创建初始内容
-         *
-         * @param inflater
-         * @param parent
-         * @return
-         */
-        protected abstract View createView(LayoutInflater inflater, ViewGroup parent);
-
-        /**
-         * 更新内容
-         *
-         * @param translationY 下拉距离
-         * @param isRefreshing 当前是否处于正在刷新的状态
-         * @param inAnimation  是否处于动画中
-         */
-        protected abstract void updateView(float translationY, boolean isRefreshing, boolean inAnimation);
-
-    }
-
-    public static class DefaultStatusHeaderView extends StatusHeaderView {
-
-        private ProgressBar mProgressBar;
-
-        protected DefaultStatusHeaderView(ViewGroup parent, int coreHeight, int maxHeight) {
-            super(parent, coreHeight, maxHeight);
-        }
-
-        @Override
-        protected View createView(LayoutInflater inflater, ViewGroup parent) {
-            View content = inflater.inflate(R.layout.okandroid_ptr_header_default_view, parent, false);
-            mProgressBar = ViewUtil.findViewById(content, R.id.progress_bar);
-
-            ArrowDrawable progressDrawable = new ArrowDrawable();
-            progressDrawable.setPadding(DimenUtil.dp2px(5));
-            mProgressBar.setProgressDrawable(progressDrawable);
-
-            mProgressBar.setIndeterminate(false);
-            mProgressBar.setProgress(0);
-
-            return content;
-        }
-
-        @Override
-        protected void updateView(float translationY, boolean isRefreshing, boolean inAnimation) {
-            if (isRefreshing) {
-                mProgressBar.setIndeterminate(true);
-                return;
-            }
-
-            if (inAnimation) {
-                return;
-            }
-
-            mProgressBar.setIndeterminate(false);
-
-            int progress;
-            if (translationY <= 0) {
-                progress = 0;
-            } else if (translationY < mCoreHeight) {
-                progress = (int) (translationY / mCoreHeight * 100);
+    protected int adjustOffset(int shortDistance, int longDistance, int current, int offset) {
+        // TODO 边界
+        if (longDistance < 0) {
+            // longDistance < 0, shortDistance < 0
+            if (current > shortDistance) {
+                return offset;
+            } else if (current <= longDistance) {
+                return 0;
             } else {
-                progress = 100;
+                return (int) (0.5f * offset);
             }
+        } else {
+            // longDistance >= 0, shortDistance >= 0
+            if (current < shortDistance) {
+                return offset;
+            } else if (current >= longDistance) {
+                return 0;
+            } else {
+                return (int) (0.5f * offset);
+            }
+        }
+    }
 
-            mProgressBar.setProgress(progress);
+    @Override
+    public void finishOffset(boolean refreshing, PullLayout pullLayout) {
+        ensureProgressBar();
+        if (mProgressBar == null) {
+            Timber.v("progress bar is null");
+            return;
         }
 
+        if (!refreshing) {
+            animate().translationX(0).translationY(0).setDuration(PullLayout.ANIMATION_DURATION).start();
+            return;
+        }
+
+        int translationX;
+        int translationY;
+        int pullPosition = pullLayout.getPullPosition();
+        if (pullPosition == PullLayout.PULL_POSITION_TOP) {
+            translationX = 0;
+            translationY = -getMinimumHeight();
+        } else if (pullPosition == PullLayout.PULL_POSITION_BOTTOM) {
+            translationX = 0;
+            translationY = getMinimumHeight();
+        } else if (pullPosition == PullLayout.PULL_POSITION_LEFT) {
+            translationX = -getMinimumWidth();
+            translationY = 0;
+        } else if (pullPosition == PullLayout.PULL_POSITION_RIGHT) {
+            translationX = getMinimumWidth();
+            translationY = 0;
+        } else {
+            throw new RuntimeException("unknown pull position: " + pullPosition);
+        }
+
+        animate().translationX(translationX).translationY(translationY).setDuration(PullLayout.ANIMATION_DURATION).start();
     }
 
 }

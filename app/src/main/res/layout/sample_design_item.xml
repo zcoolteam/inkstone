@@ -6,12 +6,15 @@
     android:layout_height="match_parent"
     app:pull_position="left">
 
-    <com.zcool.sample.widget.refreshlayout.PullHeader
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.zcool.sample.widget.refreshlayout.PullHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/okandroid_ptr_header_default_view" />
+    </com.zcool.sample.widget.refreshlayout.PullHeader>
 </com.zcool.sample.widget.refreshlayout.PullLayout>

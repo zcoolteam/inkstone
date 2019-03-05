@@ -16,7 +16,6 @@ import com.zcool.sample.widget.refreshlayout.PullLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,33 +70,24 @@ public class DesignItemFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new DataAdapter());
 
-        mPullLayout.setOnRefreshListener(new PullLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mRequestHolder.set(Single.fromCallable(
-                        new Callable<Object>() {
-                            @Override
-                            public Object call() throws Exception {
-                                Threads.sleepQuietly(3000L);
-                                return new Object();
-                            }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Object>() {
-                            @Override
-                            public void accept(Object o) throws Exception {
-                                mPullLayout.setRefreshing(false);
-                            }
-                        }, new Consumer<Throwable>() {
-                            @Override
-                            public void accept(Throwable e) throws Exception {
-                                e.printStackTrace();
-                                mPullLayout.setRefreshing(false);
-                            }
-                        }));
-            }
-        });
+        mPullLayout.setOnRefreshListener(pullLayout -> mRequestHolder.set(Single.fromCallable(() -> {
+            Threads.sleepQuietly(3000L);
+            return new Object();
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        mPullLayout.setRefreshing(false);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable e) throws Exception {
+                        e.printStackTrace();
+                        mPullLayout.setRefreshing(false);
+                    }
+                })));
     }
 
     @Override
