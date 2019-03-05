@@ -89,7 +89,7 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
             return 0;
         }
 
-        float oldOffset = offset;
+        int oldOffset = offset;
 
         clearAnyOldAnimation();
 
@@ -115,7 +115,7 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
             // 如果应用滑动之后没有产生实际位置偏移，则认为此次没有消耗 offset
             return 0;
         }
-        return offset;
+        return oldOffset;
     }
 
     protected int adjustOffset(int offset) {
