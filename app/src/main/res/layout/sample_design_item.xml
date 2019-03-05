@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zcool.sample.widget.refreshlayout.RefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zcool.sample.widget.refreshlayout.PullLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:pull_position="left">
 
-    <com.zcool.sample.widget.refreshlayout.RefreshHeader
+    <com.zcool.sample.widget.refreshlayout.PullHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</com.zcool.sample.widget.refreshlayout.RefreshLayout>
+</com.zcool.sample.widget.refreshlayout.PullLayout>

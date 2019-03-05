@@ -22,25 +22,25 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import timber.log.Timber;
 
-public class RefreshHeader extends FrameLayout implements RefreshLayout.HeaderView {
+public class PullHeader extends FrameLayout implements PullLayout.Header {
 
-    public RefreshHeader(@NonNull Context context) {
+    public PullHeader(@NonNull Context context) {
         super(context);
         init();
     }
 
-    public RefreshHeader(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PullHeader(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public RefreshHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public PullHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RefreshHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
+    public PullHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -83,27 +83,22 @@ public class RefreshHeader extends FrameLayout implements RefreshLayout.HeaderVi
     }
 
     @Override
-    public boolean isStatusBusy() {
-        return mRefreshStatus != STATUS_IDLE;
-    }
-
-    @Override
-    public float applyOffsetYDiff(float yDiff, View target) {
+    public int applyOffset(int offset, View target) {
         if (mRefreshStatus != STATUS_IDLE) {
-            Timber.d("applyOffsetYDiff refresh status not idle " + mRefreshStatus);
-            return 0f;
+            Timber.d("applyPullOffset refresh status not idle " + mRefreshStatus);
+            return 0;
         }
 
-        float oldYDiff = yDiff;
+        float oldOffset = offset;
 
         clearAnyOldAnimation();
 
-        yDiff = adjustYDiff(yDiff);
+        offset = adjustOffset(offset);
 
         float translationY = getTranslationY();
         float oldTranslationY = translationY;
 
-        translationY += yDiff;
+        translationY += offset;
         if (translationY < 0) {
             translationY = 0;
         }
@@ -117,25 +112,25 @@ public class RefreshHeader extends FrameLayout implements RefreshLayout.HeaderVi
         mStatusHeaderView.updateView(translationY, false, false);
 
         if (oldTranslationY == translationY) {
-            // 如果应用滑动之后没有产生实际位置偏移，则认为此次没有消耗 yDiff
-            return 0f;
+            // 如果应用滑动之后没有产生实际位置偏移，则认为此次没有消耗 offset
+            return 0;
         }
-        return oldYDiff;
+        return offset;
     }
 
-    protected float adjustYDiff(float yDiff) {
+    protected int adjustOffset(int offset) {
         float translationY = getTranslationY();
         if (translationY < mCoreHeight) {
-            return yDiff;
+            return offset;
         } else {
-            return yDiff * Math.max(0.4f, 1 - (translationY - mCoreHeight) / (mMaxHeight - mCoreHeight));
+            return (int) (offset * Math.max(0.4f, 1 - (translationY - mCoreHeight) / (mMaxHeight - mCoreHeight)));
         }
     }
 
     @Override
-    public void finishOffsetY(boolean cancel, View target) {
+    public void finishOffset(boolean cancel, View target) {
         if (mRefreshStatus != STATUS_IDLE) {
-            Timber.d("finishOffsetY refresh status not idle " + mRefreshStatus);
+            Timber.d("finishOffset refresh status not idle " + mRefreshStatus);
             return;
         }
 
@@ -180,10 +175,10 @@ public class RefreshHeader extends FrameLayout implements RefreshLayout.HeaderVi
 
     private ValueAnimator mToRefreshAnimator;
 
-    private RefreshLayout.OnRefreshListener mOnRefreshListener;
+    private PullLayout.OnRefreshListener mOnRefreshListener;
 
     @Override
-    public void setOnRefreshListener(RefreshLayout.OnRefreshListener onRefreshListener) {
+    public void setOnRefreshListener(PullLayout.OnRefreshListener onRefreshListener) {
         mOnRefreshListener = onRefreshListener;
     }
 
@@ -203,15 +198,12 @@ public class RefreshHeader extends FrameLayout implements RefreshLayout.HeaderVi
 
         ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
         animator.setDuration(dur);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float translationY = (float) animation.getAnimatedValue();
-                setTranslationY(translationY);
-                target.setTranslationY(translationY);
+        animator.addUpdateListener(animation -> {
+            float translationY = (float) animation.getAnimatedValue();
+            setTranslationY(translationY);
+            target.setTranslationY(translationY);
 
-                mStatusHeaderView.updateView(translationY, true, true);
-            }
+            mStatusHeaderView.updateView(translationY, true, true);
         });
         animator.addListener(new Animator.AnimatorListener() {
             @Override

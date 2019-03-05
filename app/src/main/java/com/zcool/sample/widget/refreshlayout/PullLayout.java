@@ -2,6 +2,7 @@ package com.zcool.sample.widget.refreshlayout;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import com.zcool.sample.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,50 +22,58 @@ import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
 import timber.log.Timber;
 
-public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, NestedScrollingChild2 {
+public class PullLayout extends ViewGroup implements NestedScrollingParent2, NestedScrollingChild2 {
 
-    public RefreshLayout(Context context) {
-        super(context);
-        init();
+    public PullLayout(Context context) {
+        this(context, null);
     }
 
-    public RefreshLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    public PullLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
     }
 
-    public RefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PullLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        initFromAttributes(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PullLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        initFromAttributes(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    private static final int PULL_POSITION_LEFT = 0;
+    private static final int PULL_POSITION_TOP = 1;
+    private static final int PULL_POSITION_RIGHT = 2;
+    private static final int PULL_POSITION_BOTTOM = 3;
+
     private int mTouchSlop;
+    private int mPullPosition = PULL_POSITION_TOP;
     private View mHeader; // 下拉头
     private View mTarget; // 主要内容
 
     private int mActivePointerId = -1; // 用于计算滑动的手指
-    private float mLastMotionX;
-    private float mLastMotionY;
+    private int mLastMotionX;
+    private int mLastMotionY;
 
     private boolean mIsBeingDragged;
 
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
 
-    private void init() {
-        Context context = getContext();
+    private void initFromAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         setWillNotDraw(false);
 
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
+
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullLayout, defStyleAttr,
+                defStyleRes);
+        mPullPosition = a.getInt(R.styleable.PullLayout_pull_position, PULL_POSITION_TOP);
+        a.recycle();
     }
 
     @Override
@@ -70,14 +81,14 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return false;
         }
 
         if (!isEnabled()
-                || isHeaderStatusBusy()
-                || canChildScrollUp()
+                // || isHeaderStatusBusy()
+                || canChildScroll()
                 || getNestedScrollAxes() != 0) {
-            // 排除不能触发新下拉的情况
             return false;
         }
 
@@ -88,8 +99,8 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
             case MotionEvent.ACTION_DOWN:
                 mActivePointerId = event.getPointerId(0);
                 mIsBeingDragged = false;
-                mLastMotionX = event.getX(0);
-                mLastMotionY = event.getY(0);
+                mLastMotionX = (int) event.getX(0);
+                mLastMotionY = (int) event.getY(0);
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -104,8 +115,8 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
                     return false;
                 }
 
-                float x = event.getX(pointerIndex);
-                float y = event.getY(pointerIndex);
+                int x = (int) event.getX(pointerIndex);
+                int y = (int) event.getY(pointerIndex);
                 startDragging(x, y);
                 break;
 
@@ -128,14 +139,14 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return false;
         }
 
         if (!isEnabled()
-                || isHeaderStatusBusy()
-                || canChildScrollUp()
+                // || isHeaderStatusBusy()
+                || canChildScroll()
                 || getNestedScrollAxes() != 0) {
-            // 排除不能触发新下拉的情况
             return false;
         }
 
@@ -146,8 +157,8 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
             case MotionEvent.ACTION_DOWN:
                 mActivePointerId = event.getPointerId(0);
                 mIsBeingDragged = false;
-                mLastMotionX = event.getX(0);
-                mLastMotionY = event.getY(0);
+                mLastMotionX = (int) event.getX(0);
+                mLastMotionY = (int) event.getY(0);
                 break;
 
             case MotionEvent.ACTION_MOVE: {
@@ -162,14 +173,15 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
                     return false;
                 }
 
-                float x = event.getX(pointerIndex);
-                float y = event.getY(pointerIndex);
+                int x = (int) event.getX(pointerIndex);
+                int y = (int) event.getY(pointerIndex);
 
                 if (!mIsBeingDragged) {
                     startDragging(x, y);
                 } else {
-                    final float yDiff = y - mLastMotionY;
-                    applyOffsetYDiff(yDiff);
+                    final int dx = mLastMotionX - x;
+                    final int dy = mLastMotionY - y;
+                    applyPullOffset(dx, dy);
                     mLastMotionX = x;
                     mLastMotionY = y;
                 }
@@ -181,7 +193,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
 
             case MotionEvent.ACTION_UP: {
                 if (mIsBeingDragged) {
-                    finishOffsetY(false);
+                    finishOffset(false);
                     mIsBeingDragged = false;
                 }
                 mActivePointerId = -1;
@@ -189,7 +201,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
             }
             case MotionEvent.ACTION_CANCEL:
                 if (mIsBeingDragged) {
-                    finishOffsetY(true);
+                    finishOffset(true);
                     mIsBeingDragged = false;
                 }
                 mActivePointerId = -1;
@@ -199,50 +211,84 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         return true;
     }
 
+    /*
     private boolean isHeaderStatusBusy() {
         if (mHeader == null) {
             return true;
         }
-        HeaderView headerView = (HeaderView) mHeader;
-        return headerView.isStatusBusy();
+        Header header = (Header) mHeader;
+        return header.isStatusBusy();
+    }
+    */
+
+    public int applyPullOffset(int dx, int dy) {
+        if (isPullVertical()) {
+            // vertical
+            return applyPullOffset(dy);
+        } else {
+            // horizontal
+            return applyPullOffset(dx);
+        }
     }
 
-    public float applyOffsetYDiff(float yDiff) {
+    public int applyPullOffset(int offset) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
-            return 0f;
+            Timber.e("target or header not found");
+            return 0;
         }
 
-        HeaderView headerView = (HeaderView) mHeader;
-        return headerView.applyOffsetYDiff(yDiff, mTarget);
+        Header header = (Header) mHeader;
+        return header.applyOffset(offset, mTarget);
     }
 
     /**
      * @param cancel 如果是 cancel, 则忽略计算是否触发刷新，直接滚动到初始状态
      */
-    private void finishOffsetY(boolean cancel) {
+    private void finishOffset(boolean cancel) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return;
         }
 
-        HeaderView headerView = (HeaderView) mHeader;
-        headerView.finishOffsetY(cancel, mTarget);
+        Header header = (Header) mHeader;
+        header.finishOffset(cancel, mTarget);
     }
 
-    private void startDragging(float x, float y) {
-        final float yDiff = y - mLastMotionY;
-        final float xDiff = x - mLastMotionX;
-        if (!mIsBeingDragged
-                && yDiff > mTouchSlop
-                && Math.abs(yDiff) > Math.abs(xDiff)) {
-            // 垂直滑动并且有一定距离时，触发下拉
-            mLastMotionX = x;
-            mLastMotionY = y;
-            mIsBeingDragged = true;
+    private boolean isPullVertical() {
+        return mPullPosition == PULL_POSITION_TOP || mPullPosition == PULL_POSITION_BOTTOM;
+    }
 
+    private void startDragging(int x, int y) {
+        final int dx = mLastMotionX - x;
+        final int dy = mLastMotionY - y;
+        if (mIsBeingDragged) {
+            return;
+        }
+
+        int absDx = Math.abs(dx);
+        int absDy = Math.abs(dy);
+
+        if (isPullVertical()) {
+            // vertical
+            if (absDy > mTouchSlop && absDy > absDx) {
+                mLastMotionX = x;
+                mLastMotionY = y;
+                mIsBeingDragged = true;
+            }
+        } else {
+            // horizontal
+            if (absDx > mTouchSlop && absDx > absDy) {
+                mLastMotionX = x;
+                mLastMotionY = y;
+                mIsBeingDragged = true;
+            }
+        }
+
+        if (mIsBeingDragged) {
             ViewParent parent = getParent();
             if (parent != null) {
                 parent.requestDisallowInterceptTouchEvent(true);
@@ -258,45 +304,64 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
             // 重新设置计算滑动的手指和对应的滑动坐标
             final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
             mActivePointerId = event.getPointerId(newPointerIndex);
-            mLastMotionX = event.getX(newPointerIndex);
-            mLastMotionY = event.getY(newPointerIndex);
+            mLastMotionX = (int) event.getX(newPointerIndex);
+            mLastMotionY = (int) event.getY(newPointerIndex);
         }
     }
 
-    public boolean canChildScrollUp() {
+    private boolean canChildScroll() {
+        switch (mPullPosition) {
+            case PULL_POSITION_LEFT:
+                return canChildScrollLeft();
+            case PULL_POSITION_TOP:
+                return canChildScrollUp();
+            case PULL_POSITION_RIGHT:
+                return canChildScrollRight();
+            case PULL_POSITION_BOTTOM:
+                return canChildScrollDown();
+            default:
+                throw new IllegalArgumentException("unknown pull position: " + mPullPosition);
+        }
+    }
+
+    private boolean canChildScrollUp() {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return false;
         }
 
         return mTarget.canScrollVertically(-1);
     }
 
-    public boolean canChildScrollDown() {
+    private boolean canChildScrollDown() {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return false;
         }
 
         return mTarget.canScrollVertically(1);
     }
 
-    public boolean canChildScrollLeft() {
+    private boolean canChildScrollLeft() {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return false;
         }
 
         return mTarget.canScrollHorizontally(-1);
     }
 
-    public boolean canChildScrollRight() {
+    private boolean canChildScrollRight() {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return false;
         }
 
@@ -310,6 +375,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return;
         }
 
@@ -322,20 +388,41 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
             return;
         }
 
         int targetWidth = mTarget.getMeasuredWidth();
         int targetHeight = mTarget.getMeasuredHeight();
-        int targetLeft = getPaddingLeft();
-        int targetTop = getPaddingTop();
-        mTarget.layout(targetLeft, targetTop, targetLeft + targetWidth, targetTop + targetHeight);
+        mTarget.layout(getPaddingLeft(),
+                getPaddingTop(),
+                getPaddingLeft() + targetWidth,
+                getPaddingTop() + targetHeight);
 
         int headerWidth = mHeader.getMeasuredWidth();
         int headerHeight = mHeader.getMeasuredHeight();
-        int headerLeft = getPaddingLeft();
-        int headerTop = -headerHeight;
-        mHeader.layout(headerLeft, headerTop, headerLeft + headerWidth, 0);
+        switch (mPullPosition) {
+            case PULL_POSITION_LEFT:
+                mHeader.layout(getPaddingLeft() - headerWidth,
+                        getPaddingTop(),
+                        getPaddingLeft(),
+                        getPaddingTop() + headerHeight);
+                break;
+            case PULL_POSITION_TOP:
+                mHeader.layout(getPaddingLeft(),
+                        getPaddingTop() - headerHeight,
+                        getPaddingLeft() + headerWidth,
+                        getPaddingTop());
+                break;
+            case PULL_POSITION_RIGHT:
+                mHeader.layout(getPaddingRight(), getPaddingTop(), getPaddingRight() + headerWidth, getPaddingTop() + headerHeight);
+                break;
+            case PULL_POSITION_BOTTOM:
+                mHeader.layout(getPaddingLeft(), getPaddingBottom(), getPaddingLeft() + headerWidth, getPaddingBottom() + headerHeight);
+                break;
+            default:
+                throw new IllegalArgumentException("unknown pull position: " + mPullPosition);
+        }
     }
 
     private void ensureTargetAndHeader() {
@@ -344,7 +431,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 View child = getChildAt(i);
-                if (child instanceof HeaderView) {
+                if (child instanceof Header) {
                     if (mHeader == null) {
                         mHeader = child;
                     }
@@ -357,8 +444,8 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         }
 
         if (mHeader != null) {
-            HeaderView headerView = (HeaderView) mHeader;
-            headerView.setOnRefreshListener(() -> {
+            Header header = (Header) mHeader;
+            header.setOnRefreshListener(() -> {
                 if (mOnRefreshListener != null) {
                     mOnRefreshListener.onRefresh();
                 }
@@ -374,8 +461,8 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
             return;
         }
 
-        HeaderView headerView = (HeaderView) mHeader;
-        headerView.setRefreshing(refreshing, false, mTarget);
+        Header header = (Header) mHeader;
+        header.setRefreshing(refreshing, false, mTarget);
     }
 
     // nested scroll parent
@@ -416,7 +503,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
     public void onStopNestedScroll(@NonNull View target, int type) {
         mNestedScrollingParentHelper.onStopNestedScroll(target, type);
 
-        finishOffsetY(false);
+        finishOffset(false);
 
         stopNestedScroll(type);
     }
@@ -444,7 +531,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         final int dy = dyUnconsumed + parentOffsetInWindow[1];
 
         if (dy < 0 && !canChildScrollUp()) {
-            applyOffsetYDiff(-dy);
+            applyPullOffset(-dy);
         }
     }
 
@@ -465,7 +552,7 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         // 向上滑动 dy > 0
 
         if (dy > 0) {
-            float usedDy = applyOffsetYDiff(-dy);
+            float usedDy = applyPullOffset(-dy);
             usedDy = -usedDy;
             dy -= usedDy;
 
@@ -580,25 +667,18 @@ public class RefreshLayout extends ViewGroup implements NestedScrollingParent2, 
         mOnRefreshListener = onRefreshListener;
     }
 
-    public interface HeaderView {
+    public interface Header {
 
         void setOnRefreshListener(OnRefreshListener onRefreshListener);
 
         void setRefreshing(boolean refreshing, boolean notifyRefresh, View target);
 
         /**
-         * 是否处于忙状态(处于忙状态时不会触发新的下拉事件)
-         *
-         * @return
+         * 处理拉动距离变更值, 返回实际消耗的变更值
          */
-        boolean isStatusBusy();
+        int applyOffset(int offset, View target);
 
-        /**
-         * 处理下拉距离变更值, 返回实际消耗的变更值
-         */
-        float applyOffsetYDiff(float yDiff, View target);
-
-        void finishOffsetY(boolean cancel, View target);
+        void finishOffset(boolean cancel, View target);
 
     }
 
