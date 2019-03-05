@@ -83,7 +83,7 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
     }
 
     @Override
-    public int applyOffset(int offset, View target) {
+    public int applyOffset(int offset, View target, PullLayout pullLayout) {
         if (mRefreshStatus != STATUS_IDLE) {
             Timber.d("applyPullOffset refresh status not idle " + mRefreshStatus);
             return 0;
@@ -128,7 +128,7 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
     }
 
     @Override
-    public void finishOffset(boolean cancel, View target) {
+    public void finishOffset(boolean cancel, View target, PullLayout pullLayout) {
         if (mRefreshStatus != STATUS_IDLE) {
             Timber.d("finishOffset refresh status not idle " + mRefreshStatus);
             return;
@@ -144,7 +144,7 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
     }
 
     @Override
-    public void setRefreshing(boolean refreshing, boolean notifyRefresh, View target) {
+    public void setRefreshing(boolean refreshing, boolean notifyRefresh, View target, PullLayout pullLayout) {
         setRefreshInternal(refreshing, notifyRefresh, target);
     }
 
@@ -250,15 +250,12 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
 
         ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
         animator.setDuration(dur);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float translationY = (float) animation.getAnimatedValue();
-                setTranslationY(translationY);
-                target.setTranslationY(translationY);
+        animator.addUpdateListener(animation -> {
+            float translationY = (float) animation.getAnimatedValue();
+            setTranslationY(translationY);
+            target.setTranslationY(translationY);
 
-                mStatusHeaderView.updateView(translationY, false, true);
-            }
+            mStatusHeaderView.updateView(translationY, false, true);
         });
         animator.start();
 
