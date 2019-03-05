@@ -13,6 +13,7 @@ import android.view.ViewParent;
 
 import com.zcool.sample.R;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.NestedScrollingChild2;
@@ -43,13 +44,20 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         initFromAttributes(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private static final int PULL_POSITION_LEFT = 0;
-    private static final int PULL_POSITION_TOP = 1;
-    private static final int PULL_POSITION_RIGHT = 2;
-    private static final int PULL_POSITION_BOTTOM = 3;
+    public static final int PULL_POSITION_LEFT = 0;
+    public static final int PULL_POSITION_TOP = 1;
+    public static final int PULL_POSITION_RIGHT = 2;
+    public static final int PULL_POSITION_BOTTOM = 3;
 
+    @IntDef({PULL_POSITION_LEFT, PULL_POSITION_TOP, PULL_POSITION_RIGHT, PULL_POSITION_BOTTOM})
+    public @interface PullPosition {
+    }
+
+    public static final int ANIMATION_DURATION = 200;
     private int mTouchSlop;
+    @PullPosition
     private int mPullPosition = PULL_POSITION_TOP;
+    private boolean mPullOverlay = false;
     private View mHeader; // 下拉头
     private View mTarget; // 主要内容
 
@@ -73,7 +81,29 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullLayout, defStyleAttr,
                 defStyleRes);
         mPullPosition = a.getInt(R.styleable.PullLayout_pull_position, PULL_POSITION_TOP);
+        mPullOverlay = a.getBoolean(R.styleable.PullLayout_pull_overlay, false);
         a.recycle();
+    }
+
+    @PullPosition
+    public int getPullPosition() {
+        return mPullPosition;
+    }
+
+    public boolean isPullOverlay() {
+        return mPullOverlay;
+    }
+
+    @Nullable
+    public View getTarget() {
+        ensureTargetAndHeader();
+        return mTarget;
+    }
+
+    @Nullable
+    public View getHeader() {
+        ensureTargetAndHeader();
+        return mHeader;
     }
 
     @Override
@@ -181,7 +211,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
                 } else {
                     final int dx = mLastMotionX - x;
                     final int dy = mLastMotionY - y;
-                    applyPullOffset(dx, dy);
+                    applyPullOffset(dx, dy, new int[2]);
                     mLastMotionX = x;
                     mLastMotionY = y;
                 }
@@ -211,43 +241,11 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         return true;
     }
 
-    /*
-    private boolean isHeaderStatusBusy() {
-        if (mHeader == null) {
-            return true;
-        }
-        Header header = (Header) mHeader;
-        return header.isStatusBusy();
-    }
-    */
+    private int[] mTotalConsumedOffset = new int[2];
 
-    public int applyPullOffset(int dx, int dy) {
-        if (isPullVertical()) {
-            // vertical
-            return applyPullOffset(dy);
-        } else {
-            // horizontal
-            return applyPullOffset(dx);
-        }
-    }
-
-    public int applyPullOffset(int offset) {
+    public void applyPullOffset(int dx, int dy, int[] consumed) {
         ensureTargetAndHeader();
-
-        if (mTarget == null || mHeader == null) {
-            Timber.e("target or header not found");
-            return 0;
-        }
-
-        Header header = (Header) mHeader;
-        return header.applyOffset(offset, mTarget, this);
-    }
-
-    /**
-     * @param cancel 如果是 cancel, 则忽略计算是否触发刷新，直接滚动到初始状态
-     */
-    private void finishOffset(boolean cancel) {
-        ensureTargetAndHeader();
+        consumed[0] = consumed[1] = 0;
 
         if (mTarget == null || mHeader == null) {
             Timber.e("target or header not found");
@@ -255,7 +253,54 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
         }
 
         Header header = (Header) mHeader;
-        header.finishOffset(cancel, mTarget, this);
+        header.applyOffset(dx, dy, consumed, this);
+
+        mTotalConsumedOffset[0] += consumed[0];
+        mTotalConsumedOffset[1] += consumed[1];
+
+        if (!mPullOverlay) {
+            if (isPullVertical()) {
+                setTranslationY(mTotalConsumedOffset[1]);
+            } else {
+                setTranslationX(mTotalConsumedOffset[0]);
+            }
+        }
+    }
+
+    /**
+     * @param cancel 如果是 cancel, 则忽略计算是否触发刷新，直接滚动到初始状态
+     */
+    private void finishOffset(boolean cancel) {
+        int[] totalConsumedOffset = {mTotalConsumedOffset[0], mTotalConsumedOffset[1]};
+        mTotalConsumedOffset[0] = mTotalConsumedOffset[1] = 0;
+
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            Timber.e("target or header not found");
+            return;
+        }
+
+        boolean refreshing;
+        if (cancel) {
+            refreshing = false;
+        } else {
+            if ((mPullPosition == PULL_POSITION_TOP && totalConsumedOffset[1] <= -getMinimumHeight())
+                    || (mPullPosition == PULL_POSITION_BOTTOM && totalConsumedOffset[1] >= getMinimumHeight())
+                    || (mPullPosition == PULL_POSITION_LEFT && totalConsumedOffset[0] <= -getMinimumWidth())
+                    || (mPullPosition == PULL_POSITION_RIGHT && totalConsumedOffset[0] >= getMinimumWidth())) {
+                refreshing = true;
+            } else {
+                refreshing = false;
+            }
+        }
+
+        boolean notifyRefreshing = !mRefreshing && refreshing;
+        setRefreshing(refreshing);
+
+        if (notifyRefreshing && mOnRefreshListener != null) {
+            mOnRefreshListener.onRefresh(this);
+        }
     }
 
     private boolean isPullVertical() {
@@ -319,9 +364,8 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
                 return canChildScrollRight();
             case PULL_POSITION_BOTTOM:
                 return canChildScrollDown();
-            default:
-                throw new IllegalArgumentException("unknown pull position: " + mPullPosition);
         }
+        throw new RuntimeException();
     }
 
     private boolean canChildScrollUp() {
@@ -415,13 +459,17 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
                         getPaddingTop());
                 break;
             case PULL_POSITION_RIGHT:
-                mHeader.layout(getPaddingRight(), getPaddingTop(), getPaddingRight() + headerWidth, getPaddingTop() + headerHeight);
+                mHeader.layout(getPaddingRight(),
+                        getPaddingTop(),
+                        getPaddingRight() + headerWidth,
+                        getPaddingTop() + headerHeight);
                 break;
             case PULL_POSITION_BOTTOM:
-                mHeader.layout(getPaddingLeft(), getPaddingBottom(), getPaddingLeft() + headerWidth, getPaddingBottom() + headerHeight);
+                mHeader.layout(getPaddingLeft(),
+                        getPaddingBottom(),
+                        getPaddingLeft() + headerWidth,
+                        getPaddingBottom() + headerHeight);
                 break;
-            default:
-                throw new IllegalArgumentException("unknown pull position: " + mPullPosition);
         }
     }
 
@@ -442,16 +490,9 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
                 }
             }
         }
-
-        if (mHeader != null) {
-            Header header = (Header) mHeader;
-            header.setOnRefreshListener(() -> {
-                if (mOnRefreshListener != null) {
-                    mOnRefreshListener.onRefresh();
-                }
-            });
-        }
     }
+
+    private boolean mRefreshing;
 
     public void setRefreshing(boolean refreshing) {
         ensureTargetAndHeader();
@@ -461,8 +502,35 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
             return;
         }
 
+        mRefreshing = refreshing;
         Header header = (Header) mHeader;
-        header.setRefreshing(refreshing, false, mTarget, this);
+        header.finishOffset(mRefreshing, this);
+
+        if (!mPullOverlay) {
+            int translationX;
+            int translationY;
+
+            if (!mRefreshing) {
+                translationX = translationY = 0;
+            } else {
+                if (mPullPosition == PULL_POSITION_TOP) {
+                    translationX = 0;
+                    translationY = getMinimumHeight();
+                } else if (mPullPosition == PULL_POSITION_BOTTOM) {
+                    translationX = 0;
+                    translationY = -getMinimumHeight();
+                } else if (mPullPosition == PULL_POSITION_LEFT) {
+                    translationX = getMinimumWidth();
+                    translationY = 0;
+                } else if (mPullPosition == PULL_POSITION_RIGHT) {
+                    translationX = -getMinimumWidth();
+                    translationY = 0;
+                } else {
+                    throw new RuntimeException("invalid pull position: " + mPullPosition);
+                }
+            }
+            animate().translationX(translationX).translationY(translationY).setDuration(ANIMATION_DURATION).start();
+        }
     }
 
     // nested scroll parent
@@ -480,7 +548,19 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
             return false;
         }
 
-        return type == ViewCompat.TYPE_TOUCH && isEnabled() && (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        if (type != ViewCompat.TYPE_TOUCH) {
+            return false;
+        }
+
+        if (!isEnabled()) {
+            return false;
+        }
+
+        if (isPullVertical()) {
+            return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        } else {
+            return (axes & ViewCompat.SCROLL_AXIS_HORIZONTAL) != 0;
+        }
     }
 
     @Override
@@ -491,7 +571,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
     @Override
     public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
-        startNestedScroll(axes & ViewCompat.SCROLL_AXIS_VERTICAL, type);
+        startNestedScroll(axes, type);
     }
 
     @Override
@@ -519,7 +599,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
 
         // 记录父滑动后, 当前控件实际产生的窗口偏移 (滑动后的位置减去滑动前的位置, 因此如果是向下滑动, 偏移值为正)
         // dx, dy, 向上,向左是正, 向下,向右是负 (上一个位置减去当前位置)
-        int[] parentOffsetInWindow = new int[2];
+        int[] parentOffsetInWindow = new int[2]; // 数组默认初始化为 0
 
         if (mTarget == null || mHeader == null) {
             dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow, type);
@@ -528,10 +608,15 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
 
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow, type);
 
-        final int dy = dyUnconsumed + parentOffsetInWindow[1];
+        // parentOffsetInWindow 与 dx dy 方向是反的
+        final int dx = dxUnconsumed + parentOffsetInWindow[0]; // 减去父容器消耗的 dx
+        final int dy = dyUnconsumed + parentOffsetInWindow[1]; // 减去父容器消耗的 dy
 
-        if (dy < 0 && !canChildScrollUp()) {
-            applyPullOffset(-dy);
+        if ((mPullPosition == PULL_POSITION_TOP && dy < 0 && !canChildScrollUp())
+                || (mPullPosition == PULL_POSITION_BOTTOM && dy > 0 && !canChildScrollDown())
+                || (mPullPosition == PULL_POSITION_LEFT && dx < 0 && !canChildScrollLeft())
+                || (mPullPosition == PULL_POSITION_RIGHT && dx > 0 && !canChildScrollRight())) {
+            applyPullOffset(dx, dy, new int[2]);
         }
     }
 
@@ -549,18 +634,21 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
             return;
         }
 
-        // 向上滑动 dy > 0
-
-        if (dy > 0) {
-            float usedDy = applyPullOffset(-dy);
-            usedDy = -usedDy;
-            dy -= usedDy;
+        // dx, dy, 向上,向左是正, 向下,向右是负 (上一个位置减去当前位置)
+        if ((mPullPosition == PULL_POSITION_TOP && dy > 0)
+                || (mPullPosition == PULL_POSITION_BOTTOM && dy < 0)
+                || (mPullPosition == PULL_POSITION_LEFT && dx > 0)
+                || (mPullPosition == PULL_POSITION_RIGHT && dx < 0)) {
+            int[] pullOffsetConsumed = new int[2];
+            applyPullOffset(dx, dy, pullOffsetConsumed);
+            dx -= pullOffsetConsumed[0];
+            dy -= pullOffsetConsumed[1];
 
             final int[] parentConsumed = new int[2];
             dispatchNestedPreScroll(dx, dy, parentConsumed, null, type);
 
-            consumed[0] = 0;
-            consumed[1] = (int) usedDy;
+            consumed[0] = pullOffsetConsumed[0];
+            consumed[1] = pullOffsetConsumed[1];
             consumed[0] += parentConsumed[0];
             consumed[1] += parentConsumed[1];
         } else {
@@ -658,7 +746,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
     }
 
     public interface OnRefreshListener {
-        void onRefresh();
+        void onRefresh(PullLayout pullLayout);
     }
 
     private OnRefreshListener mOnRefreshListener;
@@ -669,16 +757,15 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
 
     public interface Header {
 
-        void setOnRefreshListener(OnRefreshListener onRefreshListener);
-
-        void setRefreshing(boolean refreshing, boolean notifyRefresh, View target, PullLayout pullLayout);
-
         /**
          * 处理拉动距离变更值, 返回实际消耗的变更值
          */
-        int applyOffset(int offset, View target, PullLayout pullLayout);
+        void applyOffset(int dx, int dy, @NonNull int[] consumed, PullLayout pullLayout);
 
-        void finishOffset(boolean cancel, View target, PullLayout pullLayout);
+        /**
+         * 将 offset 置为初始状态或者刷新中的状态
+         */
+        void finishOffset(boolean refreshing, PullLayout pullLayout);
 
     }
 
