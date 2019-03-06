@@ -8,5 +8,6 @@
             <enum name="bottom" value="3" />
         </attr>
         <attr name="pull_overlay" format="boolean" />
+        <attr name="pull_threshold" format="dimension" />
     </declare-styleable>
 </resources>
