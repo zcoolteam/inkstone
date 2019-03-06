@@ -9,52 +9,97 @@
     app:systemInsetPaddingRight="all"
     app:systemInsetPaddingTop="all">
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.zcool.sample.widget.refreshlayout.PullLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:pull_position="left"
+            app:pull_threshold="50dp">
 
-            <com.zcool.sample.widget.refreshlayout.PullLayout
+            <Button
+                android:id="@+id/item_view_dialog_1"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                app:pull_position="left"
-                app:pull_threshold="50dp">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="view dialog 1" />
 
-                <Button
-                    android:id="@+id/item_view_dialog_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="view dialog 1" />
+            <com.zcool.sample.widget.refreshlayout.PullHeader
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
 
-                <com.zcool.sample.widget.refreshlayout.PullHeader
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                <include layout="@layout/okandroid_ptr_header_default_view" />
+            </com.zcool.sample.widget.refreshlayout.PullHeader>
+        </com.zcool.sample.widget.refreshlayout.PullLayout>
 
-                    <include layout="@layout/okandroid_ptr_header_default_view" />
-                </com.zcool.sample.widget.refreshlayout.PullHeader>
-            </com.zcool.sample.widget.refreshlayout.PullLayout>
+        <com.zcool.sample.widget.refreshlayout.PullLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:pull_position="right"
+            app:pull_threshold="50dp">
 
             <Button
                 android:id="@+id/item_view_dialog_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="view dialog 2" />
+
+            <com.zcool.sample.widget.refreshlayout.PullHeader
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <include layout="@layout/okandroid_ptr_header_default_view" />
+            </com.zcool.sample.widget.refreshlayout.PullHeader>
+        </com.zcool.sample.widget.refreshlayout.PullLayout>
+
+        <com.zcool.sample.widget.refreshlayout.PullLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:pull_position="top"
+            app:pull_threshold="20dp">
 
             <Button
                 android:id="@+id/item_view_dialog_3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:text="view dialog 3" />
+
+            <com.zcool.sample.widget.refreshlayout.PullHeader
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <include layout="@layout/okandroid_ptr_header_default_view" />
+            </com.zcool.sample.widget.refreshlayout.PullHeader>
+        </com.zcool.sample.widget.refreshlayout.PullLayout>
+
+        <com.zcool.sample.widget.refreshlayout.PullLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:pull_position="bottom"
+            app:pull_threshold="20dp">
 
             <Button
                 android:id="@+id/item_view_dialog_4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:text="view dialog 4" />
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+
+            <com.zcool.sample.widget.refreshlayout.PullHeader
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <include layout="@layout/okandroid_ptr_header_default_view" />
+            </com.zcool.sample.widget.refreshlayout.PullHeader>
+        </com.zcool.sample.widget.refreshlayout.PullLayout>
+    </LinearLayout>
 </com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout>
