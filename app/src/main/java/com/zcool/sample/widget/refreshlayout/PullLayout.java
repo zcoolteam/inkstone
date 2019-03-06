@@ -8,8 +8,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
@@ -24,7 +24,7 @@ import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
 import timber.log.Timber;
 
-public class PullLayout extends ViewGroup implements NestedScrollingParent2, NestedScrollingChild2 {
+public class PullLayout extends FrameLayout implements NestedScrollingParent2, NestedScrollingChild2 {
 
     public PullLayout(Context context) {
         this(context, null);
@@ -535,6 +535,7 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        /*
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -544,10 +545,13 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
 
         measureChild(mTarget, widthMeasureSpec, heightMeasureSpec);
         measureChild(mHeader, widthMeasureSpec, heightMeasureSpec);
+        */
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -555,39 +559,30 @@ public class PullLayout extends ViewGroup implements NestedScrollingParent2, Nes
             return;
         }
 
-        int targetWidth = mTarget.getMeasuredWidth();
-        int targetHeight = mTarget.getMeasuredHeight();
-        mTarget.layout(getPaddingLeft(),
-                getPaddingTop(),
-                getPaddingLeft() + targetWidth,
-                getPaddingTop() + targetHeight);
-
-        int headerWidth = mHeader.getMeasuredWidth();
-        int headerHeight = mHeader.getMeasuredHeight();
         switch (mPullPosition) {
             case PULL_POSITION_LEFT:
-                mHeader.layout(getPaddingLeft() - headerWidth,
-                        getPaddingTop(),
-                        getPaddingLeft(),
-                        getPaddingTop() + headerHeight);
+                mHeader.layout(mHeader.getLeft() - mHeader.getRight(),
+                        mHeader.getTop(),
+                        mHeader.getRight() - mHeader.getRight(),
+                        mHeader.getBottom());
                 break;
             case PULL_POSITION_TOP:
-                mHeader.layout(getPaddingLeft(),
-                        getPaddingTop() - headerHeight,
-                        getPaddingLeft() + headerWidth,
-                        getPaddingTop());
+                mHeader.layout(mHeader.getLeft(),
+                        mHeader.getTop() - mHeader.getBottom(),
+                        mHeader.getRight(),
+                        mHeader.getBottom() - mHeader.getBottom());
                 break;
             case PULL_POSITION_RIGHT:
-                mHeader.layout(getPaddingRight(),
-                        getPaddingTop(),
-                        getPaddingRight() + headerWidth,
-                        getPaddingTop() + headerHeight);
+                mHeader.layout(mHeader.getLeft() - mHeader.getLeft() + getWidth(),
+                        mHeader.getTop(),
+                        mHeader.getRight() - mHeader.getLeft() + getWidth(),
+                        mHeader.getBottom());
                 break;
             case PULL_POSITION_BOTTOM:
-                mHeader.layout(getPaddingLeft(),
-                        getPaddingBottom(),
-                        getPaddingLeft() + headerWidth,
-                        getPaddingBottom() + headerHeight);
+                mHeader.layout(mHeader.getLeft(),
+                        mHeader.getTop() - mHeader.getTop() + getHeight(),
+                        mHeader.getRight(),
+                        mHeader.getBottom() - mHeader.getTop() + getHeight());
                 break;
         }
     }
