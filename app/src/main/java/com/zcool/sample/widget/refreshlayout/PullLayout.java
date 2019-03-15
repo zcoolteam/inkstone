@@ -550,28 +550,32 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
 
         switch (mPullPosition) {
             case PULL_POSITION_TOP:
-                if (dy < -mTouchSlop && absDy > absDx) {
+                if ((dy < -mTouchSlop || (dy > mTouchSlop && mOffsetHelper.getCurrentOffsetY() < 0))
+                        && absDy > absDx) {
                     mLastMotionX = x;
                     mLastMotionY = y;
                     mIsBeingDragged = true;
                 }
                 break;
             case PULL_POSITION_BOTTOM:
-                if (dy > mTouchSlop && absDy > absDx) {
+                if ((dy > mTouchSlop || (dy < -mTouchSlop && mOffsetHelper.getCurrentOffsetY() > 0))
+                        && absDy > absDx) {
                     mLastMotionX = x;
                     mLastMotionY = y;
                     mIsBeingDragged = true;
                 }
                 break;
             case PULL_POSITION_LEFT:
-                if (dx < -mTouchSlop && absDx > absDy) {
+                if ((dx < -mTouchSlop || (dx > mTouchSlop && mOffsetHelper.getCurrentOffsetX() < 0))
+                        && absDx > absDy) {
                     mLastMotionX = x;
                     mLastMotionY = y;
                     mIsBeingDragged = true;
                 }
                 break;
             case PULL_POSITION_RIGHT:
-                if (dx > mTouchSlop && absDx > absDy) {
+                if ((dx > mTouchSlop || (dx < -mTouchSlop && mOffsetHelper.getCurrentOffsetX() > 0))
+                        && absDx > absDy) {
                     mLastMotionX = x;
                     mLastMotionY = y;
                     mIsBeingDragged = true;
