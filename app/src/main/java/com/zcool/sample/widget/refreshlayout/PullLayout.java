@@ -739,6 +739,10 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
 
     private boolean mRefreshing;
 
+    public boolean isRefreshing() {
+        return mRefreshing;
+    }
+
     public void setRefreshing(boolean refreshing) {
         ensureTargetAndHeader();
 
