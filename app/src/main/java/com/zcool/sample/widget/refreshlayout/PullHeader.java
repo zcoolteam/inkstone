@@ -56,7 +56,7 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
     }
 
     @Override
-    public void updateOffset(boolean refreshing, int offsetX, int offsetY, int absThreshold, int windowOffsetX, int windowOffsetY, PullLayout pullLayout) {
+    public void updateOffset(@NonNull PullLayout.OffsetHelper offsetHelper, boolean animating, int windowOffsetX, int windowOffsetY, @NonNull PullLayout pullLayout) {
         ensureProgressBar();
         if (mProgressBar == null) {
             Timber.v("progress bar is null");

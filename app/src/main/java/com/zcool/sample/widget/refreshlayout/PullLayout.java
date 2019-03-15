@@ -1,5 +1,8 @@
 package com.zcool.sample.widget.refreshlayout;
 
+import android.animation.Animator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +16,8 @@ import android.widget.FrameLayout;
 
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
+
+import javax.annotation.Nonnull;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -73,6 +78,8 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
 
+    private OffsetHelper mOffsetHelper;
+
     private void initFromAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         setWillNotDraw(false);
@@ -90,6 +97,24 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             throw new IllegalArgumentException("pull threshold must > 0");
         }
         a.recycle();
+
+        mOffsetHelper = new OffsetHelper((offsetHelper, animating) -> {
+            ensureTargetAndHeader();
+
+            if (mTarget == null || mHeader == null) {
+                Timber.e("target or header not found");
+                return;
+            }
+
+            int windowOffsetX = -offsetHelper.getThresholdTransform(offsetHelper.getCurrentOffsetX());
+            int windowOffsetY = -offsetHelper.getThresholdTransform(offsetHelper.getCurrentOffsetY());
+
+            mTarget.setTranslationX(windowOffsetX);
+            mTarget.setTranslationY(windowOffsetY);
+
+            Header header = (Header) mHeader;
+            header.updateOffset(offsetHelper, animating, windowOffsetX, windowOffsetY, PullLayout.this);
+        });
     }
 
     @PullPosition
@@ -250,7 +275,192 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         return true;
     }
 
-    private int[] mTotalConsumedOffset = new int[2];
+    protected interface OnOffsetChangedListener {
+        void onOffsetChanged(@Nonnull OffsetHelper offsetHelper, boolean animating);
+    }
+
+    public class OffsetHelper {
+
+        @NonNull
+        private final OnOffsetChangedListener mOffsetChangedListener;
+
+        int mCurrentOffsetX;
+        int mCurrentOffsetY;
+
+        int mTargetOffsetX;
+        int mTargetOffsetY;
+
+        private Animator mAnimator;
+
+        private OffsetHelper(OnOffsetChangedListener offsetChangedListener) {
+            mOffsetChangedListener = offsetChangedListener;
+        }
+
+        public int getCurrentOffsetX() {
+            return mCurrentOffsetX;
+        }
+
+        public int getCurrentOffsetY() {
+            return mCurrentOffsetY;
+        }
+
+        public int getTargetOffsetX() {
+            return mTargetOffsetX;
+        }
+
+        public int getTargetOffsetY() {
+            return mTargetOffsetY;
+        }
+
+        public int getThresholdTransform(int offset) {
+            if (isPullOverlay()) {
+                return 0;
+            }
+            if (offset == 0) {
+                return 0;
+            }
+
+            if (offset < 0) {
+                if (offset >= -mPullThreshold) {
+                    return offset;
+                } else {
+                    return -mPullThreshold + (int) ((offset + mPullThreshold) * 0.5f);
+                }
+            } else {
+                if (offset <= mPullThreshold) {
+                    return offset;
+                } else {
+                    return mPullThreshold + (int) ((offset - mPullThreshold) * 0.5f);
+                }
+            }
+        }
+
+        public void clear() {
+            Animator animator = mAnimator;
+            mAnimator = null;
+            if (animator != null) {
+                animator.cancel();
+            }
+        }
+
+        private boolean canTriggerRefresh() {
+            switch (mPullPosition) {
+                case PULL_POSITION_TOP: {
+                    return mCurrentOffsetY <= -mPullThreshold;
+                }
+                case PULL_POSITION_BOTTOM: {
+                    return mCurrentOffsetY >= mPullThreshold;
+                }
+                case PULL_POSITION_LEFT: {
+                    return mCurrentOffsetX <= -mPullThreshold;
+                }
+                case PULL_POSITION_RIGHT: {
+                    return mCurrentOffsetX >= mPullThreshold;
+                }
+                default:
+                    throw new IllegalArgumentException("unknown pull position: " + mPullPosition);
+            }
+        }
+
+        private boolean appendOffset(int dx, int dy) {
+            return appendOffset(dx, dy, false);
+        }
+
+        private boolean appendOffset(int dx, int dy, boolean animate) {
+            return setOffset(mCurrentOffsetX + dx, mCurrentOffsetY + dy, animate);
+        }
+
+        private boolean setOffset(int targetOffsetX, int targetOffsetY, boolean animate) {
+            clear();
+
+            switch (mPullPosition) {
+                case PULL_POSITION_TOP: {
+                    targetOffsetX = 0;
+                    if (targetOffsetY >= 0) {
+                        targetOffsetY = 0;
+                        if (mCurrentOffsetY >= 0) {
+                            // header already hide
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case PULL_POSITION_BOTTOM: {
+                    targetOffsetX = 0;
+                    if (targetOffsetY <= 0) {
+                        targetOffsetY = 0;
+                        if (mCurrentOffsetY <= 0) {
+                            // header already hide
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case PULL_POSITION_LEFT: {
+                    targetOffsetY = 0;
+                    if (targetOffsetX >= 0) {
+                        targetOffsetX = 0;
+                        if (mCurrentOffsetX >= 0) {
+                            // header already hide
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case PULL_POSITION_RIGHT: {
+                    targetOffsetY = 0;
+                    if (targetOffsetX <= 0) {
+                        targetOffsetX = 0;
+                        if (mCurrentOffsetX <= 0) {
+                            // header already hide
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                default:
+                    return false;
+            }
+
+            mTargetOffsetX = targetOffsetX;
+            mTargetOffsetY = targetOffsetY;
+
+            if (!animate) {
+                mCurrentOffsetX = targetOffsetX;
+                mCurrentOffsetY = targetOffsetY;
+                mOffsetChangedListener.onOffsetChanged(this, false);
+
+                return true;
+            }
+
+            mOffsetChangedListener.onOffsetChanged(this, true);
+
+            int duration = 200;
+            int absDistance = Math.max(Math.abs(mCurrentOffsetX - targetOffsetX), Math.abs(mCurrentOffsetY - targetOffsetY));
+            if (absDistance < mPullThreshold) {
+                duration = (int) (absDistance * 1f / mPullThreshold * 200);
+            }
+
+            ValueAnimator animator = new ValueAnimator();
+            mAnimator = animator;
+
+            animator.setValues(
+                    PropertyValuesHolder.ofInt("offsetX", mCurrentOffsetX, targetOffsetX),
+                    PropertyValuesHolder.ofInt("offsetY", mCurrentOffsetY, targetOffsetY));
+            animator.setDuration(duration);
+            animator.addUpdateListener(animation -> {
+                if (mAnimator != animator) {
+                    return;
+                }
+                mCurrentOffsetX = (int) animation.getAnimatedValue("offsetX");
+                mCurrentOffsetY = (int) animation.getAnimatedValue("offsetY");
+                mOffsetChangedListener.onOffsetChanged(this, true);
+            });
+            animator.start();
+            return true;
+        }
+
+    }
 
     public boolean applyPullOffset(int dx, int dy) {
         ensureTargetAndHeader();
@@ -260,111 +470,37 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             return false;
         }
 
-
-        int[] tmpTotalConsumedOffset = new int[]{mTotalConsumedOffset[0] + dx, mTotalConsumedOffset[1] + dy};
-        switch (mPullPosition) {
-            case PULL_POSITION_TOP: {
-                tmpTotalConsumedOffset[0] = 0;
-                if (tmpTotalConsumedOffset[1] >= 0) {
-                    tmpTotalConsumedOffset[1] = 0;
-                    if (mTotalConsumedOffset[1] >= 0) {
-                        // header already hide
-                        return false;
-                    }
-                }
-                break;
-            }
-            case PULL_POSITION_BOTTOM: {
-                tmpTotalConsumedOffset[0] = 0;
-                if (tmpTotalConsumedOffset[1] <= 0) {
-                    tmpTotalConsumedOffset[1] = 0;
-                    if (mTotalConsumedOffset[1] <= 0) {
-                        // header already hide
-                        return false;
-                    }
-                }
-                break;
-            }
-            case PULL_POSITION_LEFT: {
-                tmpTotalConsumedOffset[1] = 0;
-                if (tmpTotalConsumedOffset[0] >= 0) {
-                    tmpTotalConsumedOffset[0] = 0;
-                    if (mTotalConsumedOffset[0] >= 0) {
-                        // header already hide
-                        return false;
-                    }
-                }
-                break;
-            }
-            case PULL_POSITION_RIGHT: {
-                tmpTotalConsumedOffset[1] = 0;
-                if (tmpTotalConsumedOffset[0] <= 0) {
-                    tmpTotalConsumedOffset[0] = 0;
-                    if (mTotalConsumedOffset[0] <= 0) {
-                        // header already hide
-                        return false;
-                    }
-                }
-                break;
-            }
-            default:
-                return false;
-        }
-
-        mTotalConsumedOffset[0] = tmpTotalConsumedOffset[0];
-        mTotalConsumedOffset[1] = tmpTotalConsumedOffset[1];
-
-        int[] windowOffset = calculateBestWindowOffset(mTotalConsumedOffset[0], mTotalConsumedOffset[1], false, false);
-
-        Header header = (Header) mHeader;
-        header.updateOffset(mRefreshing, mTotalConsumedOffset[0], mTotalConsumedOffset[1], mPullThreshold, windowOffset[0], windowOffset[1], this);
-
-        if (!mPullOverlay) {
-            mTarget.animate().cancel();
-            mTarget.setTranslationX(windowOffset[0]);
-            mTarget.setTranslationY(windowOffset[1]);
-        }
-
-        return true;
+        return mOffsetHelper.appendOffset(dx, dy);
     }
 
-    // TODO
-    private int[] calculateBestWindowOffset(int totalConsumedOffsetX, int totalConsumedOffsetY, boolean refreshing, boolean cancel) {
+    private int[] getFinalOffset(boolean refreshing) {
         switch (mPullPosition) {
             case PULL_POSITION_TOP: {
                 if (refreshing) {
-                    return new int[]{0, mPullThreshold};
-                } else if (cancel) {
-                    return new int[]{0, 0};
+                    return new int[]{0, -mPullThreshold};
                 } else {
-                    return new int[]{0, Math.max(0, -totalConsumedOffsetY)};
+                    return new int[]{0, 0};
                 }
             }
             case PULL_POSITION_BOTTOM: {
                 if (refreshing) {
-                    return new int[]{0, -mPullThreshold};
-                } else if (cancel) {
-                    return new int[]{0, 0};
+                    return new int[]{0, mPullThreshold};
                 } else {
-                    return new int[]{0, Math.min(0, -totalConsumedOffsetY)};
+                    return new int[]{0, 0};
                 }
             }
             case PULL_POSITION_LEFT: {
                 if (refreshing) {
-                    return new int[]{mPullThreshold, 0};
-                } else if (cancel) {
-                    return new int[]{0, 0};
+                    return new int[]{-mPullThreshold, 0};
                 } else {
-                    return new int[]{Math.max(0, -totalConsumedOffsetX), 0};
+                    return new int[]{0, 0};
                 }
             }
             case PULL_POSITION_RIGHT: {
                 if (refreshing) {
-                    return new int[]{-mPullThreshold, 0};
-                } else if (cancel) {
-                    return new int[]{0, 0};
+                    return new int[]{mPullThreshold, 0};
                 } else {
-                    return new int[]{Math.min(0, -totalConsumedOffsetX), 0};
+                    return new int[]{0, 0};
                 }
             }
             default:
@@ -376,8 +512,6 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
      * @param cancel 如果是 cancel, 则忽略计算是否触发刷新，直接滚动到初始状态
      */
     private void finishOffset(boolean cancel) {
-        int[] totalConsumedOffset = {mTotalConsumedOffset[0], mTotalConsumedOffset[1]};
-
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -388,12 +522,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         boolean refreshing = mRefreshing;
         if (!refreshing) {
             if (!cancel) {
-                if ((mPullPosition == PULL_POSITION_TOP && totalConsumedOffset[1] <= -mPullThreshold)
-                        || (mPullPosition == PULL_POSITION_BOTTOM && totalConsumedOffset[1] >= mPullThreshold)
-                        || (mPullPosition == PULL_POSITION_LEFT && totalConsumedOffset[0] <= -mPullThreshold)
-                        || (mPullPosition == PULL_POSITION_RIGHT && totalConsumedOffset[0] >= mPullThreshold)) {
-                    refreshing = true;
-                }
+                refreshing = mOffsetHelper.canTriggerRefresh();
             }
         }
 
@@ -403,8 +532,6 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         if (notifyRefreshing && mOnRefreshListener != null) {
             mOnRefreshListener.onRefresh(this);
         }
-
-        mTotalConsumedOffset[0] = mTotalConsumedOffset[1] = 0;
     }
 
     private boolean isPullVertical() {
@@ -618,14 +745,8 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
 
         mRefreshing = refreshing;
 
-        int[] windowOffset = calculateBestWindowOffset(mTotalConsumedOffset[0], mTotalConsumedOffset[1], mRefreshing, true);
-
-        Header header = (Header) mHeader;
-        header.updateOffset(mRefreshing, mTotalConsumedOffset[0], mTotalConsumedOffset[1], mPullThreshold, windowOffset[0], windowOffset[1], this);
-
-        if (!mPullOverlay) {
-            mTarget.animate().translationX(windowOffset[0]).translationY(windowOffset[1]).setDuration(ANIMATION_DURATION).start();
-        }
+        int[] targetOffset = getFinalOffset(mRefreshing);
+        mOffsetHelper.setOffset(targetOffset[0], targetOffset[1], true);
     }
 
     // nested scroll parent
@@ -854,7 +975,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
 
     public interface Header {
 
-        void updateOffset(boolean refreshing, int offsetX, int offsetY, int absThreshold, int windowOffsetX, int windowOffsetY, PullLayout pullLayout);
+        void updateOffset(@NonNull OffsetHelper offsetHelper, boolean animating, int windowOffsetX, int windowOffsetY, @NonNull PullLayout pullLayout);
 
     }
 
