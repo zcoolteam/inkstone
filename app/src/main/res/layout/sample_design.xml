@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.zcool.sample.widget.MinHeightInsetsCollapsingToolbarLayout
+            <com.zcool.inkstone.ext.widget.MinHeightInsetsCollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -61,7 +61,7 @@
                             android:textColor="#000000" />
                     </com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout>
                 </com.zcool.sample.module.design.widget.ProgressViewFrameLayout>
-            </com.zcool.sample.widget.MinHeightInsetsCollapsingToolbarLayout>
+            </com.zcool.inkstone.ext.widget.MinHeightInsetsCollapsingToolbarLayout>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
