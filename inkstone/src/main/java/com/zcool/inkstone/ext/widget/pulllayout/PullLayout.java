@@ -1,4 +1,4 @@
-package com.zcool.sample.widget.refreshlayout;
+package com.zcool.inkstone.ext.widget.pulllayout;
 
 import android.animation.Animator;
 import android.animation.PropertyValuesHolder;
@@ -14,8 +14,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import com.zcool.inkstone.R;
 import com.zcool.inkstone.util.DimenUtil;
-import com.zcool.sample.R;
 
 import javax.annotation.Nonnull;
 
@@ -59,7 +59,6 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
     public @interface PullPosition {
     }
 
-    public static final int ANIMATION_DURATION = 200;
     private int mTouchSlop;
     @PullPosition
     private int mPullPosition = PULL_POSITION_TOP;

@@ -68,4 +68,14 @@
         <attr name="systemInsetPaddingRightNotConsume" />
         <attr name="systemInsetPaddingBottomNotConsume" />
     </declare-styleable>
+    <declare-styleable name="PullLayout">
+        <attr name="pull_position" format="enum">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="pull_overlay" format="boolean" />
+        <attr name="pull_threshold" format="dimension" />
+    </declare-styleable>
 </resources>
