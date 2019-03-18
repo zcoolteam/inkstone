@@ -44,17 +44,17 @@ public class SystemInsetsLayoutHelper {
     private int mSystemInsetPaddingRight = NONE;
     private int mSystemInsetPaddingBottom = NONE;
 
-    private boolean mSystemInsetPaddingLeftNotApply = false; // 是否将 left 值设置到 padding
-    private boolean mSystemInsetPaddingLeftNotConsume = false; // 是否将 left 值从输入值中减少
+    private boolean mSystemInsetPaddingLeftNotApply = false; // 是否不设置 left 值到 padding
+    private boolean mSystemInsetPaddingLeftNotConsume = false; // 是否不消耗输入的 left 值
 
-    private boolean mSystemInsetPaddingTopNotApply = false; // 是否将 top 值设置到 padding
-    private boolean mSystemInsetPaddingTopNotConsume = false;// 是否将 top 值从输入值中减少
+    private boolean mSystemInsetPaddingTopNotApply = false; // 是否不设置 top 值到 padding
+    private boolean mSystemInsetPaddingTopNotConsume = false;// 是否不消耗输入的 top 值
 
-    private boolean mSystemInsetPaddingRightNotApply = false; // 是否将 right 值设置到 padding
-    private boolean mSystemInsetPaddingRightNotConsume = false;// 是否将 right 值从输入值中减少
+    private boolean mSystemInsetPaddingRightNotApply = false; // 是否不设置 right 值到 padding
+    private boolean mSystemInsetPaddingRightNotConsume = false;// 是否不消耗输入的 right 值
 
-    private boolean mSystemInsetPaddingBottomNotApply = false; // 是否将 bottom 值设置到 padding
-    private boolean mSystemInsetPaddingBottomNotConsume = false;// 是否将 bottom 值从输入值中减少
+    private boolean mSystemInsetPaddingBottomNotApply = false; // 是否不设置 bottom 值到 padding
+    private boolean mSystemInsetPaddingBottomNotConsume = false;// 是否不消耗输入的 bottom 值
 
     public int mPrivateFlags;
 
@@ -266,13 +266,13 @@ public class SystemInsetsLayoutHelper {
         targetInsets.right = calculateTargetInsetPaddingValue(right, mSystemInsetPaddingRight);
         targetInsets.bottom = calculateTargetInsetPaddingValue(bottom, mSystemInsetPaddingBottom);
 
-        // adjust padding
-        boolean[] notSet = getSystemInsetsPaddingNotApply();
+        // apply padding
+        boolean[] notApply = getSystemInsetsPaddingNotApply();
         Rect padding = new Rect();
-        padding.left = notSet[Index.LEFT] ? 0 : targetInsets.left;
-        padding.top = notSet[Index.TOP] ? 0 : targetInsets.top;
-        padding.right = notSet[Index.RIGHT] ? 0 : targetInsets.right;
-        padding.bottom = notSet[Index.BOTTOM] ? 0 : targetInsets.bottom;
+        padding.left = notApply[Index.LEFT] ? 0 : targetInsets.left;
+        padding.top = notApply[Index.TOP] ? 0 : targetInsets.top;
+        padding.right = notApply[Index.RIGHT] ? 0 : targetInsets.right;
+        padding.bottom = notApply[Index.BOTTOM] ? 0 : targetInsets.bottom;
         mView.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
         // adjust remain
@@ -288,7 +288,7 @@ public class SystemInsetsLayoutHelper {
                     "onSystemInsets:%s=> targetInsets:%s->%s padding:%s->%s remain:%s->%s",
                     new Rect(left, top, right, bottom),
                     getSystemInsetsPadding(), targetInsets,
-                    Arrays.toString(notSet), padding,
+                    Arrays.toString(notApply), padding,
                     Arrays.toString(notConsume), remain);
         }
 
