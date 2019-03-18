@@ -1,4 +1,4 @@
-package com.zcool.sample.widget;
+package com.zcool.inkstone.ext.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,8 +12,6 @@ import android.view.WindowInsets;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.zcool.inkstone.Debug;
-import com.zcool.inkstone.ext.widget.SystemInsetsLayout;
-import com.zcool.inkstone.ext.widget.SystemInsetsLayoutHelper;
 
 import androidx.annotation.NonNull;
 import androidx.core.math.MathUtils;
@@ -75,26 +73,23 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
         }
     }
 
-    private final AppBarLayout.OnOffsetChangedListener mOnOffsetChangedListener = new AppBarLayout.OnOffsetChangedListener() {
-        @Override
-        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-            if (DEBUG) {
-                Timber.v("onOffsetChanged AppBarLayout totalScrollRange:%s, verticalOffset:%s, childCount:%s", appBarLayout.getTotalScrollRange(), verticalOffset, getChildCount());
-            }
+    private final AppBarLayout.OnOffsetChangedListener mOnOffsetChangedListener = (appBarLayout, verticalOffset) -> {
+        if (DEBUG) {
+            Timber.v("onOffsetChanged AppBarLayout totalScrollRange:%s, verticalOffset:%s, childCount:%s", appBarLayout.getTotalScrollRange(), verticalOffset, getChildCount());
+        }
 
-            int maxRange = appBarLayout.getTotalScrollRange();
-            int offset = -verticalOffset;
-            float progress = offset * 1f / maxRange;
-            progress = MathUtils.clamp(progress, 0f, 1f);
+        int maxRange = appBarLayout.getTotalScrollRange();
+        int offset = -verticalOffset;
+        float progress = offset * 1f / maxRange;
+        progress = MathUtils.clamp(progress, 0f, 1f);
 
-            int childCount = getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                View childView = getChildAt(i);
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View childView = getChildAt(i);
 
-                if (childView instanceof ProgressView) {
-                    int viewHeight = childView.getHeight();
-                    ((ProgressView) childView).onProgressUpdate(appBarLayout, verticalOffset, progress, maxRange, offset, viewHeight);
-                }
+            if (childView instanceof ProgressView) {
+                int viewHeight = childView.getHeight();
+                ((ProgressView) childView).onProgressUpdate(appBarLayout, verticalOffset, progress, maxRange, offset, viewHeight);
             }
         }
     };
@@ -161,6 +156,15 @@ public class MinHeightInsetsCollapsingToolbarLayout extends CollapsingToolbarLay
     @Override
     public Rect getLastSystemInsets() {
         return mSystemInsetsLayoutHelper.getLastSystemInsets();
+    }
+
+    public interface ProgressView {
+
+        /**
+         * progress [0.0f, 1.0f]
+         */
+        void onProgressUpdate(AppBarLayout appBarLayout, int verticalOffset, float progress, int maxRange, int offset, int viewHeight);
+
     }
 
 }

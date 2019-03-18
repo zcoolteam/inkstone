@@ -4,15 +4,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
-import timber.log.Timber;
 
 public class PullHeader extends FrameLayout implements PullLayout.Header {
 
@@ -38,31 +35,8 @@ public class PullHeader extends FrameLayout implements PullLayout.Header {
     private void initFromAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     }
 
-    private ProgressBar mProgressBar;
-
-    private void ensureProgressBar() {
-        if (mProgressBar != null) {
-            return;
-        }
-
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View childView = getChildAt(i);
-            if (childView instanceof ProgressBar) {
-                mProgressBar = (ProgressBar) childView;
-                break;
-            }
-        }
-    }
-
     @Override
     public void updateOffset(@NonNull PullLayout.OffsetHelper offsetHelper, boolean animating, int windowOffsetX, int windowOffsetY, @NonNull PullLayout pullLayout) {
-        ensureProgressBar();
-        if (mProgressBar == null) {
-            Timber.v("progress bar is null");
-            return;
-        }
-
         setTranslationX(windowOffsetX);
         setTranslationY(windowOffsetY);
     }

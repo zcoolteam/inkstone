@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.zcool.inkstone.Debug;
+import com.zcool.inkstone.ext.widget.MinHeightInsetsCollapsingToolbarLayout;
 import com.zcool.inkstone.lang.SystemUiHelper;
 import com.zcool.sample.R;
-import com.zcool.sample.widget.ProgressView;
 
 import java.lang.ref.WeakReference;
 
@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import timber.log.Timber;
 
-public class ProgressViewFrameLayout extends FrameLayout implements ProgressView {
+public class ProgressViewFrameLayout extends FrameLayout implements MinHeightInsetsCollapsingToolbarLayout.ProgressView {
 
     private final boolean DEBUG = Debug.isDebugWidget();
 
