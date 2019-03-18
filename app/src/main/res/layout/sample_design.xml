@@ -34,7 +34,8 @@
                         android:scaleType="fitXY"
                         android:src="@mipmap/sample_ic_launcher"
                         app:layout_constrainedHeight="true"
-                        app:layout_constraintDimensionRatio="1:1" />
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.zcool.sample.module.design.widget.ProgressViewFrameLayout
