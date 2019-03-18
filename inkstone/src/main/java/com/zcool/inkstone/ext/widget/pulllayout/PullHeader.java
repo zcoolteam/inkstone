@@ -1,4 +1,4 @@
-package com.zcool.sample.widget.refreshlayout;
+package com.zcool.inkstone.ext.widget.pulllayout;
 
 import android.annotation.TargetApi;
 import android.content.Context;

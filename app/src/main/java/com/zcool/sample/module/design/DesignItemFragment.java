@@ -12,7 +12,7 @@ import com.zcool.inkstone.lang.DisposableHolder;
 import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
-import com.zcool.sample.widget.refreshlayout.PullLayout;
+import com.zcool.inkstone.ext.widget.pulllayout.PullLayout;
 
 import java.util.ArrayList;
 import java.util.List;

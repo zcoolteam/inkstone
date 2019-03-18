@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zcool.sample.widget.refreshlayout.PullLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zcool.inkstone.ext.widget.pulllayout.PullLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.zcool.sample.widget.refreshlayout.PullHeader
+    <com.zcool.inkstone.ext.widget.pulllayout.PullHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <include layout="@layout/okandroid_ptr_header_default_view" />
-    </com.zcool.sample.widget.refreshlayout.PullHeader>
-</com.zcool.sample.widget.refreshlayout.PullLayout>
+    </com.zcool.inkstone.ext.widget.pulllayout.PullHeader>
+</com.zcool.inkstone.ext.widget.pulllayout.PullLayout>
