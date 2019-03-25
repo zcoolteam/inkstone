@@ -29,7 +29,7 @@ open class BuildInkstonePlugin : Plugin<Project> {
                     "generated/source/buildInkstone/${variant.dirName}")
             variant.outputs.all { output ->
                 val manifestDir = output.processManifestProvider.get().manifestOutputDirectory.get().asFile
-                manifestDir?.run {
+                manifestDir.run {
                     project.tasks.create("generate${variant.name.capitalize()}BuildInkstone", BuildInkstoneGenerator::class.java) {
                         it.outputDir = outputDir
                         it.manifestDir = manifestDir
@@ -40,6 +40,5 @@ open class BuildInkstonePlugin : Plugin<Project> {
             }
         }
     }
-
 
 }
