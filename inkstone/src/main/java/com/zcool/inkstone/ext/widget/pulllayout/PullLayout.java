@@ -486,10 +486,16 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         return mOffsetHelper.appendOffset(dx, dy, refreshSuccess);
     }
 
-    private int[] getFinalOffset(boolean refreshing) {
+    private int[] getFinalOffset(boolean oldRefreshing, boolean refreshing) {
         switch (mPullPosition) {
             case PULL_POSITION_TOP: {
                 if (refreshing) {
+                    if (oldRefreshing) {
+                        int offsetY = getOffsetHelper().getCurrentOffsetY();
+                        if (offsetY > -mPullThreshold) {
+                            return new int[]{0, Math.min(0, offsetY)};
+                        }
+                    }
                     return new int[]{0, -mPullThreshold};
                 } else {
                     return new int[]{0, 0};
@@ -497,6 +503,12 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             }
             case PULL_POSITION_BOTTOM: {
                 if (refreshing) {
+                    if (oldRefreshing) {
+                        int offsetY = getOffsetHelper().getCurrentOffsetY();
+                        if (offsetY < mPullThreshold) {
+                            return new int[]{0, Math.max(0, offsetY)};
+                        }
+                    }
                     return new int[]{0, mPullThreshold};
                 } else {
                     return new int[]{0, 0};
@@ -504,6 +516,12 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             }
             case PULL_POSITION_LEFT: {
                 if (refreshing) {
+                    if (oldRefreshing) {
+                        int offsetX = getOffsetHelper().getCurrentOffsetX();
+                        if (offsetX > -mPullThreshold) {
+                            return new int[]{Math.min(0, offsetX), 0};
+                        }
+                    }
                     return new int[]{-mPullThreshold, 0};
                 } else {
                     return new int[]{0, 0};
@@ -511,6 +529,12 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             }
             case PULL_POSITION_RIGHT: {
                 if (refreshing) {
+                    if (oldRefreshing) {
+                        int offsetX = getOffsetHelper().getCurrentOffsetX();
+                        if (offsetX < mPullThreshold) {
+                            return new int[]{Math.max(0, offsetX), 0};
+                        }
+                    }
                     return new int[]{mPullThreshold, 0};
                 } else {
                     return new int[]{0, 0};
@@ -747,11 +771,8 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             return;
         }
 
-
-
+        int[] targetOffset = getFinalOffset(mRefreshing, refreshing);
         mRefreshing = refreshing;
-
-        int[] targetOffset = getFinalOffset(mRefreshing);
         mOffsetHelper.setOffset(targetOffset[0], targetOffset[1], true, refreshSuccess);
     }
 
