@@ -133,6 +133,10 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         return mPullThreshold;
     }
 
+    public boolean isRefreshSuccess() {
+        return mOffsetHelper.mRefreshSuccess;
+    }
+
     @Nullable
     public View getTarget() {
         ensureTargetAndHeader();
@@ -248,7 +252,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
                 } else {
                     final int dx = mLastMotionX - x;
                     final int dy = mLastMotionY - y;
-                    applyPullOffset(dx, dy);
+                    applyPullOffset(dx, dy, false);
                     mLastMotionX = x;
                     mLastMotionY = y;
                 }
@@ -294,6 +298,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         int mTargetOffsetY;
 
         private Animator mAnimator;
+        private boolean mRefreshSuccess; // 是否处于刷新成功的状态
 
         private OffsetHelper(OnOffsetChangedListener offsetChangedListener) {
             mOffsetChangedListener = offsetChangedListener;
@@ -365,15 +370,16 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             }
         }
 
-        private boolean appendOffset(int dx, int dy) {
-            return appendOffset(dx, dy, false);
+        private boolean appendOffset(int dx, int dy, boolean refreshSuccess) {
+            return appendOffset(dx, dy, false, refreshSuccess);
         }
 
-        private boolean appendOffset(int dx, int dy, boolean animate) {
-            return setOffset(mCurrentOffsetX + dx, mCurrentOffsetY + dy, animate);
+        private boolean appendOffset(int dx, int dy, boolean animate, boolean refreshSuccess) {
+            return setOffset(mCurrentOffsetX + dx, mCurrentOffsetY + dy, animate, refreshSuccess);
         }
 
-        private boolean setOffset(int targetOffsetX, int targetOffsetY, boolean animate) {
+        private boolean setOffset(int targetOffsetX, int targetOffsetY, boolean animate, boolean refreshSuccess) {
+            mRefreshSuccess = refreshSuccess;
             clear();
 
             switch (mPullPosition) {
@@ -465,7 +471,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
 
     }
 
-    public boolean applyPullOffset(int dx, int dy) {
+    private boolean applyPullOffset(int dx, int dy, boolean refreshSuccess) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -473,7 +479,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             return false;
         }
 
-        return mOffsetHelper.appendOffset(dx, dy);
+        return mOffsetHelper.appendOffset(dx, dy, refreshSuccess);
     }
 
     private int[] getFinalOffset(boolean refreshing) {
@@ -530,7 +536,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         }
 
         boolean notifyRefreshing = !mRefreshing && refreshing;
-        setRefreshing(refreshing);
+        setRefreshing(refreshing, false);
 
         if (notifyRefreshing && mOnRefreshListener != null) {
             mOnRefreshListener.onRefresh(this);
@@ -746,7 +752,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         return mRefreshing;
     }
 
-    public void setRefreshing(boolean refreshing) {
+    public void setRefreshing(boolean refreshing, boolean refreshSuccess) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -757,7 +763,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         mRefreshing = refreshing;
 
         int[] targetOffset = getFinalOffset(mRefreshing);
-        mOffsetHelper.setOffset(targetOffset[0], targetOffset[1], true);
+        mOffsetHelper.setOffset(targetOffset[0], targetOffset[1], true, refreshSuccess);
     }
 
     // nested scroll parent
@@ -850,7 +856,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
                 || (mPullPosition == PULL_POSITION_BOTTOM && dy > 0 && !canChildScrollDown())
                 || (mPullPosition == PULL_POSITION_LEFT && dx < 0 && !canChildScrollLeft())
                 || (mPullPosition == PULL_POSITION_RIGHT && dx > 0 && !canChildScrollRight())) {
-            applyPullOffset(dx, dy);
+            applyPullOffset(dx, dy, false);
         }
     }
 
@@ -874,7 +880,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
                 || (mPullPosition == PULL_POSITION_LEFT && dx > 0)
                 || (mPullPosition == PULL_POSITION_RIGHT && dx < 0)) {
 
-            if (applyPullOffset(dx, dy)) {
+            if (applyPullOffset(dx, dy, false)) {
                 consumed[0] = dx;
                 consumed[1] = dy;
             } else {
