@@ -27,13 +27,13 @@
                 android:layout_gravity="center_vertical"
                 android:text="view dialog 1" />
 
-            <com.zcool.inkstone.ext.widget.pulllayout.PullHeader
+            <com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical">
 
                 <include layout="@layout/okandroid_ptr_header_default_view" />
-            </com.zcool.inkstone.ext.widget.pulllayout.PullHeader>
+            </com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader>
         </com.zcool.inkstone.ext.widget.pulllayout.PullLayout>
 
         <com.zcool.inkstone.ext.widget.pulllayout.PullLayout
@@ -49,13 +49,13 @@
                 android:layout_gravity="center_vertical"
                 android:text="view dialog 2" />
 
-            <com.zcool.inkstone.ext.widget.pulllayout.PullHeader
+            <com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical">
 
                 <include layout="@layout/okandroid_ptr_header_default_view" />
-            </com.zcool.inkstone.ext.widget.pulllayout.PullHeader>
+            </com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader>
         </com.zcool.inkstone.ext.widget.pulllayout.PullLayout>
 
         <com.zcool.inkstone.ext.widget.pulllayout.PullLayout
@@ -71,13 +71,13 @@
                 android:layout_gravity="center_horizontal"
                 android:text="view dialog 3" />
 
-            <com.zcool.inkstone.ext.widget.pulllayout.PullHeader
+            <com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal">
 
                 <include layout="@layout/okandroid_ptr_header_default_view" />
-            </com.zcool.inkstone.ext.widget.pulllayout.PullHeader>
+            </com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader>
         </com.zcool.inkstone.ext.widget.pulllayout.PullLayout>
 
         <com.zcool.inkstone.ext.widget.pulllayout.PullLayout
@@ -93,13 +93,13 @@
                 android:layout_gravity="center_horizontal"
                 android:text="view dialog 4" />
 
-            <com.zcool.inkstone.ext.widget.pulllayout.PullHeader
+            <com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal">
 
                 <include layout="@layout/okandroid_ptr_header_default_view" />
-            </com.zcool.inkstone.ext.widget.pulllayout.PullHeader>
+            </com.zcool.inkstone.ext.widget.pulllayout.header.SimplePullHeader>
         </com.zcool.inkstone.ext.widget.pulllayout.PullLayout>
     </LinearLayout>
 </com.zcool.inkstone.ext.widget.SystemInsetsFrameLayout>

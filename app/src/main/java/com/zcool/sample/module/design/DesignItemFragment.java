@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.zcool.inkstone.ext.widget.pulllayout.PullLayout;
 import com.zcool.inkstone.lang.DisposableHolder;
 import com.zcool.inkstone.thread.Threads;
 import com.zcool.inkstone.util.DimenUtil;
 import com.zcool.sample.R;
-import com.zcool.inkstone.ext.widget.pulllayout.PullLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,13 +79,13 @@ public class DesignItemFragment extends Fragment {
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
-                        mPullLayout.setRefreshing(false);
+                        mPullLayout.setRefreshing(false, true);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable e) throws Exception {
                         e.printStackTrace();
-                        mPullLayout.setRefreshing(false);
+                        mPullLayout.setRefreshing(false, false);
                     }
                 })));
     }

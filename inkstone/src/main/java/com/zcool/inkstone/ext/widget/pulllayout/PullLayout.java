@@ -133,8 +133,8 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         return mPullThreshold;
     }
 
-    public boolean isRefreshSuccess() {
-        return mOffsetHelper.mRefreshSuccess;
+    public OffsetHelper getOffsetHelper() {
+        return mOffsetHelper;
     }
 
     @Nullable
@@ -282,7 +282,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         return true;
     }
 
-    protected interface OnOffsetChangedListener {
+    private interface OnOffsetChangedListener {
         void onOffsetChanged(@Nonnull OffsetHelper offsetHelper, boolean animating);
     }
 
@@ -291,11 +291,11 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
         @NonNull
         private final OnOffsetChangedListener mOffsetChangedListener;
 
-        int mCurrentOffsetX;
-        int mCurrentOffsetY;
+        private int mCurrentOffsetX;
+        private int mCurrentOffsetY;
 
-        int mTargetOffsetX;
-        int mTargetOffsetY;
+        private int mTargetOffsetX;
+        private int mTargetOffsetY;
 
         private Animator mAnimator;
         private boolean mRefreshSuccess; // 是否处于刷新成功的状态
@@ -318,6 +318,10 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
 
         public int getTargetOffsetY() {
             return mTargetOffsetY;
+        }
+
+        public boolean isRefreshSuccess() {
+            return mRefreshSuccess;
         }
 
         public int getThresholdTransform(int offset) {
@@ -343,7 +347,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             }
         }
 
-        public void clear() {
+        private void clear() {
             Animator animator = mAnimator;
             mAnimator = null;
             if (animator != null) {
@@ -672,23 +676,6 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        /*
-        ensureTargetAndHeader();
-
-        if (mTarget == null || mHeader == null) {
-            Timber.e("target or header not found");
-            return;
-        }
-
-        measureChild(mTarget, widthMeasureSpec, heightMeasureSpec);
-        measureChild(mHeader, widthMeasureSpec, heightMeasureSpec);
-        */
-    }
-
-    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
@@ -759,6 +746,8 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
             Timber.e("target or header not found");
             return;
         }
+
+
 
         mRefreshing = refreshing;
 
