@@ -17,6 +17,9 @@ import android.widget.FrameLayout;
 import com.zcool.inkstone.R;
 import com.zcool.inkstone.util.DimenUtil;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import javax.annotation.Nonnull;
 
 import androidx.annotation.IntDef;
@@ -56,6 +59,7 @@ public class PullLayout extends FrameLayout implements NestedScrollingParent2, N
     public static final int PULL_POSITION_BOTTOM = 3;
 
     @IntDef({PULL_POSITION_LEFT, PULL_POSITION_TOP, PULL_POSITION_RIGHT, PULL_POSITION_BOTTOM})
+    @Retention(RetentionPolicy.SOURCE)
     public @interface PullPosition {
     }
 
