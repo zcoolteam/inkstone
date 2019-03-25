@@ -10,11 +10,11 @@ bcfg.ver.versionCode = this.createGitVersionCode()
 bcfg.ver.versionName = this.createGitVersionName()
 
 bcfg.deps = [:]
-bcfg.deps.android_gradle_plugin = "com.android.tools.build:gradle:3.2.0"
+bcfg.deps.android_gradle_plugin = "com.android.tools.build:gradle:3.3.2"
 bcfg.deps.android_maven_gradle_plugin = "com.github.dcendents:android-maven-gradle-plugin:2.1"
 bcfg.deps.gradle_bintray_plugin = "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
-bcfg.deps.kotlin_gradle_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.71"
-bcfg.deps.kotlin_stdlib_jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.71"
+bcfg.deps.kotlin_gradle_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0"
+bcfg.deps.kotlin_stdlib_jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0"
 
 bcfg.deps.test_runner = "androidx.test:runner:1.1.0"
 bcfg.deps.test_espresso = "androidx.test.espresso:espresso-core:3.1.0"
@@ -42,9 +42,9 @@ bcfg.deps.leakcanary_no_op = "com.squareup.leakcanary:leakcanary-android-no-op:1
 bcfg.deps.guava = "com.google.guava:guava:27.0.1-android"
 bcfg.deps.javapoet = "com.squareup:javapoet:1.10.0"
 bcfg.deps.auto_service = "com.google.auto.service:auto-service:1.0-rc2"
-bcfg.deps.inkstone = "com.zcool.inkstone:inkstone:0.1.150"
-bcfg.deps.inkstone_processor = "com.zcool.inkstone:inkstone-processor:0.1.150"
-bcfg.deps.inkstone_gradle_plugin = "com.zcool.inkstone:inkstone-gradle-plugin:0.1.150"
+bcfg.deps.inkstone = "com.zcool.inkstone:inkstone:0.1.200"
+bcfg.deps.inkstone_processor = "com.zcool.inkstone:inkstone-processor:0.1.200"
+bcfg.deps.inkstone_gradle_plugin = "com.zcool.inkstone:inkstone-gradle-plugin:0.1.200"
 
 bcfg.deps.timber = "com.jakewharton.timber:timber:4.7.1"
 bcfg.deps.rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.4"

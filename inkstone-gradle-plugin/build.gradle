@@ -8,8 +8,7 @@ dependencies {
     compileOnly gradleApi()
 
     implementation project(':inkstone-annotation')
-    // implementation rootProject.ext.bcfg.deps.android_gradle_plugin
-    implementation "com.android.tools.build:gradle:3.3.2"
+    implementation rootProject.ext.bcfg.deps.android_gradle_plugin
     implementation rootProject.ext.bcfg.deps.javapoet
     implementation rootProject.ext.bcfg.deps.kotlin_stdlib_jdk8
 }
