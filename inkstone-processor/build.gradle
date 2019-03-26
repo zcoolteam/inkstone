@@ -1,5 +1,7 @@
 apply plugin: 'java-library'
 
+import org.gradle.internal.jvm.Jvm
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':inkstone-annotation')
@@ -8,7 +10,7 @@ dependencies {
     implementation rootProject.ext.bcfg.deps.auto_service
     implementation rootProject.ext.bcfg.deps.guava
 
-    compileOnly files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
+    compileOnly files(Jvm.current().getToolsJar())
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
