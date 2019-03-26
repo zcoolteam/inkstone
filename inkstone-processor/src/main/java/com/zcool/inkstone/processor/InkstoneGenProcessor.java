@@ -29,7 +29,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 @AutoService(Processor.class)
-@SupportedOptions({Constants.OPTION_MODULE_MANIFEST_PACKAGE})
+@SupportedOptions({Constants.INKSTONE_MODULE_MANIFEST_PACKAGE})
 @SupportedAnnotationTypes({Constants.ANNOTATION_TYPE_APPLICATION_DELEGATE, Constants.ANNOTATION_TYPE_SERVICES_PROVIDER})
 public class InkstoneGenProcessor extends AbstractProcessor {
 
@@ -43,16 +43,16 @@ public class InkstoneGenProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
 
-        mModuleManifestPackage = processingEnv.getOptions().get(Constants.OPTION_MODULE_MANIFEST_PACKAGE);
+        mModuleManifestPackage = processingEnv.getOptions().get(Constants.INKSTONE_MODULE_MANIFEST_PACKAGE);
         if (mModuleManifestPackage != null) {
             mModuleManifestPackage = mModuleManifestPackage.trim();
         }
 
         if (Strings.isNullOrEmpty(mModuleManifestPackage)) {
-            throw new RuntimeException(Constants.TIP_NO_OPTION_MODULE_MANIFEST_PACKAGE);
+            throw new RuntimeException(Constants.TIP_NO_OPTION_INKSTONE_MODULE_MANIFEST_PACKAGE);
         }
 
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "option " + Constants.OPTION_MODULE_MANIFEST_PACKAGE + ": " + mModuleManifestPackage);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "option " + Constants.INKSTONE_MODULE_MANIFEST_PACKAGE + ": " + mModuleManifestPackage);
     }
 
     @Override
