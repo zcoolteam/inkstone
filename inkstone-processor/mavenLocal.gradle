@@ -1,0 +1,12 @@
+apply plugin: 'maven'
+
+group = 'com.zcool.inkstone'
+version = rootProject.ext.bcfg.ver.versionName
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri("../repositoryLocal"))
+        }
+    }
+}

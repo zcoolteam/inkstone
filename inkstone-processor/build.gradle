@@ -16,4 +16,5 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-apply from: ('bintray.gradle')
+// apply from: ('bintray.gradle')
+apply from: ('mavenLocal.gradle')

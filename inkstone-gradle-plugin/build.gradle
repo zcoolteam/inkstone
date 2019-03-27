@@ -13,4 +13,5 @@ dependencies {
     implementation rootProject.ext.bcfg.deps.kotlin_stdlib_jdk8
 }
 
-apply from: ('bintray.gradle')
+// apply from: ('bintray.gradle')
+apply from: ('mavenLocal.gradle')

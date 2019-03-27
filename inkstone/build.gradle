@@ -74,4 +74,5 @@ dependencies {
     api 'com.sina.weibo.sdk:core:4.3.6:openDefaultRelease@aar'
 }
 
-apply from: ('bintray.gradle')
+// apply from: ('bintray.gradle')
+apply from: ('mavenLocal.gradle')
