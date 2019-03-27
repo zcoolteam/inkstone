@@ -21,3 +21,6 @@ task clean(type: Delete) {
 
 // bintray upload command
 // ./gradlew :inkstone-annotation:clean :inkstone-annotation:install :inkstone-annotation:bintrayUpload :inkstone-processor:clean :inkstone-processor:install :inkstone-processor:bintrayUpload :inkstone-gradle-plugin:clean :inkstone-gradle-plugin:install :inkstone-gradle-plugin:bintrayUpload :inkstone:clean :inkstone:install :inkstone:bintrayUpload
+
+// maven local command
+// ./gradlew :inkstone-annotation:clean :inkstone-annotation:uploadArchives :inkstone-processor:clean :inkstone-processor:uploadArchives :inkstone-gradle-plugin:clean :inkstone-gradle-plugin:uploadArchives :inkstone:clean :inkstone:uploadArchives
